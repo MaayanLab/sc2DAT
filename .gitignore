@@ -1,3 +1,7 @@
 venv
 .DS_store
 *__pycache__
+*Mammalia
+figures
+results
+data
