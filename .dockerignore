@@ -1,0 +1,8 @@
+*Mammalia
+data/input
+data/output
+*__pycache__
+process_cptac
+results
+venv
+figures

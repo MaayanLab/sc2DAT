@@ -10,3 +10,4 @@ fsspec==2022.11.0
 tqdm
 scanpy
 rpy2==3.5.10
+fastcluster

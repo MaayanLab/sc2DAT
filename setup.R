@@ -11,5 +11,10 @@ BiocManager::install("DeSeq2")
 BiocManager::install("edgeR")
 install.packages("statmod")
 
+install.packages("tidyverse")
+install.packages("ComplexHeatmap")
+install.packages("circlize")
+
 # verify
 require(limma)
+
