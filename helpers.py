@@ -1,8 +1,12 @@
-import pandas as pd
 from IPython.display import HTML
-
+from matplotlib.ticker import MaxNLocator
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import seaborn as sns
 import requests
 import json
+import time
 import rpy2
 import rpy2.rinterface
 
@@ -187,3 +191,70 @@ def heatmap(dt: str, title='', width=800, height=800):
         draw(hm, heatmap_legend_side = "bottom")
         dev.off()
     }""")
+
+
+
+def enrichr_figure(res_list: list): 
+    all_terms,all_pvalues, all_adjusted_pvalues, all_libraries = res_list
+    # Bar colors
+    bar_color_not_sig = 'lightgrey'
+    bar_color = 'tomato'
+    edgecolor=None
+    linewidth=0
+    fig, axes = plt.subplots(nrows=len(all_libraries), ncols=1)
+        
+
+    for i, library_name in enumerate(all_libraries):
+        bar_colors = [bar_color if (x < 0.05) else bar_color_not_sig for x in all_pvalues[i]]
+        sns.barplot(x=np.log10(all_pvalues[i])*-1, y=all_terms[i],ax=axes[i], palette=bar_colors, edgecolor=edgecolor, linewidth=1)
+        axes[i].axes.get_yaxis().set_visible(False)
+        axes[i].set_title(library_name.replace('_',' '),fontsize=30)
+        if i == len(all_libraries)-1:
+            axes[i].set_xlabel('-Log10(p-value)',fontsize=30)
+        axes[i].xaxis.set_major_locator(MaxNLocator(integer=True))
+        axes[i].tick_params(axis='x', which='major', labelsize=20)
+        if max(np.log10(all_pvalues[i])*-1)<1:
+            axes[i].xaxis.set_ticks(np.arange(0, max(np.log10(all_pvalues[i])*-1), 0.1))
+        for ii,annot in enumerate(all_terms[i]):
+            if all_adjusted_pvalues[i][ii] < 0.05:
+                annot = '  *'.join([annot, str(str(np.format_float_scientific(all_pvalues[i][ii],precision=2)))]) 
+            else:
+                annot = '  '.join([annot, str(str(np.format_float_scientific(all_pvalues[i][ii],precision=2)))])
+
+            title_start= max(axes[i].axes.get_xlim())/200
+            axes[i].text(title_start,ii,annot,ha='left',wrap = True, fontsize = 30)
+    plt.subplots_adjust(top=4.8, right = 4.7,wspace = 0.03,hspace = 0.2)
+    plt.show()
+    return fig
+
+
+def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023_Human', 'GO_Biological_Process_2023', 'MGI_Mammalian_Phenotype_Level_4_2021']):
+
+    all_terms = []
+    all_pvalues =[] 
+    all_adjusted_pvalues = []
+    library_success = []
+
+    for library_name in all_libraries: 
+        
+        ENRICHR_URL = 'http://amp.pharm.mssm.edu/Enrichr/enrich'
+        query_string = '?userListId=%s&backgroundType=%s'
+        gene_set_library = library_name
+        response = requests.get(
+            ENRICHR_URL + query_string % (user_list_id, gene_set_library)
+         )
+        if not response.ok:
+            print(response.text)
+            raise Exception('Error fetching enrichment results')
+        try:
+            data = json.loads(response.text)
+            results_df  = pd.DataFrame(data[library_name][0:5])
+            all_terms.append(list(results_df[1]))
+            all_pvalues.append(list(results_df[2]))
+            all_adjusted_pvalues.append(list(results_df[6]))
+            library_success.append(library_name)
+        except:
+            print('Error for ' + library_name + ' library')
+        time.sleep(1)
+
+    return [all_terms, all_pvalues, all_adjusted_pvalues, library_success]
