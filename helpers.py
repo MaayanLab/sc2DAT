@@ -244,7 +244,6 @@ def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023
             ENRICHR_URL + query_string % (user_list_id, gene_set_library)
          )
         if not response.ok:
-            print(response.text)
             raise Exception('Error fetching enrichment results')
         try:
             data = json.loads(response.text)
