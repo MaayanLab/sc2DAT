@@ -3,7 +3,7 @@
 #  Would have used a variable, but Docker doesn't
 #  seem to have a simple way to do this (:
 
-FROM python:3.10
+FROM python:3.8
 
 ENV DEBIAN_FRONTEND "noninteractive"
 ENV TZ "America/New_York"
@@ -55,7 +55,7 @@ ARG appyter_version=appyter[production]@git+https://github.com/Maayanlab/appyter
 RUN set -x \
   && echo "Installing appyter..." \
   && pip3 install --no-cache-dir --upgrade ${appyter_version}
-  
+
 RUN set -x \
   && echo "Preparing user..." \
   && useradd -ms /bin/bash -d /app app \

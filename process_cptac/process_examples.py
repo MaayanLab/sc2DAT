@@ -20,7 +20,7 @@ HNSCC_tumor_counts.index = HNSCC_tumor_counts.index.map(lambda g: lookup(g.split
 HNSCC_tumor_counts.to_csv('out/CPTAC3_HNSCC_tumor_counts.tsv', sep='\t')
 # %%
 
-phospho_df = pd.read_csv('data/phospho_isoform_adjusted_v1.1_HNSCC_CB_obs.tsv', sep='\t')
+phospho_df = pd.read_csv('data/Phosphoproteome_Broad_Institute_harmonized_v1.tsv', sep='\t')
 available_samps = list(set(phospho_df.columns.values).intersection(list(map(lambda s: s + '-T', HNSCC_tumors.values()))))
 phospho_df_HSNCC = phospho_df[available_samps]
 phospho_df_HSNCC.columns = phospho_df_HSNCC.columns.map(lambda s: s.replace('-T', ''))
