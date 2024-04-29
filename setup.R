@@ -7,13 +7,13 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install(version = '3.16', ask = FALSE)
 
 BiocManager::install("limma")
-BiocManager::install("DeSeq2")
+BiocManager::install("DESeq2")
 BiocManager::install("edgeR")
 install.packages("statmod")
 
-install.packages("tidyverse")
-install.packages("ComplexHeatmap")
-install.packages("circlize")
+#install.packages("tidyverse")
+#install.packages("ComplexHeatmap")
+#install.packages("circlize")
 
 # verify
 require(limma)
