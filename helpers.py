@@ -10,6 +10,7 @@ import json
 import time
 import rpy2
 import rpy2.rinterface
+from tqdm import tqdm
 import openai
 from dotenv import load_dotenv
 load_dotenv()
@@ -272,17 +273,24 @@ def label_clusters(cluster_enrichments: dict):
     
     cluster_labels = {}
 
-    for c in cluster_enrichments:
+    for c in tqdm(cluster_enrichments):
         # Get top 5 enrichments
-        up_enrichments = cluster_enrichments[c]['up']
-        down_enrichments = cluster_enrichments[c]['up']
+        up_enrichments = []
+        down_enrichments = []
+        for i in range(3): # libraries
+            terms = cluster_enrichments[c]['up'][0][i]
+            p_values = cluster_enrichments[c]['up'][1][i]
+            up_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
 
+            terms = cluster_enrichments[c]['down'][0][i]
+            p_values = cluster_enrichments[c]['down'][1][i]
+            down_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
         # Get GPT-4 labels
         
         response = client.chat.completions.create(
             model='gpt-4-turbo',
             messages=[{'role': 'system', 'content': 'You are an assistant to a biologist who has performed enrichment analysis on a set of up-regulated and down-regulated genes for a certain cluster of patient samples. You must determine a consensus label for a given cluster based on the signfigantly enriched terms which relate to biological processes and phenotypes.'},
-                      {'role': 'user', 'content': f"The most signfigantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the signfigantly enriched terms are: {', '.join(up_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
+                      {'role': 'user', 'content': f"The most signfigantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the signfigantly enriched terms are: {', '.join(down_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
             max_tokens=50,
             temperature=0.3
         )
