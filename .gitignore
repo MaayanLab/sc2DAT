@@ -5,3 +5,4 @@ venv
 figures
 results
 data
+.env

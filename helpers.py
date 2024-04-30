@@ -1,3 +1,4 @@
+import os
 from IPython.display import HTML
 from matplotlib.ticker import MaxNLocator
 import matplotlib.pyplot as plt
@@ -9,6 +10,11 @@ import json
 import time
 import rpy2
 import rpy2.rinterface
+import openai
+from dotenv import load_dotenv
+load_dotenv()
+
+client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
 def read_table(filename):
     if filename.endswith('.tsv') or filename.endswith('.tsv.gz') or filename.endswith('.txt') or filename.endswith('.txt.gz'):
@@ -257,3 +263,28 @@ def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023
         time.sleep(1)
 
     return [all_terms, all_pvalues, all_adjusted_pvalues, library_success]
+
+
+def label_clusters(cluster_enrichments: dict):
+    """ Inputs:
+    cluster_enrichments: dict, dictionary of cluster enrichments
+    Return: dict, dictionary of labeled clusters (consensus with GPT-4) """
+    
+    cluster_labels = {}
+
+    for c in cluster_enrichments:
+        # Get top 5 enrichments
+        up_enrichments = cluster_enrichments[c]['up']
+        down_enrichments = cluster_enrichments[c]['up']
+
+        # Get GPT-4 labels
+        
+        response = client.chat.completions.create(
+            model='gpt-4-turbo',
+            messages=[{'role': 'system', 'content': 'You are an assistant to a biologist who has performed enrichment analysis on a set of up-regulated and down-regulated genes for a certain cluster of patient samples. You must determine a consensus label for a given cluster based on the signfigantly enriched terms which relate to biological processes and phenotypes.'},
+                      {'role': 'user', 'content': f"The most signfigantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the signfigantly enriched terms are: {', '.join(up_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
+            max_tokens=50,
+            temperature=0.3
+        )
+        cluster_labels[c] = response.choices[0].message.content
+    return cluster_labels

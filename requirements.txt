@@ -11,3 +11,5 @@ tqdm
 scanpy
 rpy2==3.5.10
 fastcluster
+openai
+python-dotenv
