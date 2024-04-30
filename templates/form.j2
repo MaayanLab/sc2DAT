@@ -19,8 +19,15 @@
             <h2> Expression to Kinases & Target Ranger </h2>
             <p class="my-0"> Upload a transcriptomic, proteomic, and phosphoproteomic data to identify active pathways and kinase and cell surface targets. </p>
         </div>
-    </div>
+    </div>  
 </div>
 </div>
-{{ super() }}
+    {{ super() }}
+<div class="row text-center justify-content-center mt-5">
+    <p class="text-center" style="font-weight:bold"> X2KTR Workflow Diagram:</p>
+</div> 
+<div class="row text-center justify-content-center">
+    <img src="{{ url_for('static', filename='X2KTR_workflows.png') }}" style="width:1000px" class="img-fluid float-right">
+</div> 
+
 {% endblock %}
