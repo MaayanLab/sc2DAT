@@ -1,6 +1,7 @@
 *Mammalia
 data/input
 data/output
+data
 *__pycache__
 process_cptac
 results
