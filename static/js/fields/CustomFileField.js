@@ -2377,84 +2377,7 @@ const {
 } = svelte_internal__WEBPACK_IMPORTED_MODULE_0__.globals;
 
 
-const file = "profiles/default/js/fields/CustomFileField.svelte"; // (36:34) 
-
-function create_if_block_2(ctx) {
-  let lazy;
-  let current;
-  lazy = new _components_Lazy_svelte__WEBPACK_IMPORTED_MODULE_2__["default"]({
-    props: {
-      module: func_2,
-      props: {
-        args: { ...
-          /*args*/
-          ctx[0],
-          value: undefined,
-          default: undefined,
-          label: 'Uniform Resource Identifier',
-          description: 'One of several supported identifiers for accessing your file',
-          examples: Object.keys(
-          /*args*/
-          ctx[0].examples || {}).reduce(
-          /*func_3*/
-          ctx[2], {})
-        }
-      }
-    },
-    $$inline: true
-  });
-  const block = {
-    c: function create() {
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.create_component)(lazy.$$.fragment);
-    },
-    m: function mount(target, anchor) {
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.mount_component)(lazy, target, anchor);
-      current = true;
-    },
-    p: function update(ctx, dirty) {
-      const lazy_changes = {};
-      if (dirty &
-      /*args*/
-      1) lazy_changes.props = {
-        args: { ...
-          /*args*/
-          ctx[0],
-          value: undefined,
-          default: undefined,
-          label: 'Uniform Resource Identifier',
-          description: 'One of several supported identifiers for accessing your file',
-          examples: Object.keys(
-          /*args*/
-          ctx[0].examples || {}).reduce(
-          /*func_3*/
-          ctx[2], {})
-        }
-      };
-      lazy.$set(lazy_changes);
-    },
-    i: function intro(local) {
-      if (current) return;
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.transition_in)(lazy.$$.fragment, local);
-      current = true;
-    },
-    o: function outro(local) {
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.transition_out)(lazy.$$.fragment, local);
-      current = false;
-    },
-    d: function destroy(detaching) {
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.destroy_component)(lazy, detaching);
-    }
-  };
-  (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.dispatch_dev)("SvelteRegisterBlock", {
-    block,
-    id: create_if_block_2.name,
-    type: "if",
-    source: "(36:34) ",
-    ctx
-  });
-  return block;
-} // (31:86) 
-
+const file = "profiles/default/js/fields/CustomFileField.svelte"; // (31:34) 
 
 function create_if_block_1(ctx) {
   let lazy;
@@ -2463,9 +2386,19 @@ function create_if_block_1(ctx) {
     props: {
       module: func_1,
       props: {
-        args:
-        /*args*/
-        ctx[0]
+        args: { ...
+          /*args*/
+          ctx[0],
+          value: undefined,
+          default: undefined,
+          label: 'Uniform Resource Identifier',
+          description: 'One of several supported identifiers for accessing your file',
+          examples: Object.keys(
+          /*args*/
+          ctx[0].examples || {}).reduce(
+          /*func_2*/
+          ctx[2], {})
+        }
       }
     },
     $$inline: true
@@ -2483,9 +2416,19 @@ function create_if_block_1(ctx) {
       if (dirty &
       /*args*/
       1) lazy_changes.props = {
-        args:
-        /*args*/
-        ctx[0]
+        args: { ...
+          /*args*/
+          ctx[0],
+          value: undefined,
+          default: undefined,
+          label: 'Uniform Resource Identifier',
+          description: 'One of several supported identifiers for accessing your file',
+          examples: Object.keys(
+          /*args*/
+          ctx[0].examples || {}).reduce(
+          /*func_2*/
+          ctx[2], {})
+        }
       };
       lazy.$set(lazy_changes);
     },
@@ -2506,7 +2449,7 @@ function create_if_block_1(ctx) {
     block,
     id: create_if_block_1.name,
     type: "if",
-    source: "(31:86) ",
+    source: "(31:34) ",
     ctx
   });
   return block;
@@ -2523,9 +2466,7 @@ function create_if_block(ctx) {
         args: { ...
           /*args*/
           ctx[0],
-          label: `Choose file${
-          /*args*/
-          ctx[0].multiple ? 's' : ''}`
+          label: ``
         }
       }
     },
@@ -2547,9 +2488,7 @@ function create_if_block(ctx) {
         args: { ...
           /*args*/
           ctx[0],
-          label: `Choose file${
-          /*args*/
-          ctx[0].multiple ? 's' : ''}`
+          label: ``
         }
       };
       lazy.$set(lazy_changes);
@@ -2579,28 +2518,20 @@ function create_if_block(ctx) {
 
 
 function create_default_slot(ctx) {
-  let show_if;
   let current_block_type_index;
   let if_block;
   let if_block_anchor;
   let current;
-  const if_block_creators = [create_if_block, create_if_block_1, create_if_block_2];
+  const if_block_creators = [create_if_block, create_if_block_1];
   const if_blocks = [];
 
   function select_block_type(ctx, dirty) {
-    if (dirty &
-    /*tab*/
-    16) show_if = null;
     if (
     /*tab*/
     ctx[4] === 'Upload') return 0;
-    if (show_if == null) show_if = !!(window._config.EXTRAS.includes('catalog-integration') &&
-    /*tab*/
-    ctx[4] === 'Locate');
-    if (show_if) return 1;
     if (
     /*tab*/
-    ctx[4] === 'Passthrough') return 2;
+    ctx[4] === 'Passthrough') return 1;
     return -1;
   }
 
@@ -2780,9 +2711,7 @@ function create_fragment(ctx) {
 
 const func = () => __webpack_require__.e(/*! import() */ "extras_file-field_Upload_svelte").then(__webpack_require__.bind(__webpack_require__, /*! @/extras/file-field/Upload.svelte */ "./extras/file-field/Upload.svelte"));
 
-const func_1 = () => __webpack_require__.e(/*! import() */ "extras_catalog-integration_LocateFileField_svelte").then(__webpack_require__.bind(__webpack_require__, /*! @/extras/catalog-integration/LocateFileField.svelte */ "./extras/catalog-integration/LocateFileField.svelte"));
-
-const func_2 = () => Promise.all(/*! import() */[__webpack_require__.e("components_fields_StringField_svelte"), __webpack_require__.e("extras_file-field_URI_svelte")]).then(__webpack_require__.bind(__webpack_require__, /*! @/extras/file-field/URI.svelte */ "./extras/file-field/URI.svelte"));
+const func_1 = () => Promise.all(/*! import() */[__webpack_require__.e("components_fields_StringField_svelte"), __webpack_require__.e("extras_file-field_URI_svelte")]).then(__webpack_require__.bind(__webpack_require__, /*! @/extras/file-field/URI.svelte */ "./extras/file-field/URI.svelte"));
 
 function instance($$self, $$props, $$invalidate) {
   let {
@@ -2805,7 +2734,7 @@ function instance($$self, $$props, $$invalidate) {
     if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CustomFileField> was created with unknown prop '${key}'`);
   });
 
-  const func_3 = (agg, example) => example.indexOf('://') !== -1 ? { ...agg,
+  const func_2 = (agg, example) => example.indexOf('://') !== -1 ? { ...agg,
     [example]: args.examples[example]
   } : agg;
 
@@ -2834,7 +2763,7 @@ function instance($$self, $$props, $$invalidate) {
     $$self.$inject_state($$props.$$inject);
   }
 
-  return [args, tabArgs, func_3, tabfield_args_binding];
+  return [args, tabArgs, func_2, tabfield_args_binding];
 }
 
 class CustomFileField extends svelte_internal__WEBPACK_IMPORTED_MODULE_0__.SvelteComponentDev {
