@@ -1,4 +1,4 @@
-{% extends "biojupies/form.j2" %}
+{% extends "bootstrap/form.j2" %}
 
 {% block head %}
 {{ super() }}
@@ -9,26 +9,67 @@
 {% endblock %}
 
 {% block body %}
-<div class="row justify-content-center" style="width:100%">
-<div class="container">
-    <div class="mt-3 row align-items-center">
-        <div class="col-3">
-            <img src="{{ url_for('static', filename='x2ktr.png') }}" style="width:150px" class="img-fluid float-right">
+<div class="row justify-content-center" style="width:100%; font-family: 'Open Sans';">
+    <div class="container col-8">
+        <div class="my-5 row align-items-center">
+            <div class="col-3">
+                <img src="{{ url_for('static', filename='x2ktr.png') }}" style="width:150px"
+                    class="img-fluid float-right">
+            </div>
+            <div class="col-7 text-center">
+                <h1 style="font-weight: 500"> X2KTR </h1>
+                <h2 style="font-weight: 200">Expression to Kinases & Target Ranger </h2>
+                <p class="my-0"> Upload transcriptomic, proteomic, and phosphoproteomic data to identify active pathways
+                    and kinase and cell surface targets. </p>
+            </div>
         </div>
-        <div class="col-7 text-center">
-            <h1 style="font-weight: 500"> X2KTR </h1>
-            <h2 style="font-weight: 200">Expression to Kinases & Target Ranger </h2>
-            <p class="my-0"> Upload transcriptomic, proteomic, and phosphoproteomic data to identify active pathways and kinase and cell surface targets. </p>
+    </div>
+</div>
+
+<div class="text-center justify-content-center mx-auto">
+    <div class="row">
+        <div class="col-12">
+            <div class="container col-8">
+                <form method="POST" enctype="multipart/form-data" action="">
+                    {% for _field in _fields %}
+                    <div class="">
+                    {{ _field.render() }}
+                    </div>
+                    {% endfor %}
+                    <button class="btn mb-3" style="background-color:aliceblue; border-style: solid; border-color:rgb(121, 140, 248) ; border-width: 1px; color:rgb(121, 140, 248);" 
+                    onclick="loadAllExamples()" type="button"> Load All Examples</button>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="Submit" />
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>  
+    </div>
 </div>
-</div>
-    {{ super() }}
+
 <div class="row text-center justify-content-center mt-5">
     <p class="text-center" style="font-weight:bold"> X2KTR Workflow Diagram:</p>
-</div> 
+</div>
 <div class="row text-center justify-content-center">
-    <img src="{{ url_for('static', filename='X2KTR_workflows.png') }}" style="width:1000px" class="img-fluid float-right">
-</div> 
+    <img src="{{ url_for('static', filename='X2KTR_workflows.png') }}" style="width:1000px"
+        class="img-fluid float-right p-5">
+</div>
 
+{% endblock %}
+
+
+{% block script %}
+{{ super() }}
+
+<script>
+    const textbtn = document.getElementsByClassName('text-btn');
+
+    function loadAllExamples() {
+        for (let i = 0; i < textbtn.length; i++) {
+            textbtn[i].click();
+        }
+    }
+</script>
 {% endblock %}
