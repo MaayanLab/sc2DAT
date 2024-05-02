@@ -162,6 +162,26 @@
     height: 100%; /* Set the fixed height of the footer here */
     line-height: 60px; /* Vertically center the text there */
 }
+
+  .custom-file-label-test[for=rna_expr] {
+    background-color: #654a6e !important;
+    color: white;
+  }
+
+  .custom-file-label-test[for=prot_expr] {
+    background-color: #654a6e !important;
+    color: white;
+  }
+
+  .custom-file-label-test[for=phospho_expr] {
+    background-color: #654a6e !important;
+    color: white;
+  }
+
+  .custom-file-label-test[for=meta] {
+    background-color: #196b3d !important;
+    color: white;
+  }
 </style>
 
 {% endblock %}
@@ -175,9 +195,7 @@
       </div>
       <div class="col-7 text-center">
         <h1 style="font-weight: 500"> Omics2Paper </h1>
-        <h2 style="font-weight: 200"> Expression2Kinases & TargetRanger </h2>
-        <p class="my-0"> Upload transcriptomic, proteomic, and phosphoproteomic data to identify active pathways
-          and kinase and cell surface targets. </p>
+         <p class="my-0"> Upload transcriptomics, proteomics, and/or phosphoproteomics data matrices to receive a complete data analysis report that resembles a research publication.</p>
       </div>
     </div>
   </div>
@@ -217,7 +235,7 @@
 {% endblock %}
 
 {% block footer %}
-<footer class="footer">
+<footer class="footer mt-5">
 <div class="d-flex"
   style="position:absolute;width: 110%; left:-5%; background-color:rgba(0, 123, 255, 0.791); padding: 0px;">
   <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
