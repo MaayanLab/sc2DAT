@@ -1,4 +1,4 @@
-appyter
+appyter==0.19.24
 pandas
 numpy
 s3fs
