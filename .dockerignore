@@ -8,3 +8,4 @@ results
 venv
 figures
 .env
+*.DS_store

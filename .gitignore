@@ -1,5 +1,5 @@
 venv
-.DS_store
+*.DS_store
 *__pycache__
 *Mammalia
 figures
