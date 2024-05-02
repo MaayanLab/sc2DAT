@@ -17,7 +17,7 @@
                     class="img-fluid float-right">
             </div>
             <div class="col-7 text-center">
-                <h1 style="font-weight: bolder"> MULTIOMICS2PAPER </h1>
+                <h1 style="font-weight: bolder; color: rgb(0, 0, 79);"> MULTIOMICS2PAPER </h1>
                 <p class="my-0">Upload transcriptomics, proteomics, and/or phosphoproteomics data matrices from a matching cohort of cancer patients to receive a complete data analysis report that resembles a research publication.</p>
             </div>
         </div>
@@ -71,14 +71,6 @@
         </div>
     </div>
 </div>
-
-<div class="row text-center justify-content-center mt-5">
-    <p class="text-center" style="font-weight:bold"> X2KTR Workflow Diagram:</p>
-</div>
-<div class="row text-center justify-content-center">
-    <img src="{{ url_for('static', filename='X2KTR_workflows.png') }}" style="width:1000px"
-        class="img-fluid float-right px-5 pt-2">
-</div>
 {% endblock %}
 
 
@@ -93,6 +85,11 @@
             textbtn[i].click();
         }
     }
+
+    $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip({'delay': { show: 50, hide: 3000 }
+    });   
+});
 </script>
 {% endblock %}
 
