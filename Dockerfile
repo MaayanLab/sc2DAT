@@ -76,7 +76,7 @@ ENV APPYTER_PORT "5000"
 ENV APPYTER_DEBUG "false"
 ENV APPYTER_IPYNB "main.ipynb"
 ENV APPYTER_PROFILE "bootstrap"
-ENV APPYTER_EXTRAS '["toc", "toggle-code"]'
+ENV APPYTER_EXTRAS '["toc", "toggle-code", "hide-code"]'
 
 ENV PATH "/app:$PATH"
 ENV PYTHONPATH "/app:$PYTHONPATH"

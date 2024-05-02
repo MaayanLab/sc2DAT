@@ -772,23 +772,48 @@ __webpack_require__.r(__webpack_exports__);
 const file = "extras/file-field/URI.svelte"; // (18:0) <Lazy   module={() => import('@/components/fields/DescriptionField.svelte')}   children >
 
 function create_default_slot(ctx) {
-  let span;
+  let div;
+  let t0_value =
+  /*args*/
+  ctx[0].filename + "";
+  let t0;
   let t1;
+  let span;
+  let t3;
   const block = {
     c: function create() {
+      div = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
+      t0 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(t0_value);
+      t1 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
       span = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("span");
       span.textContent = "URI Passthrough";
-      t1 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(": This allows you to pass the file through a number of different URI protocols. Supported protocols include: drs (GA4GH), s3, gs, ftp, http, & https");
+      t3 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(": A uniform resource identifier (URI) allows you to pass the file through a number of different URI protocols. Supported protocols include: drs (GA4GH), s3, gs, ftp, http, & https");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "class", "bold my-auto mb-2");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div, "font-weight", "500");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div, "font-size", "medium", 1);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div, file, 21, 0, 828);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(span, "font-weight", "500");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(span, file, 21, 2, 830);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(span, file, 27, 2, 942);
     },
     m: function mount(target, anchor) {
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, span, anchor);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, div, anchor);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t0);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, t1, anchor);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, span, anchor);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, t3, anchor);
+    },
+    p: function update(ctx, dirty) {
+      if (dirty &
+      /*args*/
+      1 && t0_value !== (t0_value =
+      /*args*/
+      ctx[0].filename + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t0, t0_value);
     },
     d: function destroy(detaching) {
-      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(span);
+      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(div);
       if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(t1);
+      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(span);
+      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(t3);
     }
   };
   (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.dispatch_dev)("SvelteRegisterBlock", {
@@ -799,7 +824,7 @@ function create_default_slot(ctx) {
     ctx
   });
   return block;
-} // (27:0) {:else}
+} // (33:0) {:else}
 
 
 function create_else_block(ctx) {
@@ -867,11 +892,11 @@ function create_else_block(ctx) {
     block,
     id: create_else_block.name,
     type: "else",
-    source: "(27:0) {:else}",
+    source: "(33:0) {:else}",
     ctx
   });
   return block;
-} // (25:0) {#if args.multiple}
+} // (31:0) {#if args.multiple}
 
 
 function create_if_block(ctx) {
@@ -939,7 +964,7 @@ function create_if_block(ctx) {
     block,
     id: create_if_block.name,
     type: "if",
-    source: "(25:0) {#if args.multiple}",
+    source: "(31:0) {#if args.multiple}",
     ctx
   });
   return block;
@@ -995,7 +1020,7 @@ function create_fragment(ctx) {
       textarea.value = textarea_value_value =
       /*args*/
       ctx[0].value;
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(textarea, file, 30, 0, 1160);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(textarea, file, 36, 0, 1303);
     },
     l: function claim(nodes) {
       throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1012,8 +1037,8 @@ function create_fragment(ctx) {
       const lazy_changes = {};
 
       if (dirty &
-      /*$$scope*/
-      32) {
+      /*$$scope, args*/
+      33) {
         lazy_changes.$$scope = {
           dirty,
           ctx

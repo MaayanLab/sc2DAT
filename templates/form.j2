@@ -17,10 +17,8 @@
                     class="img-fluid float-right">
             </div>
             <div class="col-7 text-center">
-                <h1 style="font-weight: 500"> X2KTR </h1>
-                <h2 style="font-weight: 200">Expression to Kinases & Target Ranger </h2>
-                <p class="my-0"> Upload transcriptomic, proteomic, and phosphoproteomic data to identify active pathways
-                    and kinase and cell surface targets. </p>
+                <h1 style="font-weight: 500"> Omics2Paper </h1>
+                <p class="my-0"> Upload transcriptomics, proteomics, and/or phosphoproteomics data matricies recieve a complete data analysis report that resembles a research publication. </p>
             </div>
         </div>
     </div>
@@ -29,14 +27,39 @@
 <div class="text-center justify-content-center mx-auto">
     <div class="row">
         <div class="col-12">
-            <div class="container col-8" style="font-size: 14px !important;">
+            <div class="container col-10" style="font-size: 14px !important;">
                 <form method="POST" enctype="multipart/form-data" action="">
-                    {% for _field in _fields %}
-                    <div class="">
-                    {{ _field.render() }}
-                    </div>
+                    
+                    {{ _fields[0].render() }}
+                    <div class="row">
+                    {% for _field in _fields[1:3] %}
+                        <div class="col">
+                            {{ _field.render() }}
+                        </div>
                     {% endfor %}
-                    <button class="btn mb-3" style="background-color:aliceblue; border-style: solid; border-color:rgb(121, 140, 248) ; border-width: 1px; color:rgb(121, 140, 248);" 
+                    </div>
+                    <div class="row">
+                    {% for _field in _fields[3:5] %}
+                        <div class="col">
+                        {{ _field.render() }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="row">
+                    {% for _field in _fields[5:7] %}
+                        <div class="col">
+                        {{ _field.render() }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="row">
+                    {% for _field in _fields[7:9] %}
+                        <div class="col">
+                        {{ _field.render() }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <button class="btn mb-3" style="background-color:rgba(255, 255, 255, 0); border-style: solid; border-color:rgb(121, 140, 248) ; border-width: 1px; color:rgb(87, 113, 255);" 
                     onclick="loadAllExamples()" type="button"> Load All Examples</button>
                     <div class="row">
                         <div class="col-sm-12">
@@ -56,17 +79,6 @@
     <img src="{{ url_for('static', filename='X2KTR_workflows.png') }}" style="width:1000px"
         class="img-fluid float-right px-5 pt-2">
 </div>
-<div class="row text-center justify-content-center p-5" >
-    <div class="text-justify" style="padding-right: 20%; padding-left: 20%"">
-    <h3>Abstract</h3>
-    In its third phase, the Clinical Proteomic Tumor Analysis Consortium (CPTAC) program collected pan-cancer data from 1,020 patients profiling the transcriptome, proteome, and phospho-proteome of tumors and adjacent tissues from ten cancer types. To identify driver cell signaling pathways and potential immunotherapeutic candidates from this CPTAC cohort, we applied the <a href="https://pubmed.ncbi.nlm.nih.gov/29800326/" target="_blank">eXpression to Kinases (X2K)</a> and <a href="https://academic.oup.com/nar/article/51/W1/W213/7160193" target="_blank">TargetRanger</a> algorithms. For each cancer type, tumor samples were first clustered into subtypes based on cell signaling profiles inferred from RNA-seq data with X2K, and then cell surface targets were prioritized for each cluster. These targets were subsequently confirmed for high protein expression in the tumor subtypes. For each cancer type, the computational pipeline identified key protein kinases and cell surface proteins that may serve as personalized targets. Many of these targets are also robustly differentially expressed at the proteome level. Altogether, this rational approach to identify key cell signaling pathways and potential targets demonstrates a pipeline that can be applied for personalized cancer diagnosis and therapeutic development.
-    <h3 class="mt-2">Summary</h3>
-    A major goal in cancer research is to identify tumor-specific proteins that are targetable with immunotherapies such as targeted therapies, antibody drug conjugates (ADCs), and chimeric antigen receptor (CAR) T-cells. Here we present a computational pipeline that identifies proteins, genes, and transcripts that are highly expressed in tumors compared to most healthy tissues and cell types while prioritizing cell-surface proteins and protein kinases. We applied this pipeline to the Clinical Proteomic Tumor Analysis Consortium (CPTAC) cohort of 1,020 pan-cancer tumors profiled with transcriptomics, proteomics, and phosphoproteomics. With this pipeline we identified a multitude of potential targets for each cancer subtype. Some of these targets are supported by prior publications while many others are new and warrant further investigation. Overall, the pipeline is a robust computational approach to harness tumor multi-omic datasets to identify promising immunotherapeutic and other targets for cancer subtypes. 
-    <h3 class="mt-2">Motivation</h3>
-    Finding targets and key to cell signaling pathways that are uniquely activated in tumor cells while absent from all normal tissues and cell types remains a significant challenge. In addition, targets identified from analyzing transcriptomics do not ensure that the targets are also expressed at the protein level. Furthermore, heterogeneity within the tumor, across patients of the same cancer type, and across cancers, underscore the need for subtype-specific personalized target identification. Our analysis and workflows address some of these challenges by combining phosphoproteomics, proteomics, and transcriptomics with comprehensive normal tissue and cell type atlases to identify safer targets for cancer subtypes. 
-    </div>
-</div>
-
 {% endblock %}
 
 

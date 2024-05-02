@@ -31,7 +31,7 @@ function create_fragment(ctx) {
       div1 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
       div0 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
       if (default_slot) default_slot.c();
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div0, "class", "col col-lg-9 px-lg-3 my-auto px-4");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div0, "class", "col col-lg-10 px-lg-3 my-auto px-4");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div0, file, 1, 2, 61);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "class", "row px-4 px-lg-3 pb-4 justify-content-center");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div1, file, 0, 0, 0);

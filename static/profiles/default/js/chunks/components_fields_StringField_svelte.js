@@ -517,7 +517,7 @@ function create_fragment(ctx) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(input, file, 25, 4, 669);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "class", "invalid-feedback");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div1, file, 34, 4, 918);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div2, "class", "col-lg-6 pt-2 pt-lg-0");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div2, "class", "col-lg-8 pt-2 pt-lg-0");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div2, file, 24, 2, 629);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div3, "class", "row px-4 px-lg-3 pb-4");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div3, file, 20, 0, 389);
