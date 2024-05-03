@@ -63,7 +63,10 @@
                     onclick="loadAllExamples()" type="button"> Load All Examples</button>
                     <div class="row">
                         <div class="col-sm-12">
-                            <input type="submit" value="Submit" />
+                            <input onclick="checkFiles(event)" type="submit" value="Submit" />
+                            <div id="submit-feedback" class="p-2 px-5 rounded mx-auto" style="position: absolute; background-color: rgba(255, 0, 0, 0.552);">
+                                Please provide at least one data file
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -85,6 +88,42 @@
             textbtn[i].click();
         }
     }
+
+    var trueTypeOf = (obj) => Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
+    
+    
+    function checkFile(field) {
+        const meta = document.forms[0].elements[field]
+        var metavalue;
+        if (trueTypeOf(meta) == 'radionodelist') {
+            metavalue = meta[1].value
+        } else {
+            metavalue = meta.value
+            const reg = new RegExp('^(drs|s3|gs|ftp|http|https)://.+$')
+            if (!reg.test(metavalue)) {
+                metavalue = undefined;
+            }
+        }
+        return metavalue ? true : false
+    }
+
+    function checkFiles(e) {
+        const files = [checkFile('rna_expr'), checkFile('prot_expr'), checkFile('phospho_expr'), checkFile('meta')]
+        if (files[0] || files[1] || files[2]) {
+            return;
+        } else {
+            e.preventDefault();
+            document.getElementById('submit-feedback').style.visibility = 'visible';
+            document.getElementById('submit-feedback').style.opacity = 1;
+            setTimeout(() => {
+                document.getElementById('submit-feedback').style.opacity = 0;
+            }, 3000)
+        }
+    }
+
+
+        
+    
 </script>
 {% endblock %}
 
