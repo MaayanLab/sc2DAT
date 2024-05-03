@@ -105,18 +105,9 @@
     border: none;
   }
 
-  .btn-link {
-    color: white !important;
-    text-decoration: none !important;
-    border-style: solid;
-    padding: 8px;
-    border-color: white;
-    border-radius: 10px;
-    border-width: 1px;
-  }
 
   .btn-link:hover {
-    background-color: #3bb1f7;
+    background-color: #2baebd;
   }
 
   .custom-file {
@@ -156,12 +147,13 @@
 
   .footer {
     position: relative;
-    background-color: #ECEFF1;
     bottom: 0;
     width: 100%;
-    height: 100%; /* Set the fixed height of the footer here */
-    line-height: 60px; /* Vertically center the text there */
-}
+    height: 100%;
+    /* Set the fixed height of the footer here */
+    line-height: 60px;
+    /* Vertically center the text there */
+  }
 
   .custom-file-label-test[for=rna_expr] {
     background-color: #2282a3 !important;
@@ -195,7 +187,9 @@
       </div>
       <div class="col-7 text-center">
         <h1 style="font-weight: 500"> MULTIOMICS2PAPER </h1>
-         <p class="my-0">Upload transcriptomics, proteomics, and/or phosphoproteomics data matrices from a matching cohort of cancer patients to receive a complete data analysis report that resembles a research publication.</p>
+        <p class="my-0">Upload transcriptomics, proteomics, and/or phosphoproteomics data matrices from a matching
+          cohort of cancer patients to receive a complete data analysis report that resembles a research publication.
+        </p>
       </div>
     </div>
   </div>
@@ -210,7 +204,6 @@
 <script>
   setTimeout(function () {
     const dropDown = document.getElementsByClassName('dropdown-toggle');
-    console.log(dropDown)
     if (dropDown.length != 0) {
       dropDown[0].addEventListener('click', function () {
         const dropDownMenu = document.getElementsByClassName('dropdown-menu');
@@ -220,7 +213,6 @@
           dropDownMenu[0].style.display = 'none';
         }
       });
-      console.log('addedListener')
     }
 
     const dropDownItems = document.getElementsByClassName('dropdown-item');
@@ -236,36 +228,48 @@
 
 {% block footer %}
 <footer class="footer mt-5">
-<div class="d-flex"
-  style="position:absolute;width: 110%; left:-5%; background-color:#2283a3; padding: 0px;">
-  <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
-    <div class="col  ml-5 mx-5" style="font-size: medium;">
-      <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank">Contact Us</a>
-      
-      <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/X2KTR" target="_blank" rel="noopener noreferrer">
-        Source Code
-      </a>
-    </div>
-    <div class="col mx-5">
-      <a href="https://labs.icahn.mssm.edu/" target="_blank" rel="noopener noreferrer">
-        <img src="{{ url_for('static', filename='ismms_white.png')}}" style="width: 8rem;" alt='Ma&apos;ayan Lab' />
-      </a>
-    </div>
+  <div class="d-flex" style="position:absolute;width: 110%; left:-5%; background-color:#2283a3; padding: 0px;">
+    <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
+      <div class="col  ml-5 mx-5" style="font-size: medium;">
+        <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank" style="color: white !important;
+    text-decoration: none !important;
+    border-style: solid;
+    padding: 8px;
+    border-color: white;
+    border-radius: 10px;
+    border-width: 1px;">Contact Us</a>
 
-    <div class="col mx-5">
-      <a href="https://labs.icahn.mssm.edu/maayanlab/" target="_blank" rel="noopener noreferrer">
-        <img class='rounded pt-3' src="{{ url_for('static', filename='maayanlab_white.png')}}" style="width: 8rem;"
-          alt='Ma&apos;ayan
+        <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/X2KTR" target="_blank" rel="noopener noreferrer"
+          style="color: white !important;
+    text-decoration: none !important;
+    border-style: solid;
+    padding: 8px;
+    border-color: white;
+    border-radius: 10px;
+    border-width: 1px;">
+          Source Code
+        </a>
+      </div>
+      <div class="col mx-5">
+        <a href="https://labs.icahn.mssm.edu/" target="_blank" rel="noopener noreferrer">
+          <img src="{{ url_for('static', filename='ismms_white.png')}}" style="width: 8rem;" alt='Ma&apos;ayan Lab' />
+        </a>
+      </div>
+
+      <div class="col mx-5">
+        <a href="https://labs.icahn.mssm.edu/maayanlab/" target="_blank" rel="noopener noreferrer">
+          <img class='rounded pt-3' src="{{ url_for('static', filename='maayanlab_white.png')}}" style="width: 8rem;"
+            alt='Ma&apos;ayan
             Lab' />
-      </a>
-    </div>
-    <div class="col mx-5">
-    <a class="mr-5" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-      <img src="{{ url_for('static', filename='cc-by-nc-sa.png')}}" style="width: 8rem;" alt="CC-by-NC-SA" />
-    </a>
+        </a>
+      </div>
+      <div class="col mx-5">
+        <a class="mr-5" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+          <img src="{{ url_for('static', filename='cc-by-nc-sa.png')}}" style="width: 8rem;" alt="CC-by-NC-SA" />
+        </a>
+      </div>
     </div>
   </div>
-</div>
 </footer>
 
 {% endblock %}
