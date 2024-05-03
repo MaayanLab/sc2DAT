@@ -132,7 +132,7 @@ def enrichr_figure(res_list: list):
     all_terms,all_pvalues, all_adjusted_pvalues, all_libraries = res_list
     # Bar colors
     bar_color_not_sig = 'lightgrey'
-    bar_color = 'tomato'
+    bar_color = 'lightblue'
     edgecolor=None
     linewidth=0
     fig, axes = plt.subplots(nrows=len(all_libraries), ncols=1)
