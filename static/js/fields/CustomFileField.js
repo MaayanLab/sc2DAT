@@ -2035,12 +2035,13 @@ function create_if_block(ctx) {
       div = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
       i = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("i");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(i, "class", "far fa-question-circle fa-lg");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(i, file, 24, 9, 807);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(i, file, 24, 9, 876);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "class", "mt-2 ml-2 upload-tooltip");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "data-bs-delay", "{\"show\":50,\"hide\":2000}");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "data-toggle", "tooltip");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "title", div_title_value =
       /*args*/
       ctx[0].description);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "class", "mt-2 ml-2");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div, file, 23, 6, 728);
     },
     m: function mount(target, anchor) {
@@ -2128,11 +2129,11 @@ function create_fragment(ctx) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div1, file, 5, 2, 101);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div2, "class", "tab-pane show active");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div2, "role", "tabpanel");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div2, file, 32, 6, 974);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div2, file, 32, 6, 1043);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div3, "class", "tab-content");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div3, file, 31, 4, 942);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div3, file, 31, 4, 1011);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div4, "class", "col pt-2 pt-lg-0 mt-2");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div4, file, 30, 2, 902);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div4, file, 30, 2, 971);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div5, "class", "col px-4 px-lg-3 pb-4");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div5, "min-width", "450px");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div5, file, 4, 0, 39);
