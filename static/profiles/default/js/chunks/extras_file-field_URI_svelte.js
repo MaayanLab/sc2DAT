@@ -773,47 +773,89 @@ const file = "extras/file-field/URI.svelte"; // (18:0) <Lazy   module={() => imp
 
 function create_default_slot(ctx) {
   let div;
-  let t0_value =
+  let t0_value = (
   /*args*/
-  ctx[0].filename + "";
+  ctx[0].filename == "RNA-seq expression" ? "TRANSCRIPTOMICS" : "") + "";
   let t0;
   let t1;
-  let span;
+  let t2_value = (
+  /*args*/
+  ctx[0].filename == "protein expression" ? "PROTEOMICS" : "") + "";
+  let t2;
   let t3;
+  let t4_value = (
+  /*args*/
+  ctx[0].filename == "protein phosphorylation" ? "PHOSPHOPROTEOMICS" : "") + "";
+  let t4;
+  let t5;
+  let t6_value = (
+  /*args*/
+  ctx[0].filename == "sample metadata" ? "METADATA" : "") + "";
+  let t6;
+  let t7;
+  let span;
+  let t9;
   const block = {
     c: function create() {
       div = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
       t0 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(t0_value);
       t1 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
+      t2 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(t2_value);
+      t3 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
+      t4 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(t4_value);
+      t5 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
+      t6 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(t6_value);
+      t7 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
       span = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("span");
       span.textContent = "URI Passthrough";
-      t3 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(": A uniform resource identifier (URI) allows you to pass the file through a number of different URI protocols. Supported protocols include: drs (GA4GH), s3, gs, ftp, http, & https");
+      t9 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(": A uniform resource identifier (URI) allows you to pass the file through a number of different URI protocols. Supported protocols include: drs (GA4GH), s3, gs, ftp, http, & https");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "class", "bold my-auto mb-2");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div, "font-weight", "500");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div, "font-size", "medium", 1);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div, "font-size", "x-large", 1);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div, file, 21, 0, 828);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(span, "font-weight", "500");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(span, file, 27, 2, 942);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(span, file, 30, 2, 1178);
     },
     m: function mount(target, anchor) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, div, anchor);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t0);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, t1, anchor);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t1);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t2);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t3);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t4);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t5);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t6);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, t7, anchor);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, span, anchor);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, t3, anchor);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, t9, anchor);
     },
     p: function update(ctx, dirty) {
       if (dirty &
       /*args*/
-      1 && t0_value !== (t0_value =
+      1 && t0_value !== (t0_value = (
       /*args*/
-      ctx[0].filename + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t0, t0_value);
+      ctx[0].filename == "RNA-seq expression" ? "TRANSCRIPTOMICS" : "") + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t0, t0_value);
+      if (dirty &
+      /*args*/
+      1 && t2_value !== (t2_value = (
+      /*args*/
+      ctx[0].filename == "protein expression" ? "PROTEOMICS" : "") + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t2, t2_value);
+      if (dirty &
+      /*args*/
+      1 && t4_value !== (t4_value = (
+      /*args*/
+      ctx[0].filename == "protein phosphorylation" ? "PHOSPHOPROTEOMICS" : "") + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t4, t4_value);
+      if (dirty &
+      /*args*/
+      1 && t6_value !== (t6_value = (
+      /*args*/
+      ctx[0].filename == "sample metadata" ? "METADATA" : "") + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t6, t6_value);
     },
     d: function destroy(detaching) {
       if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(div);
-      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(t1);
+      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(t7);
       if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(span);
-      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(t3);
+      if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(t9);
     }
   };
   (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.dispatch_dev)("SvelteRegisterBlock", {
@@ -824,7 +866,7 @@ function create_default_slot(ctx) {
     ctx
   });
   return block;
-} // (33:0) {:else}
+} // (36:0) {:else}
 
 
 function create_else_block(ctx) {
@@ -892,11 +934,11 @@ function create_else_block(ctx) {
     block,
     id: create_else_block.name,
     type: "else",
-    source: "(33:0) {:else}",
+    source: "(36:0) {:else}",
     ctx
   });
   return block;
-} // (31:0) {#if args.multiple}
+} // (34:0) {#if args.multiple}
 
 
 function create_if_block(ctx) {
@@ -964,7 +1006,7 @@ function create_if_block(ctx) {
     block,
     id: create_if_block.name,
     type: "if",
-    source: "(31:0) {#if args.multiple}",
+    source: "(34:0) {#if args.multiple}",
     ctx
   });
   return block;
@@ -1020,7 +1062,7 @@ function create_fragment(ctx) {
       textarea.value = textarea_value_value =
       /*args*/
       ctx[0].value;
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(textarea, file, 36, 0, 1303);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(textarea, file, 39, 0, 1539);
     },
     l: function claim(nodes) {
       throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
