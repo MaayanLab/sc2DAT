@@ -1,8 +1,22 @@
-## X2KTR: Expression to Kinases & Target Ranger
+# MULTIOMICS2PAPER: Expression2Kinases & Target Ranger
 
-Currently hosted at: https://x2ktr.staging.maayanlab.cloud/
+Currently hosted at: https://multiomics2paper.maayanlab.cloud/
 
-To run in development ```appyter main.ipynb```
+
+## Getting Started
+To run in development:
+```bash
+# prepare .env file & review
+cp .env.example .env
+# create and activate python3.8 virtual environment
+python3.8 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+# install relevant R dependencies
+R -e "source('setup.R')"
+# run in development
+appyter main.ipynb
+```
 
 
 
