@@ -1,4 +1,4 @@
-appyter==0.19.24
+git+https://github.com/Maayanlab/appyter.git@export-pdf
 pandas
 numpy
 s3fs
