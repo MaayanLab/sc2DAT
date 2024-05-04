@@ -1,8 +1,3 @@
-# If trying to build this outside of the catalog,
-#  comment out/remove CATALOG blocks.
-#  Would have used a variable, but Docker doesn't
-#  seem to have a simple way to do this (:
-
 FROM python:3.8
 
 ENV DEBIAN_FRONTEND "noninteractive"
@@ -19,14 +14,18 @@ RUN set -x \
   && rm -rf /var/lib/apt/lists/* \
   && pip3 install --no-cache-dir --upgrade pip
 
+ENV PLAYWRIGHT_BROWSERS_PATH /ms-playwright
+
 RUN set -x \
   && echo "Installing jupyter kernel..." \
-  && pip3 install --no-cache-dir ipython_genutils ipykernel \
-  && python3 -m ipykernel install
+  && pip3 install --no-cache-dir ipython_genutils ipykernel playwright \
+  && python3 -m ipykernel install \
+  && python3 -m playwright install chromium
 
 ADD setup.R /app/setup.R
 RUN set -x \
   && echo "Installing R..." \
+  && apt-get -y clean \
   && apt-get -y update \
   && apt-get -y install r-base \
   && rm -rf /var/lib/apt/lists/*
