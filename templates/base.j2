@@ -176,65 +176,102 @@
   }
 
   #submit-feedback {
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s, opacity 0.5s linear;
-  left: 0; 
-  right: 0; 
-  margin-left: auto; 
-  margin-right: auto;
-  width: fit-content;
-}
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+  }
 
-.tooltip-custom {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
+  .tooltip-custom {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+    /* If you want dots under the hoverable text */
+  }
 
-/* Tooltip text */
-.tooltip-custom .tooltiptext-custom {
-  visibility: hidden;
-  width: 250px;
-  background-color: rgba(97, 97, 97, 0.927);
-  color: #fff;
-  text-align: start;
-  padding: 5px;
-  border-radius: 6px;
-  font-size: 12px;
-  white-space: pre-wrap; 
- 
-  /* Position the tooltip text - see examples below! */
-  position: absolute;
-  display: inline-block;
-  z-index: 10;
-}
+  /* Tooltip text */
+  .tooltip-custom .tooltiptext-custom {
+    visibility: hidden;
+    width: 250px;
+    background-color: rgba(97, 97, 97, 0.927);
+    color: #fff;
+    text-align: start;
+    padding: 5px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: pre-wrap;
 
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip-custom:hover .tooltiptext-custom {
-  visibility: visible;
-}
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    display: inline-block;
+    z-index: 10;
+  }
 
-body {
-  padding: 0 !important;
-}
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip-custom:hover .tooltiptext-custom {
+    visibility: visible;
+  }
+
+  body {
+    padding: 0 !important;
+  }
+
 </style>
 
 {% endblock %}
 
 {% block body %}
-<div class="row justify-content-center mb-3" style="position: relative; width: 105%; left: -3%; font-family: 'Open Sans'; background-color: rgb(215, 215, 215); border-bottom: 2px solid #006bdd; overflow-x: visible;">
-  <div class="container col-7">
-    <div class="mb-1 mt-2 mx-0 row align-items-center text-left" style="position: relative; margin-right: 20%">
-      <div class="col-3">
+<div class="row justify-content-center mb-3"
+  style="position: relative; width: 105%; left: -3%; font-family: 'Open Sans'; background-color: rgb(215, 215, 215); border-bottom: 2px solid #006bdd; overflow-x: visible;">
+  <div class="container col-12">
+    <div class="mb-1 mt-2 mx-0 row align-items-center text-left" style="position: relative; margin-right: 10%">
+      <div class="col-2">
         <img src="{{ url_for('static', filename='x2ktr.png') }}" style="width:175px" class="img-fluid float-right">
       </div>
-      <div class="col-7 text-center">
+      <div class="col-3 text-center">
         <h1 style="font-weight: 500"> MULTIOMICS2PAPER </h1>
         <p class="my-0">
-          Computational Workflow to Identify Driver Pathways and Novel Targets for Cohorts of Patients Profiled with Transcriptomics, Proteomics, and Phosphoproteomics 
+          Computational Workflow to Identify Driver Pathways and Novel Targets for Cohorts of Patients Profiled with
+          Transcriptomics, Proteomics, and Phosphoproteomics
         </p>
       </div>
+      <div class="col-2">
+
+      </div>
+      <div class="col-4">
+        <img src="{{ url_for('static', filename='maayan-black.png') }}" style="width:150px; margin-right 20%;"
+          class="img-fluid float-right">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-sm-12 col-md-9 col-lg-8 col-xl-6 p-5" style="font-family: 'Open Sans';">
+    <p class="pb-3" style="font-weight: bold; font-size: 22px; color: black;">
+      Multiomics2Paper: Computational Workflow to Identify Driver Pathways and Novel Targets for Cohorts of Patients
+      Profiled with Transcriptomics, Proteomics, and Phosphoproteomics
+    </p>
+    <div class="p-2" style="border: 2px solid lightgray;">
+      <p id="abstract" class="pb-2" style="font-weight: bold; font-size: 22px; color: black;">
+        Abstract
+      </p>
+      <p class="" style="font-size: 14px; color: black;">
+        In its third phase, the Clinical Proteomic Tumor Analysis Consortium (CPTAC) program collected pan-cancer data
+        from 1,020 patients profiling the transcriptome, proteome, and phospho-proteome of tumors and adjacent tissues
+        from ten cancer types. To identify driver cell signaling pathways and potential immunotherapeutic candidates
+        from this CPTAC cohort, we applied the eXpression to Kinases (X2K) [1] and TargetRanger [2] algorithms. For each
+        cancer type, tumor samples were first clustered into subtypes based on cell signaling profiles inferred from
+        RNA-seq data with X2K, and then cell surface targets were prioritized for each cluster. These targets were
+        subsequently confirmed for high protein expression in the tumor subtypes. For each cancer type, the
+        computational pipeline identified key protein kinases and cell surface proteins that may serve as personalized
+        targets. Many of these targets are also robustly differentially expressed at the proteome level. Altogether,
+        this rational approach to identify key cell signaling pathways and potential targets demonstrates a pipeline
+        that can be applied for personalized cancer diagnosis and therapeutic development.
+      </p>
     </div>
   </div>
 </div>
@@ -249,14 +286,16 @@ body {
   setTimeout(function () {
     const dropDown = document.getElementsByClassName('dropdown-toggle');
     if (dropDown.length != 0) {
-      dropDown[0].addEventListener('click', function () {
-        const dropDownMenu = document.getElementsByClassName('dropdown-menu');
-        if (dropDownMenu[0].style.display === 'none' || dropDownMenu[0].style.display === '') {
-          dropDownMenu[0].style.display = 'block';
-        } else {
-          dropDownMenu[0].style.display = 'none';
-        }
-      });
+      for (let j = 0; j < dropDown.length; j++) {
+        dropDown[j].addEventListener('click', function () {
+          const dropDownMenu = document.getElementsByClassName('dropdown-menu');
+          if (dropDownMenu[j].style.display === 'none' || dropDownMenu[j].style.display === '') {
+            dropDownMenu[j].style.display = 'block';
+          } else {
+            dropDownMenu[j].style.display = 'none';
+          }
+        });
+      }
     }
 
     const dropDownItems = document.getElementsByClassName('dropdown-item');
@@ -264,15 +303,30 @@ body {
       dropDownItems[i].addEventListener('click', function () {
         const dropDownMenu = document.getElementsByClassName('dropdown-menu');
         dropDownMenu[0].style.display = 'none';
+        dropDownMenu[1].style.display = 'none';
       });
     }
   }, 1000);
+
+
+  function downloadCitation() {
+    const element = document.createElement('a');
+    const citation = "just a test"
+    const file = new Blob([citation], {
+      type: 'text/plain'
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = 'citation.txt';
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  }
 </script>
 {% endblock %}
 
 {% block footer %}
 <footer class="footer mt-5">
-  <div class="d-flex" style="position:absolute;width: 104%; left: -3%; background-color:#2283a3; padding: 0px; overflow-x: hidden;">
+  <div class="d-flex"
+    style="position:absolute;width: 104%; left: -3%; background-color:#2283a3; padding: 0px; overflow-x: hidden;">
     <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
       <div class="col  ml-5 mx-5" style="font-size: medium;">
         <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank" style="color: white !important;
@@ -283,8 +337,8 @@ body {
     border-radius: 10px;
     border-width: 1px;">Contact Us</a>
 
-        <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/X2KTR" target="_blank" rel="noopener noreferrer"
-          style="color: white !important;
+        <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/X2KTR" target="_blank"
+          rel="noopener noreferrer" style="color: white !important;
     text-decoration: none !important;
     border-style: solid;
     padding: 8px;

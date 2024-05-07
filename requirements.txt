@@ -1,4 +1,4 @@
-git+https://github.com/Maayanlab/appyter.git@export-pdf
+git+https://github.com/Maayanlab/appyter.git@316a667298cd72a77234eab68c438d139e335147
 pandas
 numpy
 s3fs
