@@ -2029,33 +2029,39 @@ function create_each_block(ctx) {
 function create_if_block(ctx) {
   let div;
   let i;
-  let div_title_value;
+  let t0;
+  let span;
+  let t1_value =
+  /*args*/
+  ctx[0].description + "";
+  let t1;
   const block = {
     c: function create() {
       div = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
       i = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("i");
+      t0 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
+      span = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("span");
+      t1 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.text)(t1_value);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(i, "class", "far fa-question-circle fa-lg");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(i, file, 24, 9, 839);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "class", "mt-2 ml-2 upload-tooltip");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "data-bs-delay", "50");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "data-toggle", "tooltip");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "title", div_title_value =
-      /*args*/
-      ctx[0].description);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div, file, 23, 6, 728);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(i, file, 27, 8, 915);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(span, "class", "tooltiptext-custom");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(span, file, 28, 8, 968);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "class", "mt-2 ml-2 tooltip-custom");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div, file, 26, 6, 868);
     },
     m: function mount(target, anchor) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.insert_dev)(target, div, anchor);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, i);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, t0);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(div, span);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.append_dev)(span, t1);
     },
     p: function update(ctx, dirty) {
       if (dirty &
       /*args*/
-      1 && div_title_value !== (div_title_value =
+      1 && t1_value !== (t1_value =
       /*args*/
-      ctx[0].description)) {
-        (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div, "title", div_title_value);
-      }
+      ctx[0].description + "")) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_data_dev)(t1, t1_value);
     },
     d: function destroy(detaching) {
       if (detaching) (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.detach_dev)(div);
@@ -2129,11 +2135,11 @@ function create_fragment(ctx) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div1, file, 5, 2, 101);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div2, "class", "tab-pane show active");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div2, "role", "tabpanel");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div2, file, 32, 6, 1006);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div2, file, 37, 6, 1150);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div3, "class", "tab-content");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div3, file, 31, 4, 974);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div3, file, 36, 4, 1118);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div4, "class", "col pt-2 pt-lg-0 mt-2");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div4, file, 30, 2, 934);
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div4, file, 35, 2, 1078);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div5, "class", "col px-4 px-lg-3 pb-4");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.set_style)(div5, "min-width", "450px");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div5, file, 4, 0, 39);

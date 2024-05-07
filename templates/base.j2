@@ -185,6 +185,35 @@
   margin-right: auto;
   width: fit-content;
 }
+
+.tooltip-custom {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip-custom .tooltiptext-custom {
+  visibility: hidden;
+  width: 250px;
+  background-color: rgba(97, 97, 97, 0.927);
+  color: #fff;
+  text-align: start;
+  padding: 5px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: pre-wrap; 
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  display: inline-block;
+  z-index: 10;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip-custom:hover .tooltiptext-custom {
+  visibility: visible;
+}
 </style>
 
 {% endblock %}
