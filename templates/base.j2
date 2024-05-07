@@ -214,14 +214,18 @@
 .tooltip-custom:hover .tooltiptext-custom {
   visibility: visible;
 }
+
+body {
+  padding: 0 !important;
+}
 </style>
 
 {% endblock %}
 
 {% block body %}
-<div class="row justify-content-center" style="width:100%; font-family: 'Open Sans';">
-  <div class="container col-8">
-    <div class="mb-5 mt-2 mx-0 row align-items-center">
+<div class="row justify-content-center mb-3" style="position: relative; width: 105%; left: -3%; font-family: 'Open Sans'; background-color: rgb(215, 215, 215); border-bottom: 2px solid #006bdd; overflow-x: visible;">
+  <div class="container col-7">
+    <div class="mb-1 mt-2 mx-0 row align-items-center text-left" style="position: relative; margin-right: 20%">
       <div class="col-3">
         <img src="{{ url_for('static', filename='x2ktr.png') }}" style="width:175px" class="img-fluid float-right">
       </div>
@@ -268,7 +272,7 @@
 
 {% block footer %}
 <footer class="footer mt-5">
-  <div class="d-flex" style="position:absolute;width: 110%; left:-5%; background-color:#2283a3; padding: 0px;">
+  <div class="d-flex" style="position:absolute;width: 104%; left: -3%; background-color:#2283a3; padding: 0px; overflow-x: hidden;">
     <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
       <div class="col  ml-5 mx-5" style="font-size: medium;">
         <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank" style="color: white !important;
