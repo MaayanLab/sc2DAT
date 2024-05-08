@@ -219,7 +219,6 @@
   body {
     padding: 0 !important;
   }
-
 </style>
 
 {% endblock %}
@@ -228,25 +227,27 @@
 <div class="row justify-content-center mb-3"
   style="position: relative; width: 105%; left: -3%; font-family: 'Open Sans'; background-color: rgb(215, 215, 215); border-bottom: 2px solid #006bdd; overflow-x: visible;">
   <div class="container col-12">
-    <div class="mb-1 mt-2 mx-0 row align-items-center text-left" style="position: relative; margin-right: 10%">
+    <div class="mb-1 mt-2 mx-0 row align-items-center text-left flex-row" style="position: relative; margin-right: 20%">
       <div class="col-2">
-      <a href="/">
-        <img src="{{ url_for('static', filename='x2ktr.png') }}" style="width:175px" class="img-fluid float-right">
-      </a>
+        <a href="/">
+          <img src="{{ url_for('static', filename='x2ktr.png') }}" style="width:175px" class="img-fluid float-right">
+        </a>
       </div>
-      <div class="col-3 text-center">
+      <div class="col-3 col-sm-4 text-left">
         <h1 style="font-weight: 500"> MULTIOMICS2PAPER </h1>
         <p class="my-0">
           Computational Workflow to Identify Driver Pathways and Novel Targets for Cohorts of Patients Profiled with
           Transcriptomics, Proteomics, and Phosphoproteomics
         </p>
       </div>
-      <div class="col-2">
-
+      <div class="col-1">
       </div>
-      <div class="col-4">
-        <img src="{{ url_for('static', filename='maayan-black.png') }}" style="width:150px; margin-right 20%;"
-          class="img-fluid float-right">
+      <div class="col-2">
+        <img src="{{ url_for('static', filename='ISMMS_black.png') }}" style="width:200px;" class="img-fluid">
+      </div>
+      <div class="col-2 col-sm-2">
+        <img src="{{ url_for('static', filename='maayan-black.png') }}" style="width: 150px;"
+          class="mt-4 ml-5 img-fluid">
       </div>
     </div>
   </div>
