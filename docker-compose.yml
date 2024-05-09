@@ -4,5 +4,34 @@ services:
     platform: linux/x86_64
     build: .
     image: maayanlab/x2ktr:0.0.38
+    environment:
+      - APPYTER_DATA_DIR=s3://${MINIO_ACCESS_KEY}:${MINIO_SECRET_KEY}@s3:9000/${MINIO_BUCKET}
+      - APPYTER_EXECUTOR=dispatch::http://appyter-orchestrator:5000?params.executor=docker::maayanlab/x2ktr:latest
     ports:
       - 5000:80
+  appyter-orchestrator:
+    build:
+      context: ./appyter-orchestrator
+      args:
+        appyter_version: git+git://github.com/Maayanlab/appyter.git
+    image: maayanlab/appyter:latest
+    environment:
+      - APPYTER_HOST=0.0.0.0
+      - APPYTER_JOBS=2
+      - APPYTER_DEBUG=false
+    command:
+      - appyter
+      - orchestration
+      - dispatcher
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  s3:
+    build:
+      context: ./s3
+    image: maayanlab/public-s3:latest
+    environment:
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    ports:
+      - 9000:9000
