@@ -217,9 +217,37 @@ def label_clusters(cluster_enrichments: dict):
         response = client.chat.completions.create(
             model='gpt-4-turbo',
             messages=[{'role': 'system', 'content': 'You are an assistant to a biologist who has performed enrichment analysis on a set of up-regulated and down-regulated genes for a certain cluster of patient samples. You must determine a consensus label for a given cluster based on the signfigantly enriched terms which relate to biological processes and phenotypes.'},
-                      {'role': 'user', 'content': f"The most signfigantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the signfigantly enriched terms are: {', '.join(down_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
+                      {'role': 'user', 'content': f"The most significantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the significantly enriched terms are: {', '.join(down_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
             max_tokens=50,
             temperature=0.3
         )
         cluster_labels[c] = response.choices[0].message.content
     return cluster_labels
+
+def convert_to_string(info_dict: dict):
+    res_str = ""
+    for key in info_dict:
+        if isinstance(info_dict[key], list):
+            res_str += f"{key}: {','.join(info_dict[key])}\n"
+        elif isinstance(info_dict[key], dict): res_str += convert_to_string(info_dict[key])
+        else: res_str += f"{key}: {info_dict[key]}\n" 
+    return res_str
+
+def create_discussion(results: dict):
+    """ Inputs:
+    results: dict, dictionary of results -- keys represent 'section' and values are relevant data to be included in the discussion
+    Return: str, discussion section in markdown
+    """
+    prompt = ""
+    for k in results:
+        prompt += f"## {k}\n"
+        prompt += results[k] + "\n"
+    system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. Each result will be labeled with a section name. You should note similar gene symbols that appear in different sections of the analysis. Most importantly, please try to contrast and compare the results for the various clusters. Please be careful with information you write about genes or pathways in that there should be no incorrect or assumed information. Do not include a conclusion or header for the discussion section.'
+    response = client.chat.completions.create(
+            model='gpt-4-turbo',
+            messages=[{'role': 'system', 'content': system_prompt},
+                      {'role': 'user', 'content': prompt}],
+            temperature=0.5
+        )
+    discussion = response.choices[0].message.content
+    return discussion
