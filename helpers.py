@@ -233,7 +233,7 @@ def convert_to_string(info_dict: dict):
         else: res_str += f"{key}: {info_dict[key]}\n" 
     return res_str
 
-def create_discussion(results: dict):
+def create_results_text(results: dict):
     """ Inputs:
     results: dict, dictionary of results -- keys represent 'section' and values are relevant data to be included in the discussion
     Return: str, discussion section in markdown
@@ -242,55 +242,68 @@ def create_discussion(results: dict):
     for k in results:
         prompt += f"## {k}\n"
         prompt += results[k] + "\n"
-    system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. Each result will be labeled with a section name. You should note similar gene symbols that appear in different sections of the analysis, but do not label that as a section, instead point it out in a paragraph at the end. Most importantly, please try to contrast and compare the results for the various clusters. Please be careful with information you write about genes or pathways in that there should be no incorrect or assumed information. Do not include a conclusion or header for the discussion section.'
+    system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the results without interpretation. You may specifically denote differences between clusters or specific samples/patients.'
     response = client.chat.completions.create(
             model='gpt-4-turbo',
             messages=[{'role': 'system', 'content': system_prompt},
                       {'role': 'user', 'content': prompt}],
             temperature=0.5
         )
-    discussion = response.choices[0].message.content
-    return discussion
+    text = response.choices[0].message.content
+    return text
 
-def plot_clustered_stacked(dfall, labels=None, title="multiple stacked bar plot",  H="/", **kwargs):
-    """Given a list of dataframes, with identical columns and index, create a clustered stacked bar plot. 
-labels is a list of the names of the dataframe, used for the legend
-title is a string for the title of the plot
-H is the hatch used for identification of the different dataframe"""
+def create_results_text_prompt(results, desc):
+    """ Inputs:
+    results: dict, dictionary of results -- keys represent 'section' and values are relevant data to be included in the discussion
+    Return: str, discussion section in markdown
+    """
+    prompt = desc + '\n' + str(results)
+    system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the results without interpretation. You may specifically denote differences between clusters or specific samples/patients.'
+    response = client.chat.completions.create(
+            model='gpt-4-turbo',
+            messages=[{'role': 'system', 'content': system_prompt},
+                      {'role': 'user', 'content': prompt}],
+            temperature=0.5
+        )
+    text = response.choices[0].message.content
+    return text
 
-    n_df = len(dfall)
-    n_col = len(dfall[0].columns) 
-    n_ind = len(dfall[0].index)
-    axe = plt.subplot(111)
+def clean_enrichr_lables(enrichr_labels: dict):
+    enrichr_labels_clean = {}    
+    for clus_num, enrichments in enrichr_labels.items():
+            cluster_name = f'Cluster {clus_num}'
+            enrichr_labels_clean[cluster_name] = {}
+            
+            for dir, values in enrichments.items():
+                terms = values[0]
+                pvals = values[1]
+                adjpvals = values[2]
+                libraries = values[3]
+                for i, lib in enumerate(libraries):
+                    if lib not in enrichr_labels_clean[cluster_name]:
+                        enrichr_labels_clean[cluster_name][lib] = {}
+                    if dir not in enrichr_labels_clean[cluster_name][lib]:
+                        enrichr_labels_clean[cluster_name][lib][dir] = []
+                    lib_terms = terms[i]
+                    lib_adjpvals = adjpvals[i]
+                    for j, term in enumerate(lib_terms):
+                        if lib_adjpvals[j] < 0.05:
+                            enrichr_labels_clean[cluster_name][lib][dir].append((term, "{:.4g}".format(lib_adjpvals[j])))
+    return enrichr_labels_clean
 
-    for df in dfall : # for each data frame
-        axe = df.plot(kind="bar",
-                      linewidth=0,
-                      stacked=True,
-                      ax=axe,
-                      color=['coral', 'peachpuff', 'royalblue', 'lightblue'],
-                      legend=False,
-                      grid=False,
-                      **kwargs)  # make bar plots
-
-    h,l = axe.get_legend_handles_labels() # get the handles we want to modify
-    for i in range(0, n_df * n_col, n_col): # len(h) = n_col * n_df
-        for j, pa in enumerate(h[i:i+n_col]):
-            for rect in pa.patches: # for each index
-                rect.set_x(rect.get_x() + 1 / float(n_df + 1) * i / float(n_col))
-                rect.set_hatch(H * int(i / n_col)) #edited part     
-                rect.set_width(1 / float(n_df + 1))
-
-    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.)
-    axe.set_xticklabels(df.index, rotation = 90)
-
-    # Add invisible data to add another legend
-    n=[]        
-    for i in range(n_df):
-        n.append(axe.bar(0, 0, color="gray", hatch=H * i))
-
-    l1 = axe.legend(h[:n_col], l[:n_col], loc=[1.01, 0.5])
-    if labels is not None:
-        l2 = plt.legend(n, labels, loc=[1.01, 0.1]) 
-    axe.add_artist(l1)
-    return axe
+def describe_clusters(results: dict):
+    """ Inputs:
+    results: dict, dictionary of results -- keys represent clusters and values are libraries and direction of signficant labels to be included in the discussion
+    Return: str, discussion section in markdown
+    """
+    prompt = str(results)
+    system_prompt = 'You are an assistant to a biologist who has performed enrichment analysis on significant terms for a set of clusters. Each cluster has been analyzed for significant terms in different libraries and directions. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the common themes of the enriched terms from the up and down genes. You may specifically denote differences between clusters or specific samples/patients. When referencing a term please use the full term name (with NO quotes) followed by the adj. pvalue as follows: (term, adj. pvalue = 0.00123)'
+    response = client.chat.completions.create(
+            model='gpt-4-turbo',
+            messages=[{'role': 'system', 'content': system_prompt},
+                      {'role': 'user', 'content': prompt}],
+            temperature=0.5
+        )
+    text = response.choices[0].message.content
+    return text
+    
