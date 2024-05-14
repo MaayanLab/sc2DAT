@@ -1,0 +1,15 @@
+<div class="ipynb-field">
+    <div class="bold text-center my-auto mb-1">
+    {{ this.args.label }}
+    {%- if this.args.description %}
+      <sup data-toggle="tooltip" title="{{ this.args.description }}"><i class="far fa-question-circle"></i></sup>
+    {% endif -%}
+    </div>
+    <div class="form-group">
+        <select class="select" multiple="multiple" name="{{ this.args.name }}">
+        {% for choice in this.args.choices %}
+            <option{% if choice in this.args.default %} selected{% endif %}>{{ choice }}</option>
+        {% endfor %}
+        </select>
+    </div>
+</div>

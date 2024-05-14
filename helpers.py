@@ -12,6 +12,7 @@ from tqdm import tqdm
 import openai
 from dotenv import load_dotenv
 load_dotenv()
+from Bio import Entrez
 
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -307,3 +308,8 @@ def describe_clusters(results: dict):
     text = response.choices[0].message.content
     return text
     
+def get_co_occurrence_count(terms): # co-occurrence in title or abstract
+    Entrez.email = "user@gmail.com"
+    all_terms_query = ' AND '.join([f'("{term}"[Title/Abstract])' for term in terms])
+    handle = Entrez.esearch(db="pubmed", term=all_terms_query)
+    return int(Entrez.read(handle)['Count'])
