@@ -158,7 +158,7 @@ def enrichr_figure(res_list: list):
 
             title_start= max(axes[i].axes.get_xlim())/200
             axes[i].text(title_start,ii,annot,ha='left',wrap = True, fontsize = 30)
-    plt.subplots_adjust(top=4.8, right = 4.7,wspace = 0.03,hspace = 0.2)
+    plt.subplots_adjust(bottom=-4.8, right = 4.7,wspace = 0.03,hspace = 0.2)
     plt.show()
     return fig
 

@@ -220,6 +220,52 @@
     padding: 0 !important;
   }
 
+.inner_cell + #abstract {
+    border: 2px solid #595959;
+    background-color: #F2FAFC;
+    padding: 10px;
+  
+
+}
+.BR-span {
+  display: none;
+}
+
+.CCRCC-span {
+  display: none;
+}
+.CO-span {
+  display: none;
+}
+.GBM-span {
+  display: none;
+}
+.LSCC-span {
+  display: none;
+}
+.LUAD-span {
+  display: none;
+}
+.OV-span {
+  display: none;
+}
+.PDAC-span {
+  display: none;
+}
+.UCEC-span {
+  display: none;
+}
+
+.cancer-example {
+  cursor: pointer;
+}
+.cancer-example:hover {
+  background-color: rgba(177, 229, 255, 0.784);
+  border-radius: 20px;
+  transition: all 1s;
+}
+
+
 </style>
 
 {% endblock %}
@@ -261,7 +307,25 @@
 {{ super() }}
 
 <script>
-  setTimeout(function () {
+
+  function waitForElementToDisplay(selector, callback, checkFrequencyInMs, timeoutInMs) {
+    var startTimeInMs = Date.now();
+    (function loopSearch() {
+      if (document.querySelector(selector) != null) {
+        callback();
+        return;
+      }
+      else {
+        setTimeout(function () {
+          if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs)
+            return;
+          loopSearch();
+        }, checkFrequencyInMs);
+      }
+    })();
+  } 
+
+  function enableDropdown() {
     const dropDown = document.getElementsByClassName('dropdown-toggle');
     if (dropDown.length != 0) {
       for (let j = 0; j < dropDown.length; j++) {
@@ -284,12 +348,17 @@
         dropDownMenu[1].style.display = 'none';
       });
     }
+  }
+
+  function styleAbstract() {
     const abstractElt = document.getElementById('abstract');
     const abstractBox = abstractElt.parentElement
     abstractBox.style.border = '2px solid #595959';
     abstractBox.style.backgroundColor = '#F2FAFC'
     abstractBox.style.padding = '10px';
-  }, 500);
+  }
+  waitForElementToDisplay(".dropdown-menu",enableDropdown,500,10000);
+  waitForElementToDisplay("#abstract",styleAbstract,500,10000);
 
 
   function downloadCitation() {
