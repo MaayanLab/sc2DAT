@@ -75,7 +75,7 @@
                     </div>
                     
                     <button class="btn mb-3" style="background-color:rgba(255, 255, 255, 0); border-style: solid; border-color:rgb(121, 140, 248) ; border-width: 1px; color:rgb(87, 113, 255);" 
-                    onclick="loadAllExamples()" type="button"> Load All Examples</button>
+                    onclick="loadAllExamples('HNSCC')" type="button"> Load All Examples</button>
                     <div class="row">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
@@ -85,6 +85,41 @@
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="row mt-3 mb-2 justify-content-center" style="font-style: italic; font-weight: 200;">
+            Load Examples for any of the 10 CPTAC3 Cancer Types:
+            </div>
+            <div class="row justify-content-center" style="margin-right: 20%; margin-left: 20%;">
+                <a class="col cancer-example" onclick="loadAllExamples('BR')">
+                    <img src="{{ url_for('static', filename='BR.png') }}" style="width: 83px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('CCRCC')">
+                    <img src="{{ url_for('static', filename='CCRCC.png') }}" style="width: 79px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('CO')">
+                    <img src="{{ url_for('static', filename='CO.png') }}" style="width: 83px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('GBM')">
+                    <img src="{{ url_for('static', filename='GBM.png') }}" style="width: 82px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('HNSCC')">
+                    <img src="{{ url_for('static', filename='HNSCC.png') }}" style="width: 86px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('LSCC')">
+                    <img src="{{ url_for('static', filename='LSCC.png') }}" style="width: 73px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('LUAD')">
+                    <img src="{{ url_for('static', filename='LUAD.png') }}" style="width: 84px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('OV')">
+                    <img src="{{ url_for('static', filename='OV.png') }}" style="width: 84px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('PDAC')">
+                    <img src="{{ url_for('static', filename='PDAC.png') }}" style="width: 68px;">
+                </a>
+                <a class="col cancer-example" onclick="loadAllExamples('UCEC')">
+                    <img src="{{ url_for('static', filename='UCEC.png') }}" style="width: 95px;">
+                </a>
             </div>
         </div>
     </div>
@@ -96,9 +131,12 @@
 {{ super() }}
 
 <script>
-    const textbtn = document.getElementsByClassName('text-btn');
+    
 
-    function loadAllExamples() {
+    function loadAllExamples(tumorType) {
+        console.log(tumorType)
+        const textbtn = document.getElementsByClassName('text-btn ' + tumorType);
+        console.log(textbtn)
         for (let i = 0; i < textbtn.length; i++) {
             textbtn[i].click();
         }
