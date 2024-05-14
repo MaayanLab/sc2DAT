@@ -25,7 +25,8 @@ import os
 for file in os.listdir('data/observed_data_phospho'):
     phospho_df = pd.read_csv(f'data/observed_data_phospho/{file}', sep='\t')
     phospho_df.columns = phospho_df.columns.map(lambda s: s.replace('-T', '').replace('.T', ''))
-    phospho_df.to_csv(f'out/{file.split("_")[4]}_phospho_observed.tsv', sep='\t')
+    cols_to_drop = [c for c in phospho_df.columns if '-N' in c]
+    phospho_df.drop(columns=cols_to_drop).to_csv(f'out/{file.split("_")[4]}_phospho_observed.tsv', sep='\t')
 # %%
 for file in os.listdir('data/observed_data_proteomics'):
     if file.split('_')[-1].split('.')[0] == 'Tumor':
