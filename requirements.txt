@@ -14,3 +14,4 @@ fastcluster
 openai
 python-dotenv
 networkx
+biopython

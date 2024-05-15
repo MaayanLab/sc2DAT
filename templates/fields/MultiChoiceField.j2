@@ -1,0 +1,15 @@
+<div class="col px-4 px-lg-3 pb-4">
+    <div class="bold text-center my-auto mb-1">
+    {{ this.args.label }}
+    {%- if this.args.description %}
+      <sup data-toggle="tooltip" title="{{ this.args.description }}"><i class="far fa-question-circle"></i></sup>
+    {% endif -%}
+    </div>
+    <div class="form-group col-lg-6 col-xl-6 col-md-8 col-sm-12 mx-auto" >
+        <select class="form-select" multiple="multiple" name="{{ this.args.name }}" style="min-height: 200px;">
+        {% for choice in this.args.choices %}
+            <option{% if choice in this.args.default %} selected{% endif %} class="option">{{ choice }}</option>
+        {% endfor %}
+        </select>
+    </div>
+</div>
