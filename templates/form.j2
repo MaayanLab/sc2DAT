@@ -136,7 +136,19 @@
 {{ super() }}
 
 <script>
-    
+
+    const cancerMappings = {
+        'BR': ['Breast Ductal Carcinoma In Situ', 'Invasive Breast Carcinoma'],
+        'CCRCC': ['Renal Cell Carcinoma'],
+        'CO': ['Colorectal Adenocarcinoma'],
+        'GBM': ['Diffuse Glioma'],
+        'HNSCC': ['Head and Neck Squamous Cell Carcinoma'],
+        'LSCC': ['Non-Small Cell Lung Cancer'],
+        'LUAD': ['Non-Small Cell Lung Cancer'],
+        'OV': ['Ovarian Epithelial Tumor'],
+        'PDAC': ['Pancreatic Adenocarcinoma'],
+        'UCEC': ['Endometrial Carcinoma']
+    }
 
     function loadAllExamples(tumorType) {
         console.log(tumorType)
@@ -145,7 +157,20 @@
         for (let i = 0; i < textbtn.length; i++) {
             textbtn[i].click();
         }
+        const options = document.getElementsByClassName('option')
+        console.log(options)
+        for (let i = 0; i < options.length; i++) {
+            if (cancerMappings[tumorType].includes(options[i].innerText)) {
+                options[i].selected = true
+            } else {
+                options[i].selected = false
+            }     
+        }
+        console.log(document.getElementsByClassName('form-select').value)
+
     }
+
+   
 
     var trueTypeOf = (obj) => Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
     
