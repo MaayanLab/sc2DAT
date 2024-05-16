@@ -1,5 +1,5 @@
 git+https://github.com/Maayanlab/appyter.git@bafe1f3863e904c797372edc229d5e31ce8fc55a
-pandas
+pandas==2.2.2
 numpy
 s3fs
 git+https://github.com/Maayanlab/maayanlab-bioinformatics.git
