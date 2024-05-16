@@ -2,6 +2,7 @@ import os
 from IPython.display import HTML
 from matplotlib.ticker import MaxNLocator
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -313,3 +314,72 @@ def get_co_occurrence_count(terms): # co-occurrence in title or abstract
     all_terms_query = ' AND '.join([f'("{term}"[Title/Abstract])' for term in terms])
     handle = Entrez.esearch(db="pubmed", term=all_terms_query)
     return int(Entrez.read(handle)['Count'])
+
+
+
+def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples'):
+    warmcool = cm.get_cmap('coolwarm').reversed()
+    col_colors = {}
+    clusters_pal = sns.color_palette('tab20', len(leiden_df['leiden'].unique()))
+    clusters_lut = dict(zip(sorted(leiden_df['leiden'].unique()), clusters_pal))
+    sample_clusters = data.columns.map(lambda s: clusters_lut[leiden_df.loc[s, 'leiden']])
+    col_colors['Cluster'] = sample_clusters
+    meta_luts = {'Cluster': clusters_lut}
+    meta_range_luts = {}
+    cms = ['coolwarm', 'RdPu', 'Greens', 'Greys']
+    if len(set(['Sex', 'Tumor_Size_cm', 'Stage', 'Tobacco_smoking_history']).intersection(list(meta_df.columns.values))) == 4:
+        for i, col in enumerate(default_meta_cols):
+            try:   
+                clusters_pal = sns.color_palette('viridis', as_cmap=True)
+                norm = plt.Normalize(vmin=np.min(meta_df[col].astype(float)), vmax=np.max(meta_df[col].astype(float)))
+                clusters_lut = {h: clusters_pal(norm(h)) for h in meta_df[col].astype(float)}
+                meta_range_luts[col] = clusters_lut
+                attr_colors = []
+                for s in data.columns:
+                    if s in meta_df.index:
+                        attr_colors.append(clusters_lut[float(meta_df.loc[s][col])])
+                    else:
+                        attr_colors.append((1, 1, 1, 1))
+                col_colors[col] = attr_colors
+            except:
+                clusters_pal = sns.color_palette(cms[i], len(meta_df[col].unique()))
+                clusters_lut = dict(zip(sorted(meta_df[col].dropna().unique()), clusters_pal))
+                meta_luts[col] = clusters_lut
+                attr_colors = []
+                for s in data.columns:
+                    if s in meta_df.index:
+                        if not isinstance(meta_df.loc[s][col], str):
+                            attr_colors.append((1, 1, 1, 1))
+                        else:
+                            attr_colors.append(clusters_lut[meta_df.loc[s][col]])
+                    else:
+                        attr_colors.append((1, 1, 1, 1))
+                col_colors[col] = attr_colors
+    col_colors = pd.DataFrame(col_colors, index=data.columns)
+    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label}, col_colors=col_colors)
+    ax = g.ax_heatmap
+    ax.set_ylabel(xlabel)
+    ax.set_xlabel(ylabel)
+
+    # Create the legends in the new figure
+    n = len(meta_luts)
+    total_width = 0.8  # Total width available for all legends
+    spacing = 0.02  # Spacing between legends
+    legend_width = (total_width - (n - 1) * spacing) / n  # Width of each legend
+
+    for i, attr in enumerate(meta_luts):
+        left = 0.1 + i * (legend_width + spacing)
+        ax_legend = g.fig.add_axes([left, 0.9, legend_width, 0.1])  # Adjust these values as needed
+        ax_legend.axis('off')
+        legend_elements = [plt.Line2D([0], [0], color=meta_luts[attr][label], label=label, linewidth=5) for label in meta_luts[attr].keys()]
+        ax_legend.legend(handles=legend_elements, title=attr, framealpha=1.0)  # Set framealpha to 1.0
+    for attr in meta_range_luts:
+        colorbar_position = 0.1 + n*0.2
+        ax_legend = g.figure.add_axes([colorbar_position, 0.9, 0.05, 0.1])
+        ax_legend.axis('off')
+        norm = plt.Normalize(vmin=np.min(meta_df[attr].astype(float)), vmax=np.max(meta_df[attr].astype(float)))
+        sm = plt.cm.ScalarMappable(cmap='viridis', norm=norm)
+        sm.set_array([])
+        cbar = plt.colorbar(sm, ax=ax_legend, orientation='vertical')
+        cbar.set_label(attr)
+    return g
