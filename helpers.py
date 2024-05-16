@@ -323,7 +323,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
     clusters_pal = sns.color_palette('tab20', len(leiden_df['leiden'].unique()))
     clusters_lut = dict(zip(sorted(leiden_df['leiden'].unique()), clusters_pal))
     sample_clusters = data.columns.map(lambda s: clusters_lut[leiden_df.loc[s, 'leiden']])
-    col_colors['Cluster'] = sample_clusters
+    col_colors['Cluster'] = list(sample_clusters)
     meta_luts = {'Cluster': clusters_lut}
     meta_range_luts = {}
     cms = ['coolwarm', 'RdPu', 'Greens', 'Greys']
@@ -355,6 +355,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
                     else:
                         attr_colors.append((1, 1, 1, 1))
                 col_colors[col] = attr_colors
+
     col_colors = pd.DataFrame(col_colors, index=data.columns)
     g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label}, col_colors=col_colors)
     ax = g.ax_heatmap
