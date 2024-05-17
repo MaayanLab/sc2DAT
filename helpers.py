@@ -322,6 +322,7 @@ def get_co_occurrence_count(terms): # co-occurrence in title or abstract
 def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples'):
     warmcool = cm.get_cmap('coolwarm').reversed()
     data = data[list(set(leiden_df.index).intersection(data.columns))]
+    meta_df_data = meta_df.loc[list(set(data.columns.values).intersection(meta_df.index))]
     col_colors = {}
     clusters_pal = sns.color_palette('tab20', len(leiden_df['leiden'].unique()))
     clusters_lut = dict(zip(sorted(leiden_df['leiden'].unique()), clusters_pal))
@@ -332,7 +333,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
     cms = ['coolwarm', 'RdPu', 'Greens', 'Greys']
     if len(set(['Sex', 'Tumor_Size_cm', 'Stage', 'Tobacco_smoking_history']).intersection(list(meta_df.columns.values))) == 4:
         for i, col in enumerate(default_meta_cols):
-            try:   
+            try:
                 clusters_pal = sns.color_palette('viridis', as_cmap=True)
                 norm = plt.Normalize(vmin=np.min(meta_df[col].astype(float)), vmax=np.max(meta_df[col].astype(float)))
                 if np.isnan(norm.vmin) or np.isnan(norm.vmax):
@@ -341,7 +342,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
                 meta_range_luts[col] = clusters_lut
                 attr_colors = []
                 for s in data.columns:
-                    if s in meta_df.index:
+                    if s in meta_df.index and not pd.isna(meta_df.loc[s][col]):
                         attr_colors.append(clusters_lut[float(meta_df.loc[s][col])])
                     else:
                         attr_colors.append((1, 1, 1, 1))
@@ -353,14 +354,13 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
                 attr_colors = []
                 for s in data.columns:
                     if s in meta_df.index:
-                        if not isinstance(meta_df.loc[s][col], str):
+                        if not isinstance(meta_df.loc[s][col], str) or pd.isna(meta_df.loc[s][col]):
                             attr_colors.append((1, 1, 1, 1))
                         else:
                             attr_colors.append(clusters_lut[meta_df.loc[s][col]])
                     else:
                         attr_colors.append((1, 1, 1, 1))
                 col_colors[col] = attr_colors
-
     col_colors = pd.DataFrame(col_colors, index=data.columns)
     g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label}, col_colors=col_colors)
     ax = g.ax_heatmap
