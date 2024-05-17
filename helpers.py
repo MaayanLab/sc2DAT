@@ -332,6 +332,8 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
             try:   
                 clusters_pal = sns.color_palette('viridis', as_cmap=True)
                 norm = plt.Normalize(vmin=np.min(meta_df[col].astype(float)), vmax=np.max(meta_df[col].astype(float)))
+                if np.isnan(norm.vmin) or np.isnan(norm.vmax):
+                    continue
                 clusters_lut = {h: clusters_pal(norm(h)) for h in meta_df[col].astype(float)}
                 meta_range_luts[col] = clusters_lut
                 attr_colors = []
@@ -370,7 +372,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
 
     for i, attr in enumerate(meta_luts):
         left = 0.1 + i * (legend_width + spacing)
-        ax_legend = g.fig.add_axes([left, 0.9, legend_width, 0.1])  # Adjust these values as needed
+        ax_legend = g.figure.add_axes([left, 0.9, legend_width, 0.1])  # Adjust these values as needed
         ax_legend.axis('off')
         legend_elements = [plt.Line2D([0], [0], color=meta_luts[attr][label], label=label, linewidth=5) for label in meta_luts[attr].keys()]
         ax_legend.legend(handles=legend_elements, title=attr, framealpha=1.0)  # Set framealpha to 1.0
