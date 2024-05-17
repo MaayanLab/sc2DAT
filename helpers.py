@@ -359,8 +359,8 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
     col_colors = pd.DataFrame(col_colors, index=data.columns)
     g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label}, col_colors=col_colors)
     ax = g.ax_heatmap
-    ax.set_ylabel(xlabel)
-    ax.set_xlabel(ylabel)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
 
     # Create the legends in the new figure
     n = len(meta_luts)
