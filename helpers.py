@@ -319,6 +319,7 @@ def get_co_occurrence_count(terms): # co-occurrence in title or abstract
 
 def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples'):
     warmcool = cm.get_cmap('coolwarm').reversed()
+    data = data[list(set(leiden_df.index).intersection(data.columns))]
     col_colors = {}
     clusters_pal = sns.color_palette('tab20', len(leiden_df['leiden'].unique()))
     clusters_lut = dict(zip(sorted(leiden_df['leiden'].unique()), clusters_pal))
