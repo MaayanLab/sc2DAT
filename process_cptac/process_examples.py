@@ -35,3 +35,24 @@ for file in os.listdir('data/observed_data_proteomics'):
         prot_df.index = prot_df.index.map(lambda g: lookup(g.split('.')[0]) if lookup(g.split('.')[0]) else g.split('.')[0])
         prot_df.to_csv(f'out/{ct}_proteomics_tumor.tsv', sep='\t')
 # %%
+
+## fix UCEC, LUAD columns for tumor counts:
+
+tumor_counts = pd.read_csv('out/UCEC_tumor_counts.tsv', sep='\t', index_col=0)
+
+# %%
+tumor_counts.columns = tumor_counts.columns.map(lambda s: '-'.join(s.split('-')[0:2]))
+tumor_counts
+# %%
+tumor_counts.to_csv('out/UCEC_tumor_counts.tsv', sep='\t')
+
+# %%
+tumor_counts = pd.read_csv('out/LUAD_tumor_counts.tsv', sep='\t', index_col=0)
+
+# %%
+tumor_counts.columns = tumor_counts.columns.map(lambda s: '-'.join(s.split('-')[0:2]))
+tumor_counts
+# %%
+tumor_counts.to_csv('out/LUAD_tumor_counts.tsv', sep='\t')
+
+# %%
