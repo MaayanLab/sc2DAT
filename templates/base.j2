@@ -365,13 +365,25 @@
 
   function styleAbstract() {
     const abstractElt = document.getElementById('abstract');
-    const abstractBox = abstractElt.parentElement
+    var abstractBox = abstractElt.parentElement
+    for (let i = 0; i < 6; i++) {
+      abstractBox = abstractBox.parentElement;
+    }
+    document.getElementById('output-prompt-5-1').style.display = 'none';
+    document.getElementById('output-prompt-5-0').style.display = 'none';
+    abstractBox.lastElementChild.lastElementChild.lastElementChild.classList = '';
+    
     abstractBox.style.border = '2px solid #595959';
     abstractBox.style.backgroundColor = '#F2FAFC'
     abstractBox.style.padding = '10px';
+    abstractBox.style.paddingRight = '10px';
+    abstractBox.style.paddingLeft = '10px';
+    abstractBox.style.marginLeft = '10%';
+    abstractBox.style.color = 'black';
+
   }
   waitForElementToDisplay(".dropdown-menu",enableDropdown,500,10000);
-  waitForElementToDisplay("#abstract",styleAbstract,500,10000);
+  waitForElementToDisplay("#abstract",styleAbstract,500,20000);
 
 
   function downloadCitation() {
