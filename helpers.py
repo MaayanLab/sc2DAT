@@ -389,3 +389,11 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
         cbar = plt.colorbar(sm, ax=ax_legend, orientation='vertical')
         cbar.set_label(attr)
     return g
+
+def create_clustermap(data, ylabel, cbar_label = 'Mean Rank', xlabel = 'Samples'):
+    warmcool = cm.get_cmap('coolwarm').reversed()
+    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label})
+    ax = g.ax_heatmap
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    return g
