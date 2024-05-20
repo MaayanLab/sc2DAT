@@ -190,8 +190,8 @@ def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023
             all_pvalues.append(list(results_df[2]))
             all_adjusted_pvalues.append(list(results_df[6]))
             library_success.append(library_name)
-        except:
-            print('Error for ' + library_name + ' library')
+        except Exception as e:
+            print('Error for ' + library_name + ' library:', e)
         time.sleep(1)
 
     return [all_terms, all_pvalues, all_adjusted_pvalues, library_success]
