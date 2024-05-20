@@ -209,13 +209,18 @@ def label_clusters(cluster_enrichments: dict):
         up_enrichments = []
         down_enrichments = []
         for i in range(3): # libraries
-            terms = cluster_enrichments[c]['up'][0][i]
-            p_values = cluster_enrichments[c]['up'][1][i]
-            up_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
-
-            terms = cluster_enrichments[c]['down'][0][i]
-            p_values = cluster_enrichments[c]['down'][1][i]
-            down_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
+            try:
+                terms = cluster_enrichments[c]['up'][0][i]
+                p_values = cluster_enrichments[c]['up'][1][i]
+                up_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
+            except:
+                pass
+            try:
+                terms = cluster_enrichments[c]['down'][0][i]
+                p_values = cluster_enrichments[c]['down'][1][i]
+                down_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
+            except:
+                pass
         # Get GPT-4 labels
         
         response = client.chat.completions.create(
