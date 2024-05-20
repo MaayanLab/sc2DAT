@@ -40,6 +40,9 @@
                         </div>
                         {% endfor %}
                     </div>
+                    <button class="btn mb-3"
+                        style="background-color:rgba(255, 255, 255, 0); border-style: solid; border-color:rgb(121, 140, 248) ; border-width: 1px; color:rgb(87, 113, 255);"
+                        onclick="loadAllExamples('HNSCC')" type="button"> Load All Examples</button>
                     <div class="row justify-content-evenly">
                         {% for _field in _fields[3:5] %}
                         <div class="col">
@@ -89,9 +92,7 @@
                         </div>
                     </div>
 
-                    <button class="btn mb-3"
-                        style="background-color:rgba(255, 255, 255, 0); border-style: solid; border-color:rgb(121, 140, 248) ; border-width: 1px; color:rgb(87, 113, 255);"
-                        onclick="loadAllExamples('HNSCC')" type="button"> Load All Examples</button>
+                    
                     <div class="row">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
