@@ -314,8 +314,14 @@ def describe_clusters(results: dict):
 def get_co_occurrence_count(terms): # co-occurrence in title or abstract
     Entrez.email = "user@gmail.com"
     all_terms_query = ' AND '.join([f'("{term}"[Title/Abstract])' for term in terms])
-    handle = Entrez.esearch(db="pubmed", term=all_terms_query)
-    return int(Entrez.read(handle)['Count'])
+    for i in range(10):
+        try:
+            handle = Entrez.esearch(db="pubmed", term=all_terms_query)
+            return int(Entrez.read(handle)['Count'])
+        except:
+            time.sleep(1)
+    return 'Err'
+
 
 
 
