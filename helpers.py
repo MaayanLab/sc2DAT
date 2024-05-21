@@ -327,13 +327,10 @@ def get_co_occurrence_count(terms): # co-occurrence in title or abstract
             time.sleep(1)
     return 'Err'
 
-
-
-
 def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples'):
     warmcool = cm.get_cmap('coolwarm').reversed()
     data = data[list(set(leiden_df.index).intersection(data.columns))]
-    meta_df_data = meta_df.loc[list(set(data.columns.values).intersection(meta_df.index))]
+    meta_df = meta_df.loc[list(set(data.columns.values).intersection(meta_df.index))]
     col_colors = {}
     clusters_pal = sns.color_palette('tab20', len(leiden_df['leiden'].unique()))
     clusters_lut = dict(zip(sorted(leiden_df['leiden'].unique()), clusters_pal))
@@ -383,7 +380,6 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
     total_width = 0.8  # Total width available for all legends
     spacing = 0.02  # Spacing between legends
     legend_width = (total_width - (n - 1) * spacing) / n  # Width of each legend
-
     for i, attr in enumerate(meta_luts):
         left = 0.1 + i * (legend_width + spacing)
         ax_legend = g.figure.add_axes([left, 0.9, legend_width, 0.1])  # Adjust these values as needed
@@ -391,8 +387,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
         legend_elements = [plt.Line2D([0], [0], color=meta_luts[attr][label], label=label, linewidth=5) for label in meta_luts[attr].keys()]
         ax_legend.legend(handles=legend_elements, title=attr, framealpha=1.0)  # Set framealpha to 1.0
     for attr in meta_range_luts:
-        colorbar_position = 0.1 + n*0.2
-        ax_legend = g.figure.add_axes([colorbar_position, 0.9, 0.05, 0.1])
+        ax_legend = g.figure.add_axes([.85, .75, 0.1, 0.1])
         ax_legend.axis('off')
         norm = plt.Normalize(vmin=np.min(meta_df[attr].astype(float)), vmax=np.max(meta_df[attr].astype(float)))
         sm = plt.cm.ScalarMappable(cmap='viridis', norm=norm)
