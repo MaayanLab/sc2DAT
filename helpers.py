@@ -9,7 +9,6 @@ import seaborn as sns
 import requests
 import json
 import time
-from tqdm import tqdm
 import openai
 from dotenv import load_dotenv
 load_dotenv()
@@ -204,7 +203,7 @@ def label_clusters(cluster_enrichments: dict):
     
     cluster_labels = {}
 
-    for c in tqdm(cluster_enrichments):
+    for c in cluster_enrichments:
         # Get top 5 enrichments
         up_enrichments = []
         down_enrichments = []
