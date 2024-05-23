@@ -326,7 +326,7 @@ def get_co_occurrence_count(terms): # co-occurrence in title or abstract
             time.sleep(1)
     return 'Err'
 
-def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples'):
+def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples', yticklabels=False):
     warmcool = cm.get_cmap('coolwarm').reversed()
     data = data[list(set(leiden_df.index).intersection(data.columns))]
     meta_df = meta_df.loc[list(set(data.columns.values).intersection(meta_df.index))]
@@ -369,7 +369,7 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
                         attr_colors.append((1, 1, 1, 1))
                 col_colors[col] = attr_colors
     col_colors = pd.DataFrame(col_colors, index=data.columns)
-    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label}, col_colors=col_colors)
+    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=yticklabels, cbar_kws={'label': cbar_label}, col_colors=col_colors)
     ax = g.ax_heatmap
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
@@ -395,9 +395,9 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
         cbar.set_label(attr)
     return g
 
-def create_clustermap(data, ylabel, cbar_label = 'Mean Rank', xlabel = 'Samples'):
+def create_clustermap(data, ylabel, cbar_label = 'Mean Rank', xlabel = 'Samples', yticklabels=False):
     warmcool = cm.get_cmap('coolwarm').reversed()
-    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=False, cbar_kws={'label': cbar_label})
+    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=yticklabels, cbar_kws={'label': cbar_label})
     ax = g.ax_heatmap
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
