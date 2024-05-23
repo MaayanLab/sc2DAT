@@ -402,3 +402,17 @@ def create_clustermap(data, ylabel, cbar_label = 'Mean Rank', xlabel = 'Samples'
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
     return g
+
+def clustergrammer_link(df: pd.DataFrame, filename: str):
+    if df.shape[0] * df.shape[1] > 500000:
+        return None
+    try:
+        df.to_csv(f'results/{filename}.tsv', sep='\t')
+        upload_url = 'http://amp.pharm.mssm.edu/clustergrammer/matrix_upload/'
+
+        r = requests.post(upload_url, files={'file': open(f'results/{filename}.tsv', 'rb')})
+        link = r.text
+        return link
+    except Exception as e:
+        print('Error uploading to Clustergrammer:', e)
+        return None
