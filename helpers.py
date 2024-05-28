@@ -103,6 +103,21 @@ def geneshot_set_augment(gene_list, similarity_type='coexpression', n_genes=100)
     geneshot_dataframe = geneshot_dataframe.iloc[:n_genes]
     return geneshot_dataframe.index.to_list()
 
+def augment_proteomics(gene_list, protein_coexp, n_genes=100):
+    """ Inputs:
+    gene_list: list[]
+    n_genes: int, number of the most similar genes to return
+    Return: list[] of augmented genes """
+        
+    matched_TFs = list(set(gene_list).intersection(set(protein_coexp.index)))
+    if len(matched_TFs) == 0:
+        print(f"No TFs matched")
+        return []
+    else:
+        average_similarity = protein_coexp[matched_TFs].mean(axis=1) 
+        expansion = average_similarity.sort_values(ascending=False).head(n_genes).index.to_list()
+    return expansion
+
 def get_g2n_results(geneset, subgraph_size=30, path_length=2):
     # Inputs: 
     # 'geneset' : ['gene name'] - needs a list of strings
