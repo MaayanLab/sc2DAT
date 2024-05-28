@@ -1,7 +1,7 @@
-# MULTIOMICS2PAPER: 
+# MULTIOMICS2TARGETS: 
 ### Expression2Kinases & Target Ranger
 
-Currently hosted at: https://multiomics2paper.maayanlab.cloud/
+Currently hosted at: https://multiomics2targets.maayanlab.cloud/
 
 
 ## Getting Started
