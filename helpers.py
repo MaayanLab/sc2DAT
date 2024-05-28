@@ -111,8 +111,7 @@ def augment_proteomics(gene_list, protein_coexp, n_genes=100):
         
     matched_TFs = list(set(gene_list).intersection(set(protein_coexp.index)))
     if len(matched_TFs) == 0:
-        print(f"No TFs matched")
-        return []
+        return [None]*n_genes
     else:
         average_similarity = protein_coexp[matched_TFs].mean(axis=1) 
         expansion = average_similarity.sort_values(ascending=False).head(n_genes).index.to_list()
