@@ -316,14 +316,16 @@
           Transcriptomics, Proteomics, and Phosphoproteomics
         </p>
       </div>
-      <div class="col-1">
-      </div>
+       
       <div class="col-2">
         <img src="{{ url_for('static', filename='ISMMS_black.png') }}" style="width:200px;" class="img-fluid">
       </div>
       <div class="col-2 col-sm-2">
         <img src="{{ url_for('static', filename='maayan-black.png') }}" style="width: 150px;"
           class="mt-4 ml-5 img-fluid">
+      </div>
+      <div class="col-1 text-center ml-5">
+          Runs: <p style="font-weight: 1200; font-size: 1.5rem" id="numruns"></p>
       </div>
     </div>
   </div>
@@ -404,7 +406,7 @@
 
   function downloadCitation() {
     const element = document.createElement('a');
-    const citation = "just a test"
+    const citation = "URL: " + window.location.href
     const file = new Blob([citation], {
       type: 'text/plain'
     });
@@ -414,7 +416,13 @@
     element.click();
   }
 
-  
+  function getNumRuns() {
+        fetch('/blueprint/numruns').then(response => response.json()).then(data => {
+            document.getElementById('numruns').innerText = data.num_runs;
+        })
+    }
+    getNumRuns()
+
 </script>
 {% endblock %}
 
