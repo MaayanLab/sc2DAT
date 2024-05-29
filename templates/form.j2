@@ -22,6 +22,9 @@
                     matching cohort of cancer patients to receive a complete data analysis report that resembles a
                     research publication.</p>
             </div>
+            <div class="col-1 ml-5 text-center">
+                Runs: <p style="font-weight: 1200; font-size: 1.5rem" id="numruns"></p>
+            </div>
         </div>
     </div>
 </div>
@@ -235,6 +238,12 @@
         }
     }
 
+    function getNumRuns() {
+        fetch('/blueprint/numruns').then(response => response.json()).then(data => {
+            document.getElementById('numruns').innerText = data.num_runs;
+        })
+    }
+    getNumRuns()
 
 
 
