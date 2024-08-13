@@ -2,6 +2,16 @@
 
 {% block head %}
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QSM2MDFW8W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QSM2MDFW8W');
+</script>
+
 <title class="h1">MULTIOMICS2TARGETS</title>
 <link rel="shortcut icon" href="{{ url_for('static', filename='x2ktr-sm.png') }}" />
 <link rel="icon" href="{{ url_for('static', filename='x2ktr-sm.png') }}">

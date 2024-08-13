@@ -1,6 +1,15 @@
 {% extends "bootstrap/form.j2" %}
 
 {% block head %}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QSM2MDFW8W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QSM2MDFW8W');
+</script>
 {{ super() }}
 {% endblock %}
 
