@@ -6,7 +6,7 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QSM2MDFW8W"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
 
   gtag('config', 'G-QSM2MDFW8W');
@@ -230,94 +230,101 @@
     padding: 0 !important;
   }
 
-.inner_cell + #abstract {
+  .inner_cell+#abstract {
     border: 2px solid #595959;
     background-color: #F2FAFC;
     padding: 10px;
-  
 
-}
-.BR-span {
-  display: none;
-}
 
-div.cell {
-  padding: 0 !important;
-  text-align: justify !important;
-}
+  }
 
-.rendered_html p {
+  .BR-span {
+    display: none;
+  }
+
+  div.cell {
+    padding: 0 !important;
     text-align: justify !important;
-}
+  }
 
-#notebook {
-  padding-top: 0px !important;
-}
+  .rendered_html p {
+    text-align: justify !important;
+  }
 
-.HNSCC-span {
-  display: none;
-}
+  #notebook {
+    padding-top: 0px !important;
+  }
 
-.CCRCC-span {
-  display: none;
-}
-.CO-span {
-  display: none;
-}
+  .HNSCC-span {
+    display: none;
+  }
 
-.LSCC-span {
-  display: none;
-}
-.LUAD-span {
-  display: none;
-}
-.OV-span {
-  display: none;
-}
-.PDAC-span {
-  display: none;
-}
-.UCEC-span {
-  display: none;
-}
+  .CCRCC-span {
+    display: none;
+  }
 
-.cancer-example {
-  cursor: pointer;
-}
-.cancer-example:hover {
-  background-color: rgba(177, 229, 255, 0.784);
-  border-radius: 20px;
-  transition: all 1s;
-}
+  .CO-span {
+    display: none;
+  }
 
-.button-custom {
-  background-color: #2283a300;
-  color: #2282a3;
-  border: 1px solid #2282a3;
-  border-radius: 5px;
-  padding: 2px 5px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-}
+  .LSCC-span {
+    display: none;
+  }
 
-.all-examples {
-  background-color: #2283a300;
-  color: #2282a3;
-  border: 1px solid #2282a3;
-  border-radius: 5px;
-  padding: 2px 5px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  font-weight: lighter;
-}
+  .LUAD-span {
+    display: none;
+  }
+
+  .OV-span {
+    display: none;
+  }
+
+  .PDAC-span {
+    display: none;
+  }
+
+  .UCEC-span {
+    display: none;
+  }
+
+  .cancer-example {
+    cursor: pointer;
+  }
+
+  .cancer-example:hover {
+    background-color: rgba(177, 229, 255, 0.784);
+    border-radius: 20px;
+    transition: all 1s;
+  }
+
+  .button-custom {
+    background-color: #2283a300;
+    color: #2282a3;
+    border: 1px solid #2282a3;
+    border-radius: 5px;
+    padding: 2px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+  .all-examples {
+    background-color: #2283a300;
+    color: #2282a3;
+    border: 1px solid #2282a3;
+    border-radius: 5px;
+    padding: 2px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    font-weight: lighter;
+  }
 </style>
 
 {% endblock %}
@@ -339,7 +346,7 @@ div.cell {
           Transcriptomics, Proteomics, and Phosphoproteomics
         </p>
       </div>
-       
+
       <div class="col-2">
         <img src="{{ url_for('static', filename='ISMMS_black.png') }}" style="width:200px;" class="img-fluid">
       </div>
@@ -348,7 +355,7 @@ div.cell {
           class="mt-4 ml-5 img-fluid">
       </div>
       <div class="col-1 text-center ml-5">
-          Executed Reports: <p style="font-weight: 1200; font-size: 1.5rem" id="numruns"></p>
+        Executed Reports: <p style="font-weight: 1200; font-size: 1.5rem" id="numruns"></p>
       </div>
     </div>
   </div>
@@ -377,7 +384,7 @@ div.cell {
         }, checkFrequencyInMs);
       }
     })();
-  } 
+  }
 
   function enableDropdown() {
     const dropDown = document.getElementsByClassName('dropdown-toggle');
@@ -413,7 +420,7 @@ div.cell {
     document.getElementById('output-prompt-5-1').style.display = 'none';
     document.getElementById('output-prompt-5-0').style.display = 'none';
     abstractBox.lastElementChild.lastElementChild.lastElementChild.classList = '';
-    
+
     abstractBox.style.border = '2px solid #595959';
     abstractBox.style.backgroundColor = '#F2FAFC'
     abstractBox.style.padding = '10px';
@@ -423,8 +430,8 @@ div.cell {
     abstractBox.style.color = 'black';
 
   }
-  waitForElementToDisplay(".dropdown-menu",enableDropdown,500,10000);
-  waitForElementToDisplay("#abstract",styleAbstract,500,100000);
+  waitForElementToDisplay(".dropdown-menu", enableDropdown, 500, 10000);
+  waitForElementToDisplay("#abstract", styleAbstract, 500, 100000);
 
 
   function downloadCitation() {
@@ -440,11 +447,11 @@ div.cell {
   }
 
   function getNumRuns() {
-        fetch('/blueprint/numruns').then(response => response.json()).then(data => {
-            document.getElementById('numruns').innerText = data.num_runs;
-        })
-    }
-    getNumRuns()
+    fetch('/blueprint/numruns').then(response => response.json()).then(data => {
+      document.getElementById('numruns').innerText = data.num_runs;
+    })
+  }
+  getNumRuns()
 
 </script>
 {% endblock %}
@@ -456,22 +463,22 @@ div.cell {
     <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
       <div class="col  ml-5 mx-5" style="font-size: medium;">
         <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank" style="color: white !important;
-    text-decoration: none !important;
-    border-style: solid;
-    padding: 8px;
-    border-color: white;
-    border-radius: 10px;
-    border-width: 1px;">Contact Us</a>
+          text-decoration: none !important;
+          border-style: solid;
+          padding: 8px;
+          border-color: white;
+          border-radius: 10px;
+          border-width: 1px;">Contact Us</a>
 
         <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/X2KTR" target="_blank"
           rel="noopener noreferrer" style="color: white !important;
-    text-decoration: none !important;
-    border-style: solid;
-    padding: 8px;
-    border-color: white;
-    border-radius: 10px;
-    border-width: 1px;">
-          Source Code
+            text-decoration: none !important;
+            border-style: solid;
+            padding: 8px;
+            border-color: white;
+            border-radius: 10px;
+            border-width: 1px;">
+            Source Code
         </a>
       </div>
       <div class="col mx-5">
@@ -491,8 +498,21 @@ div.cell {
         <a class="mr-5" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
           <img src="{{ url_for('static', filename='cc-by-nc-sa.png')}}" style="width: 8rem;" alt="CC-by-NC-SA" />
         </a>
-      </div>
+      </div> 
+      <div class="row justify-content-around align-items-center text-center mx-auto p-5 pb-0 pt-0">
+        <div class="mb-0" style="color: white">
+          Please acknowledge Multiomics2Targets in your publications by citing the following reference:
+        </div>
+        <div class="col-8">
+        <a class="" style="color: #a0d8f9;" href="https://www.cell.com/cell-reports-methods/fulltext/S2667-2375(24)00212-1" target="_blank">
+        <p style="line-height: normal;">Deng EZ, Marino GB, Clarke DJB, Diamant I, Resnick AC, Ma W, Wang P, Ma'ayan A. Multiomics2Targets identifies targets from cancer cohorts profiled with transcriptomics, proteomics, and phosphoproteomics. Cell Rep Methods. 2024 Aug 19;4(8):100839. doi: 10.1016/j.crmeth.2024.100839.</p>
+        </a>
+        </div>
     </div>
+
+    </div>
+   
+
   </div>
 </footer>
 
