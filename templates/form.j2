@@ -62,29 +62,34 @@
                         </div>
                         {% endfor %}
                     </div>
+                    <div class="row justify-content-evenly mb-4">
+                        <div class="col-4">
+                            {{ _fields[5].render() }}
+                        </div>
+                    </div>
                     <div class="row justify-content-evenly">
-                        {% for _field in _fields[5:7] %}
+                        {% for _field in _fields[6:8] %}
                         <div class="col">
                             {{ _field.render() }}
                         </div>
                         {% endfor %}
                     </div>
                     <div class="row justify-content-evenly">
-                        {% for _field in _fields[7:9] %}
+                        {% for _field in _fields[8:10] %}
                         <div class="col">
                             {{ _field.render() }}
                         </div>
                         {% endfor %}
                     </div>
                     <div class="row justify-content-evenly">
-                        {% for _field in _fields[9:11] %}
+                        {% for _field in _fields[10:12] %}
                         <div class="col">
                             {{ _field.render() }}
                         </div>
                         {% endfor %}
                     </div>
                     <div class="row justify-content-evenly">
-                        {% for _field in _fields[11:13] %}
+                        {% for _field in _fields[12:14] %}
                         <div class="col">
                             {{ _field.render() }}
                         </div>
@@ -92,7 +97,7 @@
                     </div>
                     <div class="row justify-content-evenly">
                         <p style="font-weight: 200; font-size: medium;">UMAP Parameters:</p>
-                        {% for _field in _fields[13:16] %}
+                        {% for _field in _fields[14:17] %}
                         <div class="col">
                             {{ _field.render() }}
                         </div>
@@ -100,12 +105,12 @@
                     </div>
                     <div class="row justify-content-center">
                         <div class="col">
-                            {{ _fields[16].render() }}
+                            {{ _fields[17].render() }}
                         </div>
                     </div>
                     <div class="row justify-content-evenly">
                         <div class="col">
-                            {{ _fields[17].render() }}
+                            {{ _fields[18].render() }}
                         </div>
                     </div>
 
@@ -193,10 +198,24 @@
         'UCEC': [3, 0.001, 0.4]
     }
 
+    const URLmap = {
+        'BR': '2293f7775078d20509a91a15f868a13793b0d4d6',
+        'CCRCC': 'f92d42fb1399a95a2a4bb0bf114ab4420d6c7a37',
+        'CO': '79a63d84fa234fbd7a28dec3b3aaff4c76c98fb4',
+        'GBM': '881cad4bee235066068c3244085b6d41bce78ef2',
+        'HNSCC': '579a8f3703be7e8a0f7b950b55cd050750013bf9',
+        'LSCC': '451bcbdb6e5677d500a3a127415ab28a50e3a1be',
+        'LUAD': 'f984a53e874fef8197c22d2ff2d69ac0f499aad1',
+        'OV': '60e1c03c5ce944ea5a5faa7617dd56ce388859f8',
+        'PDAC': 'c59dc08e379739f417a0ee4b0d6fb2efb4af86bd',
+        'UCEC': 'f5cea422df4ab8e837affd76f524445c17f7341e'
+    }
+
     function loadAllExamples(tumorType) {
-        console.log(tumorType)
-        const textbtn = document.getElementsByClassName('text-btn ' + tumorType);
-        console.log(textbtn)
+        
+        window.open('https://multiomics2targets.maayanlab.cloud/' + URLmap[tumorType])
+        
+        {# const textbtn = document.getElementsByClassName('text-btn ' + tumorType);
         for (let i = 0; i < textbtn.length; i++) {
             textbtn[i].click();
         }
@@ -213,8 +232,7 @@
         const umapFields = ['n_neighbors', 'min_dist', 'resolution']
         for (let i = 0; i < umapFields.length; i++) {
             document.forms[0].elements[umapFields[i]].value = umapParams[i]
-        }
-        
+        } #}
 
     }
 

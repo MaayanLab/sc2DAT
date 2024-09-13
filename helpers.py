@@ -345,9 +345,9 @@ def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cba
     data = data[list(set(leiden_df.index).intersection(data.columns))]
     meta_df = meta_df.loc[list(set(data.columns.values).intersection(meta_df.index))]
     col_colors = {}
-    clusters_pal = sns.color_palette('tab20', len(leiden_df['leiden'].unique()))
-    clusters_lut = dict(zip(sorted(leiden_df['leiden'].unique()), clusters_pal))
-    sample_clusters = data.columns.map(lambda s: clusters_lut[leiden_df.loc[s, 'leiden']])
+    clusters_pal = sns.color_palette('tab20', len(leiden_df['cluster'].unique()))
+    clusters_lut = dict(zip(sorted(leiden_df['cluster'].unique()), clusters_pal))
+    sample_clusters = data.columns.map(lambda s: clusters_lut[leiden_df.loc[s, 'cluster']])
     col_colors['Cluster'] = list(sample_clusters)
     meta_luts = {'Cluster': clusters_lut}
     meta_range_luts = {}
