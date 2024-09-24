@@ -135,34 +135,34 @@
                 Load examples for any of the 10 CPTAC3 cancer types:
             </div>
             <div class="row justify-content-center" style="margin-right: 20%; margin-left: 20%;">
-                <a class="col cancer-example" onclick="loadAllExamplesRun('BR')">
+                <a class="col cancer-example" onclick="loadAllExamples('BR')">
                     <img src="{{ url_for('static', filename='BR.png') }}" style="width: 83px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('CCRCC')">
+                <a class="col cancer-example" onclick="loadAllExamples('CCRCC')">
                     <img src="{{ url_for('static', filename='CCRCC.png') }}" style="width: 79px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('CO')">
+                <a class="col cancer-example" onclick="loadAllExamples('CO')">
                     <img src="{{ url_for('static', filename='CO.png') }}" style="width: 83px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('GBM')">
+                <a class="col cancer-example" onclick="loadAllExamples('GBM')">
                     <img src="{{ url_for('static', filename='GBM.png') }}" style="width: 82px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('HNSCC')">
+                <a class="col cancer-example" onclick="loadAllExamples('HNSCC')">
                     <img src="{{ url_for('static', filename='HNSCC.png') }}" style="width: 86px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('LSCC')">
+                <a class="col cancer-example" onclick="loadAllExamples('LSCC')">
                     <img src="{{ url_for('static', filename='LSCC.png') }}" style="width: 73px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('LUAD')">
+                <a class="col cancer-example" onclick="loadAllExamples('LUAD')">
                     <img src="{{ url_for('static', filename='LUAD.png') }}" style="width: 84px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('OV')">
+                <a class="col cancer-example" onclick="loadAllExamples('OV')">
                     <img src="{{ url_for('static', filename='OV.png') }}" style="width: 84px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('PDAC')">
+                <a class="col cancer-example" onclick="loadAllExamples('PDAC')">
                     <img src="{{ url_for('static', filename='PDAC.png') }}" style="width: 68px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamplesRun('UCEC')">
+                <a class="col cancer-example" onclick="loadAllExamples('UCEC')">
                     <img src="{{ url_for('static', filename='UCEC.png') }}" style="width: 95px;">
                 </a>
             </div>
@@ -204,16 +204,16 @@
     }
 
     const URLmap = {
-        'BR': '2293f7775078d20509a91a15f868a13793b0d4d6',
-        'CCRCC': 'f92d42fb1399a95a2a4bb0bf114ab4420d6c7a37',
-        'CO': '79a63d84fa234fbd7a28dec3b3aaff4c76c98fb4',
-        'GBM': '881cad4bee235066068c3244085b6d41bce78ef2',
-        'HNSCC': '579a8f3703be7e8a0f7b950b55cd050750013bf9',
-        'LSCC': '451bcbdb6e5677d500a3a127415ab28a50e3a1be',
-        'LUAD': 'f984a53e874fef8197c22d2ff2d69ac0f499aad1',
-        'OV': '60e1c03c5ce944ea5a5faa7617dd56ce388859f8',
-        'PDAC': 'c59dc08e379739f417a0ee4b0d6fb2efb4af86bd',
-        'UCEC': 'f5cea422df4ab8e837affd76f524445c17f7341e'
+        'BR': '42e130aef3b94bca5d4f094624e86b55fd2748b2',
+        'CCRCC': '8e4927d7dbe0069133a252c489a3d2174b4be032',
+        'CO': 'ebef01276d375cb2c20ac9d2cb1819e66f74092e',
+        'GBM': 'f61afc06057289cae95b68192ce0e064f749cbf6',
+        'HNSCC': 'd484a8c3821596b42eacddf4864fe3e214dd2a64',
+        'LSCC': '737c796f1eb32d2d224bb8352204f6b139c4966a',
+        'LUAD': 'cdf92528814c08ba6661c2fc8df1c7d03cf1c092',
+        'OV': 'b196edbc7c53228d6ddb45a323c1190749576da3',
+        'PDAC': 'be68ad486dba82b4b639bfbe95cbb78970894655',
+        'UCEC': 'dd5337d7015ab18f0cde98a1ea2f334a425fb717'
     }
 
     function loadAllExamples(tumorType) {
