@@ -22,10 +22,10 @@ appyter main.ipynb
 ## Running locally
 To run the Multiomics2Targets app locally first ensure [Docker](https://www.docker.com/) is installed and then run the following command:
 ```bash
-docker run --device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined -p 5000:5000 -it maayanlab/x2ktr:0.1.03
+docker run --device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined -p 5000:5000 -it maayanlab/x2ktr:0.1.04
 ```
 To receive automatically generated descriptions of the results, you must provide an [OpenAI API Key](https://openai.com/index/openai-api/) as an environment variable:
 ```bash
-docker run --device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined -p 5000:5000 -e OPENAI_API_KEY=sk-… -it maayanlab/x2ktr:0.1.03
+docker run --device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined -p 5000:5000 -e OPENAI_API_KEY=sk-… -it maayanlab/x2ktr:0.1.04
 ```
 
