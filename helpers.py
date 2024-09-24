@@ -155,8 +155,7 @@ def enrichr_figure(res_list: list):
     edgecolor=None
     linewidth=0
     fig, axes = plt.subplots(nrows=len(all_libraries), ncols=1)
-        
-
+    
     for i, library_name in enumerate(all_libraries):
         bar_colors = [bar_color if (x < 0.05) else bar_color_not_sig for x in all_pvalues[i]]
         sns.barplot(x=np.log10(all_pvalues[i])*-1, y=all_terms[i],ax=axes[i], palette=bar_colors, edgecolor=edgecolor, linewidth=1)
@@ -182,14 +181,13 @@ def enrichr_figure(res_list: list):
 
 
 def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023_Human', 'GO_Biological_Process_2023', 'MGI_Mammalian_Phenotype_Level_4_2021']):
-
     all_terms = []
     all_pvalues =[] 
     all_adjusted_pvalues = []
     library_success = []
-
+    all_sig_results = []
+    
     for library_name in all_libraries: 
-        
         ENRICHR_URL = 'http://amp.pharm.mssm.edu/Enrichr/enrich'
         query_string = '?userListId=%s&backgroundType=%s'
         gene_set_library = library_name
@@ -201,6 +199,10 @@ def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023
         try:
             data = json.loads(response.text)
             results_df  = pd.DataFrame(data[library_name][0:5])
+            results_df_full  = pd.DataFrame(data[library_name])
+            results_df_full.columns = ['Rank in Lib', 'Term', 'P-value', 'Odds Ratio', 'Combined Score', 'Overlapping genes', 'Adjusted p-value', 'Old p-value', 'Old adjusted p-value']
+            results_df_full = results_df_full[results_df_full['P-value'] < 0.05][['Rank in Lib', 'Term', 'P-value', 'Adjusted p-value', 'Combined Score', 'Overlapping genes']]
+            all_sig_results.append(results_df_full)
             all_terms.append(list(results_df[1]))
             all_pvalues.append(list(results_df[2]))
             all_adjusted_pvalues.append(list(results_df[6]))
@@ -209,7 +211,7 @@ def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023
             print('Error for ' + library_name + ' library:', e)
         time.sleep(1)
 
-    return [all_terms, all_pvalues, all_adjusted_pvalues, library_success]
+    return [all_terms, all_pvalues, all_adjusted_pvalues, library_success], all_sig_results
 
 
 def label_clusters(cluster_enrichments: dict):
