@@ -114,7 +114,12 @@
                         </div>
                     </div>
 
-                    
+                    <div  class="row col-3 mx-auto mt-0 mb-3">
+                        <button type="button" class="reset-button rounded p-2" onclick="resetParams()"> 
+                        Reset Default Parameters
+                        </button>
+                    </div>
+
                     <div class="row">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
@@ -258,6 +263,18 @@
             }
         }
         return metavalue ? true : false
+    }
+
+    function resetParams() {
+        const params = [15, 0.01, 1, '', 'yes', 'yes', 'yes', 'yes', 0.8, 0.5, 500, 500, 'Protein-Protein Co-expression', []]
+        const fields = ['n_neighbors', 'min_dist', 'resolution', 'cluster_column', 
+        'membrane_screener', 'normalize_to_bg', 'impute_protein_expr', 
+        'impute_phospho_expr', 'percent_rows_protein', 'percent_rows_phospho', 'chea3_n', 'kea3_n', 
+        'intermediate_method', 'tumor_validate']
+        for (let i = 0; i < fields.length; i++) {
+            document.forms[0].elements[fields[i]].value = params[i]
+        }
+
     }
 
     function checkFiles(e) {

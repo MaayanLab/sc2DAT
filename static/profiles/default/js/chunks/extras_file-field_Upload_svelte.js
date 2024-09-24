@@ -1033,7 +1033,7 @@ function create_fragment(ctx) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div4, file, 151, 4, 3594);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div5, "class", "col-lg-12 pt-2 pt-lg-0 mx-auto");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div5, file, 150, 2, 3545);
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div6, "class", "row px-2 px-lg-3 pb-4");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div6, "class", "row px-2 px-lg-3 pb-2");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div6, file, 149, 0, 3507);
     },
     l: function claim(nodes) {
