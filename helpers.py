@@ -15,8 +15,10 @@ load_dotenv()
 from Bio import Entrez
 
 MODEL = 'gpt-4o'
-
-client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
+try:
+    client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
+except:
+    client = None
 
 def read_table(filename):
     if filename.endswith('.tsv') or filename.endswith('.tsv.gz') or filename.endswith('.txt') or filename.endswith('.txt.gz'):
@@ -235,15 +237,18 @@ def label_clusters(cluster_enrichments: dict):
             except:
                 pass
         # Get GPT-4 labels
-        
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=[{'role': 'system', 'content': 'You are an assistant to a biologist who has performed enrichment analysis on a set of up-regulated and down-regulated genes for a certain cluster of patient samples. You must determine a consensus label for a given cluster based on the signfigantly enriched terms which relate to biological processes and phenotypes.'},
-                      {'role': 'user', 'content': f"The most significantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the significantly enriched terms are: {', '.join(down_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
-            max_tokens=50,
-            temperature=0.3
-        )
-        cluster_labels[c] = response.choices[0].message.content
+        if client:
+            response = client.chat.completions.create(
+                model=MODEL,
+                messages=[{'role': 'system', 'content': 'You are an assistant to a biologist who has performed enrichment analysis on a set of up-regulated and down-regulated genes for a certain cluster of patient samples. You must determine a consensus label for a given cluster based on the signfigantly enriched terms which relate to biological processes and phenotypes.'},
+                        {'role': 'user', 'content': f"The most significantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the significantly enriched terms are: {', '.join(down_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
+                max_tokens=50,
+                temperature=0.3
+            )
+            cluster_labels[c] = response.choices[0].message.content
+        else:
+            cluster_labels[c] = c
+
     return cluster_labels
 
 def convert_to_string(info_dict: dict):
@@ -265,14 +270,17 @@ def create_results_text(results: dict):
         prompt += f"## {k}\n"
         prompt += results[k] + "\n"
     system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the results without interpretation. You may specifically denote differences between clusters or specific samples/patients.'
-    response = client.chat.completions.create(
-            model=MODEL,
-            messages=[{'role': 'system', 'content': system_prompt},
-                      {'role': 'user', 'content': prompt}],
-            temperature=0.5
-        )
-    text = response.choices[0].message.content
-    return text
+    if client:
+        response = client.chat.completions.create(
+                model=MODEL,
+                messages=[{'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': prompt}],
+                temperature=0.5
+            )
+        text = response.choices[0].message.content
+        return text
+    else:
+        return "No set OpenAI API key set. (set the OPENAI_API_KEY environment variable to receive automatically generated results text)"
 
 def create_results_text_prompt(results, desc):
     """ Inputs:
@@ -281,14 +289,17 @@ def create_results_text_prompt(results, desc):
     """
     prompt = desc + '\n' + str(results)
     system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the results without interpretation. You may specifically denote differences between clusters or specific samples/patients.'
-    response = client.chat.completions.create(
-            model=MODEL,
-            messages=[{'role': 'system', 'content': system_prompt},
-                      {'role': 'user', 'content': prompt}],
-            temperature=0.5
-        )
-    text = response.choices[0].message.content
-    return text
+    if client:
+        response = client.chat.completions.create(
+                model=MODEL,
+                messages=[{'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': prompt}],
+                temperature=0.5
+            )
+        text = response.choices[0].message.content
+        return text
+    else:
+        return "No set OpenAI API key set. (set the OPENAI_API_KEY environment variable to receive automatically generated results text)"
 
 def clean_enrichr_lables(enrichr_labels: dict):
     enrichr_labels_clean = {}    
@@ -320,14 +331,17 @@ def describe_clusters(results: dict):
     """
     prompt = str(results)
     system_prompt = 'You are an assistant to a biologist who has performed enrichment analysis on significant terms for a set of clusters. Each cluster has been analyzed for significant terms in different libraries and directions. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the common themes of the enriched terms from the up and down genes. You may specifically denote differences between clusters or specific samples/patients. When referencing a term please use the full term name (with NO quotes) followed by the adj. pvalue as follows: (term, adj. pvalue = 0.00123)'
-    response = client.chat.completions.create(
-            model=MODEL,
-            messages=[{'role': 'system', 'content': system_prompt},
-                      {'role': 'user', 'content': prompt}],
-            temperature=0.5
-        )
-    text = response.choices[0].message.content
-    return text
+    if client:
+        response = client.chat.completions.create(
+                model=MODEL,
+                messages=[{'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': prompt}],
+                temperature=0.5
+            )
+        text = response.choices[0].message.content
+        return text
+    else:
+        return "No set OpenAI API key set. (set the OPENAI_API_KEY environment variable to receive automatically generated results text)"
     
 def get_co_occurrence_count(terms): # co-occurrence in title or abstract
     Entrez.email = "user@gmail.com"
