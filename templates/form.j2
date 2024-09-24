@@ -54,7 +54,7 @@
                     </div>
                     <button class="btn mb-3"
                         style="background-color:rgba(255, 255, 255, 0); border-style: solid; border-color:#2282a3 ; border-width: 1px; color:#2282a3;"
-                        onclick="loadAllExamplesGBM('GBM')" type="button"> Load All Examples</button>
+                        onclick="loadAllExamplesRun('GBM')" type="button"> Load All Examples</button>
                     <div class="row justify-content-evenly">
                         {% for _field in _fields[3:5] %}
                         <div class="col">
@@ -135,34 +135,34 @@
                 Load examples for any of the 10 CPTAC3 cancer types:
             </div>
             <div class="row justify-content-center" style="margin-right: 20%; margin-left: 20%;">
-                <a class="col cancer-example" onclick="loadAllExamples('BR')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('BR')">
                     <img src="{{ url_for('static', filename='BR.png') }}" style="width: 83px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('CCRCC')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('CCRCC')">
                     <img src="{{ url_for('static', filename='CCRCC.png') }}" style="width: 79px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('CO')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('CO')">
                     <img src="{{ url_for('static', filename='CO.png') }}" style="width: 83px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('GBM')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('GBM')">
                     <img src="{{ url_for('static', filename='GBM.png') }}" style="width: 82px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('HNSCC')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('HNSCC')">
                     <img src="{{ url_for('static', filename='HNSCC.png') }}" style="width: 86px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('LSCC')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('LSCC')">
                     <img src="{{ url_for('static', filename='LSCC.png') }}" style="width: 73px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('LUAD')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('LUAD')">
                     <img src="{{ url_for('static', filename='LUAD.png') }}" style="width: 84px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('OV')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('OV')">
                     <img src="{{ url_for('static', filename='OV.png') }}" style="width: 84px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('PDAC')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('PDAC')">
                     <img src="{{ url_for('static', filename='PDAC.png') }}" style="width: 68px;">
                 </a>
-                <a class="col cancer-example" onclick="loadAllExamples('UCEC')">
+                <a class="col cancer-example" onclick="loadAllExamplesRun('UCEC')">
                     <img src="{{ url_for('static', filename='UCEC.png') }}" style="width: 95px;">
                 </a>
             </div>
@@ -222,7 +222,7 @@
 
     }
 
-    function loadAllExamplesGBM(tumorType) {
+    function loadAllExamplesRun(tumorType) {
         
         const textbtn = document.getElementsByClassName('text-btn ' + tumorType);
         for (let i = 0; i < textbtn.length; i++) {
