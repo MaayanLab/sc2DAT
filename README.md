@@ -10,7 +10,7 @@ To run in development:
 # prepare .env file & review
 cp .env.example .env
 # create and activate python3.8 (or python3.9) virtual environment
-python3.8 -m venv venv
+python3.9 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 # install relevant R dependencies
