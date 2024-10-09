@@ -1,15 +1,6 @@
 {% extends "bootstrap/form.j2" %}
 
 {% block head %}
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QSM2MDFW8W"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-QSM2MDFW8W');
-</script>
 {{ super() }}
 {% endblock %}
 
@@ -26,10 +17,9 @@
                     class="img-fluid float-right">
             </div>
             <div class="col-7 text-center">
-                <h1 style="font-weight: bolder; color: rgb(0, 0, 79);"> MULTIOMICS2TARGETS </h1>
-                <p class="my-0">Upload transcriptomics, proteomics, and/or phosphoproteomics data matrices from a
-                    matching cohort of cancer patients to receive a complete data analysis report that resembles a
-                    research publication.</p>
+                <h1 style="font-weight: bolder; color: rgb(0, 110, 26);"> SC2Targets </h1>
+                <p class="my-0">Upload a single cell RNA-seq matrix or a bulk RNA-seq matrix with and select a
+                    corresponding single cell reference to identify cell-surface targets and L1000 compounds.</p>
             </div>
             <div class="col-1 ml-5 text-center">
                 Executed Reports: <p style="font-weight: 1200; font-size: 1.5rem" id="numruns"></p>
@@ -44,82 +34,17 @@
             <div class="container col-10" style="font-size: 14px !important;">
                 <form method="POST" enctype="multipart/form-data" action="">
 
-                    {{ _fields[0].render() }}
+
                     <div class="row justify-content-evenly">
-                        {% for _field in _fields[1:3] %}
-                        <div class="col">
-                            {{ _field.render() }}
-                        </div>
-                        {% endfor %}
+                        {{ _fields[1].render() }}
                     </div>
-                    <button class="btn mb-3"
-                        style="background-color:rgba(255, 255, 255, 0); border-style: solid; border-color:#2282a3 ; border-width: 1px; color:#2282a3;"
-                        onclick="loadAllExamplesRun('GBM')" type="button"> Load All Examples</button>
-                    <div class="row justify-content-evenly">
-                        {% for _field in _fields[3:5] %}
-                        <div class="col">
-                            {{ _field.render() }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="row justify-content-evenly mb-4">
+                    <div class="row">
+                        {% for _field in _fields[2:] %}
                         <div class="col-4">
-                            {{ _fields[5].render() }}
-                        </div>
-                    </div>
-                    <div class="row justify-content-evenly">
-                        {% for _field in _fields[6:8] %}
-                        <div class="col">
                             {{ _field.render() }}
                         </div>
                         {% endfor %}
                     </div>
-                    <div class="row justify-content-evenly">
-                        {% for _field in _fields[8:10] %}
-                        <div class="col">
-                            {{ _field.render() }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="row justify-content-evenly">
-                        {% for _field in _fields[10:12] %}
-                        <div class="col">
-                            {{ _field.render() }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="row justify-content-evenly">
-                        {% for _field in _fields[12:14] %}
-                        <div class="col">
-                            {{ _field.render() }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="row justify-content-evenly">
-                        <p style="font-weight: 200; font-size: medium;">UMAP Parameters:</p>
-                        {% for _field in _fields[14:17] %}
-                        <div class="col">
-                            {{ _field.render() }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="row justify-content-center">
-                        <div class="col">
-                            {{ _fields[17].render() }}
-                        </div>
-                    </div>
-                    <div class="row justify-content-evenly">
-                        <div class="col">
-                            {{ _fields[18].render() }}
-                        </div>
-                    </div>
-
-                    <div  class="row col-3 mx-auto mt-0 mb-3">
-                        <button type="button" class="reset-button rounded p-2" onclick="resetParams()"> 
-                        Reset Default Parameters
-                        </button>
-                    </div>
-
                     <div class="row">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
@@ -130,41 +55,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-            <div class="row mt-3 mb-2 justify-content-center" style="font-style: italic; font-weight: 200;">
-                Load examples for any of the 10 CPTAC3 cancer types:
-            </div>
-            <div class="row justify-content-center" style="margin-right: 20%; margin-left: 20%;">
-                <a class="col cancer-example" onclick="loadAllExamples('BR')">
-                    <img src="{{ url_for('static', filename='BR.png') }}" style="width: 83px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('CCRCC')">
-                    <img src="{{ url_for('static', filename='CCRCC.png') }}" style="width: 79px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('CO')">
-                    <img src="{{ url_for('static', filename='CO.png') }}" style="width: 83px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('GBM')">
-                    <img src="{{ url_for('static', filename='GBM.png') }}" style="width: 82px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('HNSCC')">
-                    <img src="{{ url_for('static', filename='HNSCC.png') }}" style="width: 86px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('LSCC')">
-                    <img src="{{ url_for('static', filename='LSCC.png') }}" style="width: 73px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('LUAD')">
-                    <img src="{{ url_for('static', filename='LUAD.png') }}" style="width: 84px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('OV')">
-                    <img src="{{ url_for('static', filename='OV.png') }}" style="width: 84px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('PDAC')">
-                    <img src="{{ url_for('static', filename='PDAC.png') }}" style="width: 68px;">
-                </a>
-                <a class="col cancer-example" onclick="loadAllExamples('UCEC')">
-                    <img src="{{ url_for('static', filename='UCEC.png') }}" style="width: 95px;">
-                </a>
             </div>
         </div>
     </div>
@@ -217,13 +107,13 @@
     }
 
     function loadAllExamples(tumorType) {
-        
+
         window.open('https://multiomics2targets.maayanlab.cloud/' + URLmap[tumorType])
 
     }
 
     function loadAllExamplesRun(tumorType) {
-        
+
         const textbtn = document.getElementsByClassName('text-btn ' + tumorType);
         for (let i = 0; i < textbtn.length; i++) {
             textbtn[i].click();
@@ -267,10 +157,10 @@
 
     function resetParams() {
         const params = [15, 0.01, 1, '', 'yes', 'yes', 'yes', 'yes', 0.8, 0.5, 500, 500, 'Protein-Protein Co-expression', []]
-        const fields = ['n_neighbors', 'min_dist', 'resolution', 'cluster_column', 
-        'membrane_screener', 'normalize_to_bg', 'impute_protein_expr', 
-        'impute_phospho_expr', 'percent_rows_protein', 'percent_rows_phospho', 'chea3_n', 'kea3_n', 
-        'intermediate_method', 'tumor_validate']
+        const fields = ['n_neighbors', 'min_dist', 'resolution', 'cluster_column',
+            'membrane_screener', 'normalize_to_bg', 'impute_protein_expr',
+            'impute_phospho_expr', 'percent_rows_protein', 'percent_rows_phospho', 'chea3_n', 'kea3_n',
+            'intermediate_method', 'tumor_validate']
         for (let i = 0; i < fields.length; i++) {
             document.forms[0].elements[fields[i]].value = params[i]
         }
