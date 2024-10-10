@@ -1,1 +1,13 @@
-{% include "fragments/svelte-field.j2" %}
+<div class="row px-4 px-lg-3 pb-4">
+  <div class="col-lg-3 bold text-lg-right my-auto mt-2 mr-0">
+    {{ this.args.label }}:
+  </div>
+  <div class="col-lg-6 pt-10 pt-lg-0">
+    <input
+        name="{{ this.args.name }}"
+        placeholder="{{ this.args.default }}"
+        class="form-control nodecoration tiny"
+        rows = "12"
+    >
+  </div>
+</div>

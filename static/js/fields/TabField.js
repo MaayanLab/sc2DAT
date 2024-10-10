@@ -2067,7 +2067,7 @@ function create_fragment(ctx) {
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div0, "class", "text-center mx-auto");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div0, file, 5, 2, 76);
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "class", "nav flex-row nav-pills nav-justified mx-auto");
-      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "style", "width: 50%");
+      (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "style", "width: 100%");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "aria-orientation", "horiztonal");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.attr_dev)(div1, "role", "tablist");
       (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.add_location)(div1, file, 12, 4, 335);

@@ -892,7 +892,7 @@ function create_fragment(ctx) {
   let p0;
   let t2_value = (
   /*args*/
-  ctx[0].label == "RNA-seq expression" ? "TRANSCRIPTOMICS" : "") + "";
+  ctx[0].label == "RNA-seq expression" ? "" : "") + "";
   let t2;
   let t3;
   let t4_value = (
