@@ -16,3 +16,4 @@ python-dotenv
 networkx
 biopython
 decoupler
+python-slugify

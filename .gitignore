@@ -7,3 +7,5 @@ results
 data
 .env
 process_cptac/out
+temp
+results.zip

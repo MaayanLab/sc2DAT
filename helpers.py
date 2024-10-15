@@ -7,442 +7,323 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import requests
-import json
-import time
-import openai
+import math
+from scipy.stats import norm
+import numpy as np
 from dotenv import load_dotenv
 load_dotenv()
-from Bio import Entrez
+import time
+import json
+from tqdm import tqdm
+import pandas as pd
+from rpy2 import robjects as ro
 
-MODEL = 'gpt-4o'
-try:
-    client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
-except:
-    client = None
-
-def read_table(filename):
-    if filename.endswith('.tsv') or filename.endswith('.tsv.gz') or filename.endswith('.txt') or filename.endswith('.txt.gz'):
-        return pd.read_csv(filename, sep='\t', index_col=0)
-    elif filename.endswith('.csv') or filename.endswith('.csv.gz'):
-        return pd.read_csv(filename, sep=',', index_col=0)
-    elif filename.endswith('.gct') or filename.endswith('.gct.gz'):
-        return pd.read_csv(filename, sep='\t', index_col=0, skiprows=2)
-    else:
-        return pd.read_table(filename, sep=None, engine='python', index_col=0)
-
-def create_download_link(df, title = "Download CSV file: {}", filename = "data.csv"):  
-    df.to_csv(filename)
-    html = "<a href=\"./{}\" target='_blank'>{}</a>".format(filename, title.format(filename))
-    return HTML(html)
-
-def get_chea3_results(gene_set, query_name='', db='Integrated--meanRank'):
-    """ Inputs:
-    gene_set: list[]
-    query_name: str
-    db: ['Integrated--meanRank', 'Integrated--topRank'], ranking method for ChEA3 
-    Return: list[] of TFs by decreasing score (higher match) """ 
-
-    ADDLIST_URL = 'https://maayanlab.cloud/chea3/api/enrich/'
-    payload = {
-        'gene_set': gene_set,
-        'query_name': query_name
-    }
-    
-    # Retrieve response
-    response = requests.post(ADDLIST_URL, data=json.dumps(payload))
-    if not response.ok:
-        raise Exception('Error analyzing gene list')
-    chea = json.loads(response.text)
-
-    # Save nodes
-    ## Lower scores indicate more relevancy to the transcription factor
-    chea_results = pd.DataFrame(chea[db])
-    chea_results = chea_results[['TF', 'Score']].set_index('TF')
-    return chea_results.astype(float)
-
-def get_kea3_results(gene_set, query_name='', db='Integrated--meanRank'):
-    """ Inputs:
-    gene_set: list[]
-    query_name: str
-    db: ['Integrated--meanRank', 'Integrated--topRank'], ranking method for KEA3 
-    Return: list[] of kinases by decreasing score (higher match) """ 
-    
-    ADDLIST_URL = 'https://amp.pharm.mssm.edu/kea3/api/enrich/'
-    payload = {
-        'gene_set': gene_set,
-        'query_name': query_name
-    }
-    
-    # Retrieve response
-    response = requests.post(ADDLIST_URL, data=json.dumps(payload))
-    if not response.ok:
-        raise Exception('Error analyzing gene list')
-    data = json.loads(response.text)
-
-    df = pd.DataFrame([[k['TF'], k['Score']] for k in data[db]], columns=['Kinase','Score'])
-    df = df.set_index('Kinase')
-    return df.astype(float)
-
-def geneshot_set_augment(gene_list, similarity_type='coexpression', n_genes=100):
-    """ Inputs:
-    gene_list: list[]
-    similarity_type: ['generif', 'tagger', 'coexpression', 'enrichr'], resource to do the augmentation
-    n_genes: int, number of the most similar genes to return
-    Return: list[] of augmented genes """
-
-    GENESHOT_URL = 'https://maayanlab.cloud/geneshot/api/associate'
-    payload = {
-        "gene_list": gene_list,
-        "similarity": similarity_type 
-        }
-    
-    # Retrieve response
-    response = requests.post(GENESHOT_URL, json=payload)
-    data = json.loads(response.text)
-  
-    # Return augmented genes
-    geneshot_dataframe = pd.DataFrame.from_dict(data['association'], orient="index").drop(['topGenes', 'topScores'], axis=1).sort_values(by='simScore', ascending=False)
-    geneshot_dataframe = geneshot_dataframe.iloc[:n_genes]
-    return geneshot_dataframe.index.to_list()
-
-def augment_proteomics(gene_list, protein_coexp, n_genes=100):
-    """ Inputs:
-    gene_list: list[]
-    n_genes: int, number of the most similar genes to return
-    Return: list[] of augmented genes """
+def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
+    if type == 'plain':
+        if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csz.gz'):
+            sc_data = pd.read_csv(sc_data_file, index_col=0, compression='gzip' if sc_data_file.endswith('.gz') else None)
+        elif sc_data_file.endswith('.txt') or sc_data_file.endswith('.txt.gz') or sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
+            sc_data = pd.read_csv(sc_data_file, index_col=0, sep='\t', compression='gzip' if sc_data_file.endswith('.gz') else None)
+        else:
+            raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv, .txt)')
         
-    matched_TFs = list(set(gene_list).intersection(set(protein_coexp.index)))
-    if len(matched_TFs) == 0:
-        return [None]*n_genes
-    else:
-        average_similarity = protein_coexp[matched_TFs].mean(axis=1) 
-        expansion = average_similarity.sort_values(ascending=False).head(n_genes).index.to_list()
-    return expansion
-
-def get_g2n_results(geneset, subgraph_size=30, path_length=2):
-    # Inputs: 
-    # 'geneset' : ['gene name'] - needs a list of strings
-    # 'databases' : ['database name'] - needs a list of strings,  
-    # options: iid, bioGRID, STRING, bioPlex 3.0, default - all of them 
-    # 'subgraph_size' : int, - max size of the subgraph you want to produce
-    # 'path_length' : int, number of edges between target proteins 
-
-    payload = {'geneset' : geneset, 'subgraph_size': str(subgraph_size), 'path_length': path_length} 
-
-    # Retrieve response
-    res = requests.post("https://g2nkg.dev.maayanlab.cloud/api/knowledge_graph/ppi_kg", json = payload)
-    results = res.json()
-
-    # Format results
-    nodes_data = {}
-    for i in results:
-        if i["data"]["kind"] == 'Relation':
-            continue
+        if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csz.gz'):
+            sc_metadata = pd.read_csv(sc_metadata_file, index_col=0, compression='gzip' if sc_metadata_file.endswith('.gz') else None)
+        elif sc_data_file.endswith('.txt') or sc_metadata_file.endswith('.txt.gz') or sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
+            sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         else:
-            nodes_data[i["data"]["id"]] = i["data"]
+            raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv, .txt)')
+        
+        adata = sc.AnnData(sc_data.T.values, obs=sc_metadata)
+        adata.var['gene_names'] = sc_data.index.values
+        adata.obs['samples'] = sc_metadata.index.values
+        return adata
     
-    # Return nodes
-    nodes = pd.DataFrame.from_dict(nodes_data, orient="index")
-    return nodes['label'].to_list()
-
-
-
-def enrichr_figure(res_list: list): 
-    all_terms,all_pvalues, all_adjusted_pvalues, all_libraries = res_list
-    # Bar colors
-    bar_color_not_sig = 'lightgrey'
-    bar_color = 'lightblue'
-    edgecolor=None
-    linewidth=0
-    fig, axes = plt.subplots(nrows=len(all_libraries), ncols=1)
-    
-    for i, library_name in enumerate(all_libraries):
-        bar_colors = [bar_color if (x < 0.05) else bar_color_not_sig for x in all_pvalues[i]]
-        sns.barplot(x=np.log10(all_pvalues[i])*-1, y=all_terms[i],ax=axes[i], palette=bar_colors, edgecolor=edgecolor, linewidth=1)
-        axes[i].axes.get_yaxis().set_visible(False)
-        axes[i].set_title(library_name.replace('_',' '),fontsize=30)
-        if i == len(all_libraries)-1:
-            axes[i].set_xlabel('-Log10(p-value)',fontsize=30)
-        axes[i].xaxis.set_major_locator(MaxNLocator(integer=True))
-        axes[i].tick_params(axis='x', which='major', labelsize=20)
-        if max(np.log10(all_pvalues[i])*-1)<1:
-            axes[i].xaxis.set_ticks(np.arange(0, max(np.log10(all_pvalues[i])*-1), 0.1))
-        for ii,annot in enumerate(all_terms[i]):
-            if all_adjusted_pvalues[i][ii] < 0.05:
-                annot = '  *'.join([annot, str(str(np.format_float_scientific(all_pvalues[i][ii],precision=2)))]) 
-            else:
-                annot = '  '.join([annot, str(str(np.format_float_scientific(all_pvalues[i][ii],precision=2)))])
-
-            title_start= max(axes[i].axes.get_xlim())/200
-            axes[i].text(title_start,ii,annot,ha='left',wrap = True, fontsize = 30)
-    plt.subplots_adjust(bottom=-4.8, right = 4.7,wspace = 0.03,hspace = 0.2)
-    plt.show()
-    return fig
-
-
-def enrich_libraries(user_list_id: str, all_libraries: list = ['WikiPathway_2023_Human', 'GO_Biological_Process_2023', 'MGI_Mammalian_Phenotype_Level_4_2021']):
-    all_terms = []
-    all_pvalues =[] 
-    all_adjusted_pvalues = []
-    library_success = []
-    all_sig_results = []
-    
-    for library_name in all_libraries: 
-        ENRICHR_URL = 'http://amp.pharm.mssm.edu/Enrichr/enrich'
-        query_string = '?userListId=%s&backgroundType=%s'
-        gene_set_library = library_name
-        response = requests.get(
-            ENRICHR_URL + query_string % (user_list_id, gene_set_library)
-         )
-        if not response.ok:
-            raise Exception('Error fetching enrichment results')
-        try:
-            data = json.loads(response.text)
-            results_df  = pd.DataFrame(data[library_name][0:5])
-            results_df_full  = pd.DataFrame(data[library_name])
-            results_df_full.columns = ['Rank in Lib', 'Term', 'P-value', 'Odds Ratio', 'Combined Score', 'Overlapping genes', 'Adjusted p-value', 'Old p-value', 'Old adjusted p-value']
-            results_df_full = results_df_full[results_df_full['P-value'] < 0.05][['Rank in Lib', 'Term', 'P-value', 'Adjusted p-value', 'Combined Score', 'Overlapping genes']]
-            all_sig_results.append(results_df_full)
-            all_terms.append(list(results_df[1]))
-            all_pvalues.append(list(results_df[2]))
-            all_adjusted_pvalues.append(list(results_df[6]))
-            library_success.append(library_name)
-        except Exception as e:
-            print('Error for ' + library_name + ' library:', e)
-        time.sleep(1)
-
-    return [all_terms, all_pvalues, all_adjusted_pvalues, library_success], all_sig_results
-
-
-def label_clusters(cluster_enrichments: dict):
-    """ Inputs:
-    cluster_enrichments: dict, dictionary of cluster enrichments
-    Return: dict, dictionary of labeled clusters (consensus with GPT-4) """
-    
-    cluster_labels = {}
-
-    for c in cluster_enrichments:
-        # Get top 5 enrichments
-        up_enrichments = []
-        down_enrichments = []
-        for i in range(3): # libraries
-            try:
-                terms = cluster_enrichments[c]['up'][0][i]
-                p_values = cluster_enrichments[c]['up'][1][i]
-                up_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
-            except:
-                pass
-            try:
-                terms = cluster_enrichments[c]['down'][0][i]
-                p_values = cluster_enrichments[c]['down'][1][i]
-                down_enrichments.extend([terms[j] for j in range(len(terms)) if p_values[j] < 0.01])
-            except:
-                pass
-        # Get GPT-4 labels
-        if client:
-            response = client.chat.completions.create(
-                model=MODEL,
-                messages=[{'role': 'system', 'content': 'You are an assistant to a biologist who has performed enrichment analysis on a set of up-regulated and down-regulated genes for a certain cluster of patient samples. You must determine a consensus label for a given cluster based on the signfigantly enriched terms which relate to biological processes and phenotypes.'},
-                        {'role': 'user', 'content': f"The most significantly enriched terms for the upregulated genes of cluster {str(c)} are: {', '.join(up_enrichments)}. For the down genes the significantly enriched terms are: {', '.join(down_enrichments)}. Please provide a consensus label for this cluster with no other reasoning. The label should be at maximum 5 words in length."}],
-                max_tokens=50,
-                temperature=0.3
-            )
-            cluster_labels[c] = response.choices[0].message.content
-        else:
-            cluster_labels[c] = c
-
-    return cluster_labels
-
-def convert_to_string(info_dict: dict):
-    res_str = ""
-    for key in info_dict:
-        if isinstance(info_dict[key], list):
-            res_str += f"{key}: {','.join(info_dict[key])}\n"
-        elif isinstance(info_dict[key], dict): res_str += convert_to_string(info_dict[key])
-        else: res_str += f"{key}: {info_dict[key]}\n" 
-    return res_str
-
-def create_results_text(results: dict):
-    """ Inputs:
-    results: dict, dictionary of results -- keys represent 'section' and values are relevant data to be included in the discussion
-    Return: str, discussion section in markdown
-    """
-    prompt = ""
-    for k in results:
-        prompt += f"## {k}\n"
-        prompt += results[k] + "\n"
-    system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the results without interpretation. You may specifically denote differences between clusters or specific samples/patients.'
-    if client:
-        response = client.chat.completions.create(
-                model=MODEL,
-                messages=[{'role': 'system', 'content': system_prompt},
-                        {'role': 'user', 'content': prompt}],
-                temperature=0.5
-            )
-        text = response.choices[0].message.content
-        return text
+def read_bulk_data(filename: str):
+    if filename.endswith('.csv') or filename.endswith('.csz.gz'):
+        return pd.read_csv(filename, index_col=0, compression='gzip' if filename.endswith('.gz') else None)
+    elif filename.endswith('.txt') or filename.endswith('.txt.gz') or filename.endswith('.tsv') or filename.endswith('.tsv.gz'):
+        return pd.read_csv(filename, index_col=0, sep='\t', compression='gzip' if filename.endswith('.gz') else None)
     else:
-        return "No set OpenAI API key set. (set the OPENAI_API_KEY environment variable to receive automatically generated results text)"
+        raise ValueError('File type for bulk data not supported (.csv, .tsv, .txt)')
 
-def create_results_text_prompt(results, desc):
-    """ Inputs:
-    results: dict, dictionary of results -- keys represent 'section' and values are relevant data to be included in the discussion
-    Return: str, discussion section in markdown
+def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output_dir: str, convert_dict: dict):
     """
-    prompt = desc + '\n' + str(results)
-    system_prompt = 'You are an assistant to a biologist who has performed various analysis on gene, protein and phosphoprotein data related to tumor expression. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the results without interpretation. You may specifically denote differences between clusters or specific samples/patients.'
-    if client:
-        response = client.chat.completions.create(
-                model=MODEL,
-                messages=[{'role': 'system', 'content': system_prompt},
-                        {'role': 'user', 'content': prompt}],
-                temperature=0.5
-            )
-        text = response.choices[0].message.content
-        return text
-    else:
-        return "No set OpenAI API key set. (set the OPENAI_API_KEY environment variable to receive automatically generated results text)"
+    Perform deconvolution using InstaPrism and save results.
 
-def clean_enrichr_lables(enrichr_labels: dict):
-    enrichr_labels_clean = {}    
-    for clus_num, enrichments in enrichr_labels.items():
-            cluster_name = f'Cluster {clus_num}'
-            enrichr_labels_clean[cluster_name] = {}
-            
-            for dir, values in enrichments.items():
-                terms = values[0]
-                pvals = values[1]
-                adjpvals = values[2]
-                libraries = values[3]
-                for i, lib in enumerate(libraries):
-                    if lib not in enrichr_labels_clean[cluster_name]:
-                        enrichr_labels_clean[cluster_name][lib] = {}
-                    if dir not in enrichr_labels_clean[cluster_name][lib]:
-                        enrichr_labels_clean[cluster_name][lib][dir] = []
-                    lib_terms = terms[i]
-                    lib_adjpvals = adjpvals[i]
-                    for j, term in enumerate(lib_terms):
-                        if lib_adjpvals[j] < 0.05:
-                            enrichr_labels_clean[cluster_name][lib][dir].append((term, "{:.4g}".format(lib_adjpvals[j])))
-    return enrichr_labels_clean
+    Parameters:
+    - ref_obj_path: str, path to the reference RDS file.
+    - bulk_expr_path: str, path to the bulk expression file.
+    - output_dir: str, directory to save output files.
+    - convert_dict: dict, mapping of gene symbols to Ensembl IDs.
 
-def describe_clusters(results: dict):
-    """ Inputs:
-    results: dict, dictionary of results -- keys represent clusters and values are libraries and direction of signficant labels to be included in the discussion
-    Return: str, discussion section in markdown
+    Returns:
+    - estimated_frac: pd.DataFrame, cell type fractions.
     """
-    prompt = str(results)
-    system_prompt = 'You are an assistant to a biologist who has performed enrichment analysis on significant terms for a set of clusters. Each cluster has been analyzed for significant terms in different libraries and directions. A certain result or set of results will be provided with a section header that describes the analysis. Do not include the headers in your response. Write a discussion of the results that mainly describes the common themes of the enriched terms from the up and down genes. You may specifically denote differences between clusters or specific samples/patients. When referencing a term please use the full term name (with NO quotes) followed by the adj. pvalue as follows: (term, adj. pvalue = 0.00123)'
-    if client:
-        response = client.chat.completions.create(
-                model=MODEL,
-                messages=[{'role': 'system', 'content': system_prompt},
-                        {'role': 'user', 'content': prompt}],
-                temperature=0.5
-            )
-        text = response.choices[0].message.content
-        return text
+    # Example conversion dictionary (you should populate this with actual mappings)
+    os.makedirs(name='temp', exist_ok=True)
+    # Step 1: Read the bulk expression data and convert gene symbols to Ensembl IDs
+    bulk_expr.index = bulk_expr.index.map(lambda x: convert_dict.get(x, x))  # Convert gene symbols
+    print(ref_url)
+    response = requests.get(ref_url)
+    print(response.status_code)
+    if response.status_code == 200:
+        # Write the content to a file
+        with open('temp/ref_obj.rds', 'wb') as file:
+            file.write(response.content)
     else:
-        return "No set OpenAI API key set. (set the OPENAI_API_KEY environment variable to receive automatically generated results text)"
+        print('Failed to retrieve reference object.', response.status_code)
     
-def get_co_occurrence_count(terms): # co-occurrence in title or abstract
-    Entrez.email = "user@gmail.com"
-    all_terms_query = ' AND '.join([f'("{term}"[Title/Abstract])' for term in terms])
-    for i in range(10):
-        try:
-            handle = Entrez.esearch(db="pubmed", term=all_terms_query)
-            return int(Entrez.read(handle)['Count'])
-        except:
-            time.sleep(1)
-    return 'Err'
+    # Step 2: Write out the modified bulk expression DataFrame
+    bulk_expr_ensembl_path = f'temp/bulk_expr_ensembl.tsv'
+    bulk_expr = bulk_expr.loc[~bulk_expr.index.duplicated(keep='first')]
+    bulk_expr.to_csv(bulk_expr_ensembl_path, sep='\t')
 
-def create_annotated_clustermap(data, meta_df, leiden_df, default_meta_cols, cbar_label = 'Mean Rank', ylabel='Transcription Factors', xlabel='Samples', yticklabels=False):
-    warmcool = cm.get_cmap('coolwarm').reversed()
-    data = data[list(set(leiden_df.index).intersection(data.columns))]
-    meta_df = meta_df.loc[list(set(data.columns.values).intersection(meta_df.index))]
-    col_colors = {}
-    clusters_pal = sns.color_palette('tab20', len(leiden_df['cluster'].unique()))
-    clusters_lut = dict(zip(sorted(leiden_df['cluster'].unique()), clusters_pal))
-    sample_clusters = data.columns.map(lambda s: clusters_lut[leiden_df.loc[s, 'cluster']])
-    col_colors['Cluster'] = list(sample_clusters)
-    meta_luts = {'Cluster': clusters_lut}
-    meta_range_luts = {}
-    cms = ['coolwarm', 'RdPu', 'Greens', 'Greys']
-    if len(set(['Sex', 'Tumor_Size_cm', 'Stage', 'Tobacco_smoking_history']).intersection(list(meta_df.columns.values))) == 4:
-        for i, col in enumerate(default_meta_cols):
-            try:
-                clusters_pal = sns.color_palette('viridis', as_cmap=True)
-                norm = plt.Normalize(vmin=np.min(meta_df[col].astype(float)), vmax=np.max(meta_df[col].astype(float)))
-                if np.isnan(norm.vmin) or np.isnan(norm.vmax):
-                    continue
-                clusters_lut = {h: clusters_pal(norm(h)) for h in meta_df[col].astype(float)}
-                meta_range_luts[col] = clusters_lut
-                attr_colors = []
-                for s in data.columns:
-                    if s in meta_df.index and not pd.isna(meta_df.loc[s][col]):
-                        attr_colors.append(clusters_lut[float(meta_df.loc[s][col])])
-                    else:
-                        attr_colors.append((1, 1, 1, 1))
-                col_colors[col] = attr_colors
-            except:
-                clusters_pal = sns.color_palette(cms[i], len(meta_df[col].unique()))
-                clusters_lut = dict(zip(sorted(meta_df[col].dropna().unique()), clusters_pal))
-                meta_luts[col] = clusters_lut
-                attr_colors = []
-                for s in data.columns:
-                    if s in meta_df.index:
-                        if not isinstance(meta_df.loc[s][col], str) or pd.isna(meta_df.loc[s][col]):
-                            attr_colors.append((1, 1, 1, 1))
-                        else:
-                            attr_colors.append(clusters_lut[meta_df.loc[s][col]])
-                    else:
-                        attr_colors.append((1, 1, 1, 1))
-                col_colors[col] = attr_colors
-    col_colors = pd.DataFrame(col_colors, index=data.columns)
-    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=yticklabels, cbar_kws={'label': cbar_label}, col_colors=col_colors)
-    ax = g.ax_heatmap
-    ax.set_ylabel(ylabel)
-    ax.set_xlabel(xlabel)
+    # Step 3: Create the R code string
+    r_code = f"""
+    library(InstaPrism)
 
-    # Create the legends in the new figure
-    n = len(meta_luts)
-    total_width = 0.8  # Total width available for all legends
-    spacing = 0.02  # Spacing between legends
-    legend_width = (total_width - (n - 1) * spacing) / n  # Width of each legend
-    for i, attr in enumerate(meta_luts):
-        left = 0.1 + i * (legend_width + spacing)
-        ax_legend = g.figure.add_axes([left, 0.9, legend_width, 0.1])  # Adjust these values as needed
-        ax_legend.axis('off')
-        legend_elements = [plt.Line2D([0], [0], color=meta_luts[attr][label], label=label, linewidth=5) for label in meta_luts[attr].keys()]
-        ax_legend.legend(handles=legend_elements, title=attr, framealpha=1.0)  # Set framealpha to 1.0
-    for attr in meta_range_luts:
-        ax_legend = g.figure.add_axes([.85, .75, 0.1, 0.1])
-        ax_legend.axis('off')
-        norm = plt.Normalize(vmin=np.min(meta_df[attr].astype(float)), vmax=np.max(meta_df[attr].astype(float)))
-        sm = plt.cm.ScalarMappable(cmap='viridis', norm=norm)
-        sm.set_array([])
-        cbar = plt.colorbar(sm, ax=ax_legend, orientation='vertical')
-        cbar.set_label(attr)
-    return g
+    # Read the reference object
+    print('reading reference object')
+    ref_obj <- readRDS('temp/ref_obj.rds')
 
-def create_clustermap(data, ylabel, cbar_label = 'Mean Rank', xlabel = 'Samples', yticklabels=False):
-    warmcool = cm.get_cmap('coolwarm').reversed()
-    g = sns.clustermap(data.astype(float), cmap=warmcool, xticklabels=False, yticklabels=yticklabels, cbar_kws={'label': cbar_label})
-    ax = g.ax_heatmap
-    ax.set_ylabel(ylabel)
-    ax.set_xlabel(xlabel)
-    return g
+    # Read the bulk expression data
+    print('reading bulk expression')
+    bulk_expr <- read.csv('{bulk_expr_ensembl_path}', sep='\\t', row.names=1)
 
-def clustergrammer_link(df: pd.DataFrame, filename: str):
-    if df.shape[0] * df.shape[1] > 500000:
-        return None
+    # Print diagnostic information
+    cat("Bulk expression dimensions:", dim(bulk_expr), "\\n")
+    cat("Reference object class:", class(ref_obj), "\\n")
+
+    # Perform deconvolution
+    deconv_res <- InstaPrism::InstaPrism(bulk_Expr=bulk_expr, refPhi_cs=ref_obj)
+
+    # Get estimated fractions
+    estimated_frac <- t(deconv_res@Post.ini.ct@theta)
+
+    # Save estimated fractions
+    write.csv(estimated_frac, file='{output_dir}/estimated_frac.csv', row.names=TRUE)
+
+    # Get Z array and save for each cell type
+    Z <- get_Z_array(deconv_res)
+    cell_types <- dimnames(Z)[[3]]  # Get cell type names
+
+    for (cell_type in cell_types) {{
+        DCT_Z <- Z[, , cell_type]
+        write.csv(DCT_Z, file=paste0('{output_dir}/', gsub("/", "", cell_type), '_Z.csv'), row.names=TRUE)
+    }}
+
+    # Return estimated fractions
+    """
+
+    # Step 4: Execute the R code
     try:
-        df.to_csv(f'results/{filename}.tsv', sep='\t')
-        upload_url = 'http://amp.pharm.mssm.edu/clustergrammer/matrix_upload/'
-
-        r = requests.post(upload_url, files={'file': open(f'results/{filename}.tsv', 'rb')})
-        link = r.text
-        return link
+        ro.r(r_code)  # Execute the R code and get estimated fractions
     except Exception as e:
-        print('Error uploading to Clustergrammer:', e)
-        return None
+        print(f"Error during execution: {str(e)}")
+        raise
+    
+    estimated_frac_df = pd.read_csv(f'{output_dir}/estimated_frac.csv', index_col=0)
+    cell_type_dfs = {}
+    for f in os.listdir(output_dir):
+        if f.endswith('_Z.csv'):
+            cell_type_dfs[f[:-4]] = pd.read_csv(f'{output_dir}/{f}', index_col=0)
+    return estimated_frac_df, cell_type_dfs
+
+import scanpy as sc
+import decoupler as dc
+def normalize_sc_data(adata, n_neighbors, min_dist, resolution):
+    sc.pp.filter_cells(adata, min_genes=200)
+    sc.pp.filter_genes(adata, min_cells=3)
+
+    # Annotate the group of mitochondrial genes as 'mt'
+    adata.var['mt'] = adata.var_names.str.startswith('MT-')
+    sc.pp.calculate_qc_metrics(adata, qc_vars=['mt'], percent_top=None, log1p=False, inplace=True)
+
+    # Filter cells following standard QC criteria.
+    adata = adata[adata.obs.n_genes_by_counts < 2500, :]
+    adata = adata[adata.obs.pct_counts_mt < 5, :]
+
+    # Normalize the data
+    sc.pp.normalize_total(adata, target_sum=1e4)
+    sc.pp.log1p(adata)
+    adata.layers['log_norm'] = adata.X.copy()
+    sc.pp.highly_variable_genes(adata, min_mean=0.0125, max_mean=3, min_disp=0.5)
+    sc.pp.regress_out(adata, ['total_counts', 'pct_counts_mt'])
+    sc.pp.scale(adata, max_value=10)
+    sc.tl.pca(adata, svd_solver='arpack')
+    dc.swap_layer(adata, 'log_norm', X_layer_key=None, inplace=True)
+    sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=40)
+    sc.tl.umap(adata, min_dist=min_dist)
+    sc.tl.leiden(adata, resolution=resolution)
+    return adata
+
+
+def mannwhitney3(n1, n2, ranksum):
+	meanRankExpected = (n1*n2)/2
+	sigma = math.sqrt(n1)*math.sqrt(n2/12)*math.sqrt(n1+n2+1)
+	U = ranksum - n1*(n1+1)/2
+	z = (U - meanRankExpected)/sigma
+	pvals = np.minimum(norm.cdf(z), norm.sf(z))*2
+	return z, pvals
+
+
+
+OUT_DIR = 'out/'
+MATRIX_DIR = "data/"
+
+metadata_api = "https://maayanlab.cloud/sigcom-lincs/metadata-api"
+data_api = "https://maayanlab.cloud/sigcom-lincs/data-api/api/v1"
+
+datasets = {
+	'l1000_shRNA': '8f1ff550-ece8-591d-a213-2763f854c008',
+	'l1000_oe': 'ef9389a8-53d3-50db-90cc-57e7d150b76c',
+	'l1000_cp': '54198d6e-fe17-5ef8-91ac-02b425761653',
+	'l1000_xpr': '96c7b8c5-1eca-5764-88e4-e4ccaee6603f',
+	'l1000_mean_xpr': '98c6a1ef-e3b7-5a96-9913-480acf78a577',
+	'l1000_lig': 'e24989ba-5258-511c-9c6a-00634f74857b',
+	'l1000_mean_cp': '42cd56da-0ad8-5dad-b27c-fe1d135401b2',
+	'l1000_aby': 'b759a653-0877-549a-a76a-3a8914b73106',
+	'l1000_siRNA': 'b953025a-4356-5cc8-b6e3-dcf2f4f85420'
+}
+
+meta_columns = ["pert_name", "pert_dose", "pert_time"]
+set_columns = ['zscore', 'p-value', 'type']
+up_down_columns = ['z-up', 'p-up', 'z-down', 'p-down', 'z-sum', 'type']
+
+def get_genes_metadata():
+	print("Getting genes metadata")
+	if not os.path.isfile("data/genes_meta.json"):
+		if not os.path.exists('data/'):
+			os.makedirs('data/')
+		print("Fetching signature metadata...")
+		url = "https://s3.dev.maayanlab.cloud/sigcom-lincs/ranker/genes_meta.json"
+		res = requests.get(url)
+		with open("data/genes_meta.json", "w") as o:
+			o.write(json.dumps(res.json()))
+		return res.json()
+	else:
+		with open("data/genes_meta.json") as o:
+			return json.loads(o.read())
+
+
+def get_metadata():
+	if not os.path.isfile("data/signatures_meta.json"):
+		if not os.path.exists('data/'):
+			os.makedirs('data/')
+		print("Fetching signature metadata...")
+		url = "https://s3.dev.maayanlab.cloud/sigcom-lincs/ranker/signatures_meta.json"
+		res = requests.get(url)
+		with open("data/signatures_meta.json", "w") as o:
+			o.write(json.dumps(res.json()))
+		return res.json()
+	else:
+		with open("data/signatures_meta.json") as o:
+			return json.loads(o.read())
+
+
+metadata_api = "https://maayanlab.cloud/sigcom-lincs/metadata-api"
+data_api = "https://maayanlab.cloud/sigcom-lincs/data-api/api/v1"
+
+datasets = {
+	'l1000_shRNA': '8f1ff550-ece8-591d-a213-2763f854c008',
+	'l1000_oe': 'ef9389a8-53d3-50db-90cc-57e7d150b76c',
+	'l1000_cp': '54198d6e-fe17-5ef8-91ac-02b425761653',
+	'l1000_xpr': '96c7b8c5-1eca-5764-88e4-e4ccaee6603f',
+	'l1000_mean_xpr': '98c6a1ef-e3b7-5a96-9913-480acf78a577',
+	'l1000_lig': 'e24989ba-5258-511c-9c6a-00634f74857b',
+	'l1000_mean_cp': '42cd56da-0ad8-5dad-b27c-fe1d135401b2',
+	'l1000_aby': 'b759a653-0877-549a-a76a-3a8914b73106',
+	'l1000_siRNA': 'b953025a-4356-5cc8-b6e3-dcf2f4f85420'
+}
+
+
+def convert_entities(genes, genes_meta=None):
+	if not genes_meta:
+		payload = {
+			"filter": {
+				"where": {
+					"meta.symbol": {"inq": genes}
+				},
+				"fields": ["id"]
+			}
+		}
+		res = requests.post(metadata_api + "/entities/find", json=payload)
+		if res.ok:
+			return [i["id"] for i in res.json()]
+		else:
+			print(res.text)
+	else:
+		return [genes_meta[i] for i in genes if i in genes_meta]
+
+def get_sigcom_link(input):
+	if 'entities' in input:
+		input['entities'] = convert_entities(input['entities'])
+	if 'up_entities' in input:
+		input['up_entities'] = convert_entities(input['up_entities'])
+	if 'down_entities' in input and 'up_entities' in input:
+		input['down_entities'] = convert_entities(input['down_entities'])
+	payload = {
+		"meta": {
+			**input,
+			"$validator": "/dcic/signature-commons-schema/v6/meta/user_input/user_input.json"
+		},
+		"type": "signatures"
+	}
+	res = requests.post(metadata_api + "/user_input", json=payload)
+	if res.ok:
+		uid = res.json()["id"]
+		endpoint = "Set" if "entities" in input else "UpDown"
+		link = "https://maayanlab.cloud/sigcom-lincs/#/SignatureSearch/%s/%s"%(endpoint, uid)
+		return input.get('description', ''), link
+	else: 
+		print(res.text)
+	# print("%s: %s"%(input.get('description', ''), link))
+
+def signature_search_online(gmt, signatures, dataset, completed=[]):
+	print("Performing Signature Search...")
+	limit = 5000
+	sig_ids = [i for i in signatures.keys() if i not in completed]
+	if len(completed):
+		print("Found %d completed signatures. Continuing..."%len(completed))
+	for start in tqdm(range(0, len(sig_ids), limit)):
+		sigs = sig_ids[start:start+limit]
+		for k,input in gmt.items():
+			inp = {}
+			for key, val in input.items():
+				inp[key] = val
+			payload = {
+				"database": dataset,
+				"signatures": sigs,
+				"limit": len(sigs),
+				**inp,
+			}
+			endpoint = "/enrich/rank" if "entities" in input else "/enrich/ranktwosided"
+			for i in range(5):
+				res = requests.post(data_api + endpoint, json=payload)
+				if res.ok:
+					r = res.json()
+					results = r["results"]
+					with open(OUT_DIR + "signature_search/%s.tsv"%k, "a") as o:
+						csv_writer = csv.writer(o, delimiter="\t")
+						for i in results:
+							uid = i["uuid"]
+							s = signatures[uid]
+							meta = [s[field] for field in meta_columns]
+							score_columns = set_columns if "entities" in input else up_down_columns
+							scores = [i[field] for field in score_columns]
+							csv_writer.writerow([uid, *meta, *scores])
+					time.sleep(0.2)
+					break
+				else:
+					time.sleep(i+0.2)
+			else:
+				raise Exception(res.text)	
+	
+
+
+
+
+
+
+
