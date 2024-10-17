@@ -8,4 +8,4 @@ data
 .env
 process_cptac/out
 temp
-results.zip
+deconvolution_res.zip

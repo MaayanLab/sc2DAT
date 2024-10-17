@@ -169,22 +169,13 @@ def mannwhitney3(n1, n2, ranksum):
 
 
 
-OUT_DIR = 'out/'
-MATRIX_DIR = "data/"
-
 metadata_api = "https://maayanlab.cloud/sigcom-lincs/metadata-api"
 data_api = "https://maayanlab.cloud/sigcom-lincs/data-api/api/v1"
 
-datasets = {
-	'l1000_shRNA': '8f1ff550-ece8-591d-a213-2763f854c008',
-	'l1000_oe': 'ef9389a8-53d3-50db-90cc-57e7d150b76c',
-	'l1000_cp': '54198d6e-fe17-5ef8-91ac-02b425761653',
-	'l1000_xpr': '96c7b8c5-1eca-5764-88e4-e4ccaee6603f',
-	'l1000_mean_xpr': '98c6a1ef-e3b7-5a96-9913-480acf78a577',
-	'l1000_lig': 'e24989ba-5258-511c-9c6a-00634f74857b',
-	'l1000_mean_cp': '42cd56da-0ad8-5dad-b27c-fe1d135401b2',
-	'l1000_aby': 'b759a653-0877-549a-a76a-3a8914b73106',
-	'l1000_siRNA': 'b953025a-4356-5cc8-b6e3-dcf2f4f85420'
+
+input_gene_set = {
+    "up_entities": ["TARBP1", "APP", "RAP1GAP", "UFM1", "DNAJA3", "PCBD1", "CSRP1"],
+    "down_entities": ["CEBPA", "STAT5B", "DSE", "EIF4EBP1", "CARD8", "HLA-DMA", "SERPINE1"]
 }
 
 meta_columns = ["pert_name", "pert_dose", "pert_time"]
@@ -239,6 +230,7 @@ datasets = {
 
 
 def convert_entities(genes, genes_meta=None):
+	metadata_api = "https://maayanlab.cloud/sigcom-lincs/metadata-api"
 	if not genes_meta:
 		payload = {
 			"filter": {
@@ -256,13 +248,14 @@ def convert_entities(genes, genes_meta=None):
 	else:
 		return [genes_meta[i] for i in genes if i in genes_meta]
 
-def get_sigcom_link(input):
-	if 'entities' in input:
-		input['entities'] = convert_entities(input['entities'])
-	if 'up_entities' in input:
-		input['up_entities'] = convert_entities(input['up_entities'])
-	if 'down_entities' in input and 'up_entities' in input:
-		input['down_entities'] = convert_entities(input['down_entities'])
+def get_sigcom_link(input, convert=False):
+	if convert:
+		if 'entities' in input:
+			input['entities'] = convert_entities(input['entities'])
+		if 'up_entities' in input:
+			input['up_entities'] = convert_entities(input['up_entities'])
+		if 'down_entities' in input and 'up_entities' in input:
+			input['down_entities'] = convert_entities(input['down_entities'])
 	payload = {
 		"meta": {
 			**input,
@@ -280,46 +273,65 @@ def get_sigcom_link(input):
 		print(res.text)
 	# print("%s: %s"%(input.get('description', ''), link))
 
-def signature_search_online(gmt, signatures, dataset, completed=[]):
-	print("Performing Signature Search...")
-	limit = 5000
-	sig_ids = [i for i in signatures.keys() if i not in completed]
-	if len(completed):
-		print("Found %d completed signatures. Continuing..."%len(completed))
-	for start in tqdm(range(0, len(sig_ids), limit)):
-		sigs = sig_ids[start:start+limit]
-		for k,input in gmt.items():
-			inp = {}
-			for key, val in input.items():
-				inp[key] = val
-			payload = {
-				"database": dataset,
-				"signatures": sigs,
-				"limit": len(sigs),
-				**inp,
+
+def get_sigcom_data(input: dict, database: str, enrichment_id: str, convert=False):
+	DATA_API = "https://maayanlab.cloud/sigcom-lincs/data-api/api/v1/"
+	METADATA_API = "https://maayanlab.cloud/sigcom-lincs/metadata-api/"
+
+	if convert:
+		if 'entities' in input:
+			input['entities'] = convert_entities(input['entities'])
+		if 'up_entities' in input:
+			input['up_entities'] = convert_entities(input['up_entities'])
+		if 'down_entities' in input and 'up_entities' in input:
+			input['down_entities'] = convert_entities(input['down_entities'])
+
+	query = {
+		**input,
+		"limit": 10,
+		"database": database,
+		"enrichment_id": enrichment_id
+	}
+
+	res = requests.post(DATA_API + "enrich/ranktwosided", json=query)
+	results = res.json()
+
+	# Optional, multiply z-down and direction-down with -1
+	for i in results["results"]:
+		i["z-down"] = -i["z-down"]
+		i["direction-down"] = -i["direction-down"]
+
+	sigids = {i["uuid"]: i for i in results["results"]}
+
+	payload = {
+		"filter": {
+			"where": {
+				"id": {
+					"inq": list(sigids.keys())
+				}
 			}
-			endpoint = "/enrich/rank" if "entities" in input else "/enrich/ranktwosided"
-			for i in range(5):
-				res = requests.post(data_api + endpoint, json=payload)
-				if res.ok:
-					r = res.json()
-					results = r["results"]
-					with open(OUT_DIR + "signature_search/%s.tsv"%k, "a") as o:
-						csv_writer = csv.writer(o, delimiter="\t")
-						for i in results:
-							uid = i["uuid"]
-							s = signatures[uid]
-							meta = [s[field] for field in meta_columns]
-							score_columns = set_columns if "entities" in input else up_down_columns
-							scores = [i[field] for field in score_columns]
-							csv_writer.writerow([uid, *meta, *scores])
-					time.sleep(0.2)
-					break
-				else:
-					time.sleep(i+0.2)
-			else:
-				raise Exception(res.text)	
-	
+		}
+	}
+
+	res = requests.post(METADATA_API + "signatures/find", json=payload)
+	signatures = res.json()
+
+	## Merge the scores and the metadata
+	for sig in signatures:
+		uid = sig["id"]
+		scores = sigids[uid]
+		scores.pop("uuid")
+		sig["scores"] = scores
+	bar_chat_data = []
+	for sig in signatures:
+		if sig["scores"]["type"] == "reversers":
+			name = f"{sig['meta']['pert_name']} {sig['meta']['pert_type']}"
+			bar_chat_data.append([name, abs(sig["scores"]["z-sum"])])
+
+	sigs_df = pd.DataFrame(bar_chat_data, columns=["name", "abs(Z-sum)"]).sort_values("abs(Z-sum)", ascending=False)[:10]
+	return sigs_df
+		
+		
 
 
 
