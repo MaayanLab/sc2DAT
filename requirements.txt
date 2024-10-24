@@ -17,3 +17,5 @@ networkx
 biopython
 decoupler
 python-slugify
+harmonypy
+scikit-image

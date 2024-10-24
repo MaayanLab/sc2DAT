@@ -9,3 +9,4 @@ libxkbcommon0
 libcups2
 libxdamage1
 libasound2
+build-essential

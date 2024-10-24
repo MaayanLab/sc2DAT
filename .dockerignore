@@ -9,3 +9,5 @@ venv
 figures
 .env
 *.DS_store
+temp
+deconvolution_res.zip

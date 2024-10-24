@@ -8,15 +8,39 @@ import numpy as np
 import seaborn as sns
 import requests
 import math
+import anndata
 from scipy.stats import norm
+import scipy.stats
+from maayanlab_bioinformatics.normalization import log2_normalize
 import numpy as np
-from dotenv import load_dotenv
-load_dotenv()
-import time
 import json
-from tqdm import tqdm
 import pandas as pd
 from rpy2 import robjects as ro
+from dotenv import load_dotenv
+load_dotenv()
+
+def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
+    
+    adata = anndata.read_mtx(mtx_filename).T
+    with open(barcodes_filename, "r") as f:
+        cells = f.readlines()
+        cells = [x.strip() for x in cells]
+    genes = pd.read_csv(
+        gene_filename,
+        header=None,
+        sep='\t',
+    )
+    
+    adata.var['gene_ids'] = genes.iloc[:, 0].values    
+    adata.var['gene_symbols'] = genes.iloc[:, 1].values
+    adata.var_names = adata.var['gene_symbols']
+    adata.var_names_make_unique(join="-")
+    
+    
+    adata.obs['barcode'] = cells
+    adata.obs_names = cells
+    adata.obs_names_make_unique(join="-")
+    return adata
 
 def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
     if type == 'plain':
@@ -26,16 +50,17 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
             sc_data = pd.read_csv(sc_data_file, index_col=0, sep='\t', compression='gzip' if sc_data_file.endswith('.gz') else None)
         else:
             raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv, .txt)')
-        
+
         if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csz.gz'):
             sc_metadata = pd.read_csv(sc_metadata_file, index_col=0, compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         elif sc_data_file.endswith('.txt') or sc_metadata_file.endswith('.txt.gz') or sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         else:
             raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv, .txt)')
-        
+
         adata = sc.AnnData(sc_data.T.values, obs=sc_metadata)
         adata.var['gene_names'] = sc_data.index.values
+        adata.var.set_index('gene_names', drop=False, inplace=True)
         adata.obs['samples'] = sc_metadata.index.values
         return adata
     
@@ -235,7 +260,7 @@ def convert_entities(genes, genes_meta=None):
 		payload = {
 			"filter": {
 				"where": {
-					"meta.symbol": {"inq": genes}
+					"meta.symbol": {"inq": [g.upper() for g in genes]}
 				},
 				"fields": ["id"]
 			}
@@ -330,6 +355,32 @@ def get_sigcom_data(input: dict, database: str, enrichment_id: str, convert=Fals
 
 	sigs_df = pd.DataFrame(bar_chat_data, columns=["name", "abs(Z-sum)"]).sort_values("abs(Z-sum)", ascending=False)[:10]
 	return sigs_df
+
+
+
+def ttest_differential_expression(controls_mat: pd.DataFrame, cases_mat: pd.DataFrame, equal_var=False, alternative='two-sided', log2norm=True):
+  ''' Given two separate dataframes (controls, cases) with a shared index (genes),
+  we compute the ttest differential expression for all genes. Benjamini-Hochberg Adjusted p-value.
+
+  :param controls_mat: (pd.DataFrame) the control samples (samples as columns and genes as rows)
+  :param cases_mat: (pd.DataFrame) the case samples (samples as columns and genes as rows)
+  :param equal_var: (bool) Should t-test assume equal variance (default: False)
+  :param alternative: (str) Alternative hypothesis (see scipy.stats.ttest_ind) (default: two-sided)
+  :param log2norm: (bool) Apply log2norm, typically keep with raw counts but disable if you have normalized data (default: True)
+  :return: A data frame with the results
+  '''
+  assert (controls_mat.index == cases_mat.index).all(), 'Index between controls and cases must be the same'
+  if log2norm:
+    cases_mat = log2_normalize(cases_mat)
+    controls_mat = log2_normalize(controls_mat)
+  results = scipy.stats.ttest_ind(cases_mat.T, controls_mat.T, equal_var=equal_var, alternative=alternative)
+  df_results = pd.DataFrame({
+    'Statistic': results.statistic,
+    'Pval': results.pvalue,
+  }, index=controls_mat.index)
+  df_results['AdjPval'] = scipy.stats.false_discovery_control(df_results['Pval'].fillna(1.), method='bh')
+  df_results.sort_values('AdjPval', inplace=True)
+  return df_results
 		
 		
 

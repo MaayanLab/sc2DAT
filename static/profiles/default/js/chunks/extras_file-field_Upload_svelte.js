@@ -975,7 +975,7 @@ function create_fragment(ctx) {
       img = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("img");
       t14 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
       p1 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("p");
-      p1.textContent = "Accepts .tsv, .csv, .txt";
+      p1.textContent = ctx[0].accepts || "Accepts .tsv, .csv, .txt (.gz)";
       t16 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();
       div2 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.element)("div");
       t17 = (0,svelte_internal__WEBPACK_IMPORTED_MODULE_0__.space)();

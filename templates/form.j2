@@ -17,7 +17,8 @@
                     class="img-fluid float-right">
             </div>
             <div class="col-7 text-center">
-                <h1 style="font-weight: bolder; color: rgb(0, 0, 0);"> scRNASeq2Targets </h1>
+                 <h1 style="font-weight: 50; font-size: 75px">CT2T</h1>
+                <h3 style="font-weight: 100"> Cell-Types-2-Targets </h3>
                 <p class="my-0">Upload a single cell RNA-seq matrix or a bulk RNA-seq matrix with and select a
                     corresponding single cell reference to identify cell-surface targets and L1000 compounds.</p>
             </div>
@@ -32,6 +33,20 @@
     <div class="row">
         <div class="col-12">
             <div class="container col-10" style="font-size: 14px !important;">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-3">
+                        <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(146, 239, 211);" 
+                            onclick="loadExampleSc1()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(146, 239, 211);" 
+                            onclick="loadExampleSc2()">Load scRNA-seq Example (Melanoma)</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(146, 239, 211);" 
+                            onclick="loadExampleBulk()">Load bulk RNA-seq Example (Lung Cancer)</div>
+                    </div>
+                </div>
                 <form method="POST" enctype="multipart/form-data" action="">
 
 
@@ -51,13 +66,7 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <div class="row justify-content-center">
-                        <div class="col-3">
-                            <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 300;" 
-                            
-                            onclick="loadExample()">Load Example</div>
-                        </div>
-                    </div>
+                    
                     <div class="row">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
@@ -97,11 +106,51 @@
                 textbtn[i].click();
             }
             document.forms[0].elements['species'].value = 'mouse'
+            document.forms[0].elements['pert_name_pert'].value = 'Krt20'
+            document.forms[0].elements['control_cond'].value = 'Cont'
         }
     }
 
+    function loadExampleSc1() {
+        document.querySelector('[aria-controls="tab-content-data_type-scRNA-seq"]').click();
+        setTimeout(() => {
+            document.querySelector('[aria-controls="tab-content-sc_data_type_ctrl-Plain Text"]').click();
+            document.querySelector('[aria-controls="tab-content-sc_data_type-Plain Text"]').click()
+            setTimeout(() => {
+                const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
+                for (let i = 0; i < textbtn.length; i++) {
+                    textbtn[i].click();
+                }
+                document.forms[0].elements['species'].value = 'mouse'
+                document.querySelector('[name="control_cond"]').value = 'Cont';
+                document.querySelector('[name="pert_name_pert"]').value = 'Krt20';
+            }, 1000)
+        }, 1000)
+    }
 
+    function loadExampleSc2() {
+        const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
+        for (let i = 0; i < textbtn.length; i++) {
+            textbtn[i].click();
+        }
+        document.forms[0].elements['species'].value = 'human'
+        document.forms[0].elements['pert_name'].value = 'Krt20'
+        document.forms[0].elements['control_cond'].value = 'Cont'
+    }
 
+    async function loadExampleBulk() {
+        document.querySelector('[aria-controls="tab-content-data_type-bulk RNA-seq"]').click();
+        await setTimeout(() => {
+             const textbtn = document.getElementsByClassName('text-btn ' + 'GSE49155');
+            for (let i = 0; i < textbtn.length; i++) {
+                textbtn[i].click();
+            }
+            document.forms[0].elements['condition_col'].value = 'condition';
+            document.forms[0].elements['ctrl_condition'].value = 'normal';
+            document.forms[0].elements['reference'].value = 'Lung Cancer Atlas (LuCA) - Salcher et al. 2022 (Human)';
+            document.forms[0].elements['species'].value = 'human';
+        }, 1000)
+    }
 
     var trueTypeOf = (obj) => Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
 
