@@ -17,6 +17,9 @@ import json
 import pandas as pd
 from rpy2 import robjects as ro
 from dotenv import load_dotenv
+import statsmodels
+import statsmodels.stats
+import statsmodels.stats.multitest
 load_dotenv()
 
 def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
@@ -357,7 +360,6 @@ def get_sigcom_data(input: dict, database: str, enrichment_id: str, convert=Fals
 	return sigs_df
 
 
-
 def ttest_differential_expression(controls_mat: pd.DataFrame, cases_mat: pd.DataFrame, equal_var=False, alternative='two-sided', log2norm=True):
   ''' Given two separate dataframes (controls, cases) with a shared index (genes),
   we compute the ttest differential expression for all genes. Benjamini-Hochberg Adjusted p-value.
@@ -378,10 +380,10 @@ def ttest_differential_expression(controls_mat: pd.DataFrame, cases_mat: pd.Data
     'Statistic': results.statistic,
     'Pval': results.pvalue,
   }, index=controls_mat.index)
-  df_results['AdjPval'] = scipy.stats.false_discovery_control(df_results['Pval'].fillna(1.), method='bh')
+  adj_pval = statsmodels.stats.multitest.multipletests(df_results['Pval'].fillna(1.), method='fdr_bh')
+  df_results['AdjPval'] = adj_pval[1]
   df_results.sort_values('AdjPval', inplace=True)
   return df_results
-		
 		
 
 

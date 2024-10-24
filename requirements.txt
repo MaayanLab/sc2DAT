@@ -19,3 +19,4 @@ decoupler
 python-slugify
 harmonypy
 scikit-image
+statsmodels
