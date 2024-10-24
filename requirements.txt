@@ -20,3 +20,4 @@ python-slugify
 harmonypy
 scikit-image
 statsmodels
+scrublet
