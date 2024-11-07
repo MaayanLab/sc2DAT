@@ -13,17 +13,14 @@
     <div class="container col-8">
         <div class="mb-5 mt-2 mx-0 row align-items-center">
             <div class="col-3">
-            <a href="/">
                 <img src="{{ url_for('static', filename='sc2targets.png') }}" style="width:175px"
                     class="img-fluid float-right">
-            </a>
             </div>
             <div class="col-7 text-center">
-                 <h1 style="font-weight: 50; font-size: 75px">sc2DAT</h1>
-                <h3 style="font-weight: 100"> scRNA-seq 2 Drugs and Targets </h3>
-                <p class="my-0">Upload a single cell RNA-seq matrix or a bulk RNA-seq matrix with a
-                    corresponding single cell reference to identify cell-surface targets and L1000 compounds specific 
-                    to identifed cell types.</p>
+                 <h1 style="font-weight: 50; font-size: 75px">CT2T</h1>
+                <h3 style="font-weight: 100"> Cell-Types-2-Targets </h3>
+                <p class="my-0">Upload a single cell RNA-seq matrix or a bulk RNA-seq matrix with and select a
+                    corresponding single cell reference to identify cell-surface targets and L1000 compounds.</p>
             </div>
             <div class="col-1 ml-5 text-center">
                 Executed Reports: <p style="font-weight: 1200; font-size: 1.5rem" id="numruns"></p>
@@ -35,67 +32,42 @@
 <div class="text-center justify-content-center mx-auto">
     <div class="row">
         <div class="col-12">
-            <div id="selector" class="row mx-auto justify-content-center gap-5 mb-0">
-                <div id="scRNA-seq-button" class="col-3 justify-content-center question">
-                    Start with scRNA-seq data
+            <div class="container col-10" style="font-size: 14px !important;">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-3">
+                        <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(146, 239, 211);" 
+                            onclick="loadExampleSc1()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(146, 239, 211);" 
+                            onclick="loadExampleSc2()">Load scRNA-seq Example (Melanoma)</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(146, 239, 211);" 
+                            onclick="loadExampleBulk()">Load bulk RNA-seq Example (Lung Cancer)</div>
+                    </div>
                 </div>
-                <div id="bulk-RNAseq-button" class="col-3 justify-content-center question">
-                    Start with Bulk Data
-                </div>
-            </div>
-
-            <div class="container col-10 mt-3" style="font-size: 14px !important;">
-            <div id="ga" class="mb-4"><img src="static/sc2DAT_GA.png" width="850px"/></></div>
-                
                 <form method="POST" enctype="multipart/form-data" action="">
-                    <div hidden> 
-                        {{ _fields[1].render() }}
-                    </div>
-                    <div id="bulk-RNA-seq" style="display: none;">
-                        <div class="col-3 mx-auto mb-3">
-                            <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
-                                onclick="loadExample()">Load bulk RNA-seq Example (Lung Cancer)</div>
-                        </div>
-                        <div class="row justify-content-evenly ">
-                        {% for _field in _fields[4:6] %}
-                            <div class="col-6 ">
-                                {{ _field.render() }}
-                            </div>
-                        {% endfor %}
-                        </div>
-                        <div class="row justify-content-evenly">
-                        {% for _field in _fields[6:8] %}
-                            <div class="col-4">
-                                {{ _field.render() }}
-                            </div>
-                        {% endfor %}
-                        </div>
-                         <div class="row justify-content-evenly">
-                         {{ _fields[8].render() }}
-                         </div>
 
-                        <div class="row justify-content-evenly">
-                        {% for _field in _fields[9:] %}
-                            <div class="col-4">
-                                {{ _field.render() }}
-                            </div>
-                        {% endfor %}
+
+                    <div class="row justify-content-evenly">
+                        <div class="col-12">
+                            {{ _fields[1].render() }}
                         </div>
+                        {# <div class="col-sm-12 col-md-12 col-lg-5 col-xl-5 col-xxl-5">
+                            {{ _fields[2].render() }}
+                        </div> #}
                     </div>
-                    <div id="scRNA-seq" style="display: none;">
-                        <div class="col-4 mx-auto">
-                            <div class="btn rounded mt-0 mb-3" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
-                                onclick="loadExampleSc1()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
-                            </div>
-                        <div class="row justify-content-evenly">
-                        {% for _field in _fields[2:4] %}
-                            <div class="col-5">
-                                {{ _field.render() }}
-                            </div>
-                        {% endfor %}
+                    
+                    <div class="row justify-content-center">
+                        {% for _field in _fields[2:] %}
+                        <div class="col-4">
+                            {{ _field.render() }}
                         </div>
+                        {% endfor %}
                     </div>
-                    <div id="submit-area" class="row" style="display: none;">
+                    
+                    <div class="row">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
                             <div id="submit-feedback" class="p-2 px-5 rounded mx-auto"
@@ -116,26 +88,6 @@
 {{ super() }}
 
 <script>
-
-    document.getElementById('scRNA-seq-button').addEventListener('click', () => {
-        $('#ga').fadeOut(50)
-        $('#bulk-RNA-seq').fadeOut(50)
-        $('#scRNA-seq').fadeIn(50)
-        $('#submit-area').fadeIn(1000)
-        document.forms[0].elements['data_type'].value = 'scRNA-seq';
-        $('#scRNA-seq-button').addClass('selected')
-        $('#bulk-RNAseq-button').removeClass('selected')
-    })
-
-    document.getElementById('bulk-RNAseq-button').addEventListener('click', () => {
-        $('#ga').fadeOut(50)
-        $('#scRNA-seq').fadeOut(50)
-        $('#bulk-RNA-seq').fadeIn(1000)
-        $('#submit-area').fadeIn(1000)
-        document.forms[0].elements['data_type'].value = 'bulk RNA-seq';
-        $('#scRNA-seq-button').removeClass('selected')
-        $('#bulk-RNAseq-button').addClass('selected')
-    })
 
     function loadExample() {
         const dataType = document.forms[0].elements['data_type'].value

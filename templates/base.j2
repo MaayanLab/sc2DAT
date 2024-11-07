@@ -12,7 +12,7 @@
   gtag('config', 'G-QSM2MDFW8W');
 </script>
 
-<title class="h1">CT2T</title>
+<title class="h1">sc2DAT</title>
 <link rel="shortcut icon" href="{{ url_for('static', filename='sc2targets.png') }}" />
 <link rel="icon" href="{{ url_for('static', filename='sc2targets.png') }}">
 <meta charset="UTF-8">
@@ -246,6 +246,28 @@
 
   }
 
+  .question {
+    font-weight: light; 
+    border: solid 2px gray; 
+    padding: 20px; 
+    border-radius: 10px; 
+    font-size: larger;
+    transition: all 500ms;
+    cursor: pointer;
+  }
+
+  :hover.question {
+    font-weight: bolder !important; 
+    border: solid 2px black; 
+    background-color: rgb(155, 219, 155);
+  }
+
+  .selected {
+    font-weight: bolder !important; 
+    border: solid 2px black !important; 
+    background-color: rgb(173, 236, 173);
+  }
+
   div.cell {
     padding: 0 !important;
     text-align: justify !important;
@@ -312,8 +334,8 @@
         </a>
       </div>
       <div class="col-3 col-sm-4 text-left">
-         <h1 style="font-weight: 500">CT2T</h1>
-         <h3 style="font-weight: 500"> Cell-Types-2-Targets </h3>
+         <h1 style="font-weight: 500">sc2DAT</h1>
+         <h3 style="font-weight: 500"> scRNA-seq 2 Drugs and Targets </h3>
         <p class="my-0">
           Upload a single cell RNA-seq matrix or a bulk RNA-seq matrix with and select a
           corresponding single cell reference to identify cell-surface targets and L1000 compounds.
