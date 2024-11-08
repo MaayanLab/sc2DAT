@@ -3,7 +3,7 @@ services:
   app:
     platform: linux/x86_64
     build: .
-    image: maayanlab/sc2dat:0.0.1
+    image: maayanlab/sc2dat:0.0.2
     environment:
       - APPYTER_DATA_DIR=s3://${MINIO_ACCESS_KEY}:${MINIO_SECRET_KEY}@s3:9000/${MINIO_BUCKET}
       - APPYTER_EXECUTOR=dispatch::http://appyter-orchestrator:5000?params.executor=docker::maayanlab/ct2targets:latest
