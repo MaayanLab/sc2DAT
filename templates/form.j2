@@ -74,18 +74,12 @@
                          {{ _fields[8].render() }}
                          </div>
 
-                        <div class="row justify-content-evenly">
-                        {% for _field in _fields[9:] %}
-                            <div class="col-4">
-                                {{ _field.render() }}
-                            </div>
-                        {% endfor %}
-                        </div>
+                        
                     </div>
                     <div id="scRNA-seq" style="display: none;">
                         <div class="col-4 mx-auto">
                             <div class="btn rounded mt-0 mb-3" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
-                                onclick="loadExampleSc1()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
+                                onclick="loadExample()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
                             </div>
                         <div class="row justify-content-evenly">
                         {% for _field in _fields[2:4] %}
@@ -95,6 +89,13 @@
                         {% endfor %}
                         </div>
                     </div>
+                    <div id="shared-area" class="row justify-content-evenly" style="display: none;">
+                        {% for _field in _fields[9:] %}
+                            <div class="col-4">
+                                {{ _field.render() }}
+                            </div>
+                        {% endfor %}
+                        </div>
                     <div id="submit-area" class="row" style="display: none;">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
@@ -121,16 +122,19 @@
         $('#ga').fadeOut(50)
         $('#bulk-RNA-seq').fadeOut(50)
         $('#scRNA-seq').fadeIn(50)
+        $('#shared-area').fadeIn()
         $('#submit-area').fadeIn(1000)
         document.forms[0].elements['data_type'].value = 'scRNA-seq';
         $('#scRNA-seq-button').addClass('selected')
         $('#bulk-RNAseq-button').removeClass('selected')
+
     })
 
     document.getElementById('bulk-RNAseq-button').addEventListener('click', () => {
         $('#ga').fadeOut(50)
         $('#scRNA-seq').fadeOut(50)
         $('#bulk-RNA-seq').fadeIn(1000)
+        $('#shared-area').fadeIn()
         $('#submit-area').fadeIn(1000)
         document.forms[0].elements['data_type'].value = 'bulk RNA-seq';
         $('#scRNA-seq-button').removeClass('selected')
@@ -154,8 +158,6 @@
                 textbtn[i].click();
             }
             document.forms[0].elements['species'].value = 'mouse'
-            document.forms[0].elements['pert_name_pert'].value = 'Krt20'
-            document.forms[0].elements['control_cond'].value = 'Cont'
         }
     }
 
