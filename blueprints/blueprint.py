@@ -12,7 +12,7 @@ def numruns():
   key = os.getenv('APPYTER_DATA_DIR').split('#?key=')[-1].split('&')[0]
   secret = os.getenv('APPYTER_DATA_DIR').split('&secret=')[-1]
   s3 = s3fs.S3FileSystem(key = key, secret = secret)
-  n_runs = len(s3.ls('s3://multiomics2paper/output'))
+  n_runs = len(s3.ls('s3://ct2targets/output'))
   response = make_response({'num_runs': n_runs})
   response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
   response.headers['Pragma'] = 'no-cache'
