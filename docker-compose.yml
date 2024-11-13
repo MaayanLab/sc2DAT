@@ -3,9 +3,22 @@ services:
   app:
     platform: linux/x86_64
     build: .
-    image: maayanlab/sc2dat:0.0.2
+    image: maayanlab/sc2dat:0.0.4
+    x-kubernetes:
+      imagePullPolicy: IfNotPresent
+      annotations:
+        maayanlab.cloud/ingress: ${APPYTER_PUBLIC_URL}
     environment:
-      - APPYTER_DATA_DIR=s3://${MINIO_ACCESS_KEY}:${MINIO_SECRET_KEY}@s3:9000/${MINIO_BUCKET}
-      - APPYTER_EXECUTOR=dispatch::http://appyter-orchestrator:5000?params.executor=docker::maayanlab/ct2targets:latest
+      - APPYTER_PUBLIC_URL=${APPYTER_PUBLIC_URL}
+      - APPYTER_DATA_DIR=s3://${MINIO_BUCKET}/#?key=${MINIO_ACCESS_KEY}&secret=${MINIO_SECRET_KEY}
+      - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.0.4#?namespace=ct2targets&env.PLAYWRIGHT_BROWSERS_PATH=/ms-playwright&resources.requests.memory=8Gi
+      - APPYTER_PROFILE=bootstrap
+      - APPYTER_EXTRAS=${APPYTER_EXTRAS}
+      - APPYTER_DEBUG=false
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
     ports:
       - 5000:80
+
+x-kubernetes:
+  name: ct2targets
+  namespace: ct2targets
