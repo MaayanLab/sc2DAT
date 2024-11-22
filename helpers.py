@@ -45,6 +45,30 @@ def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
     adata.obs_names_make_unique(join="-")
     return adata
 
+
+def load_mtx(mtx_filename, barcodes_filename, gene_filename):
+    
+    adata = anndata.read_mtx(mtx_filename).T
+    with open(barcodes_filename, "r") as f:
+        cells = f.readlines()
+        cells = [x.strip() for x in cells]
+    genes = pd.read_csv(
+        gene_filename,
+        header=None,
+        sep='\t',
+    )
+    
+    adata.var['gene_ids'] = genes.iloc[:, 0].values    
+    adata.var['gene_symbols'] = genes.iloc[:, 1].values
+    adata.var_names = adata.var['gene_symbols']
+    adata.var_names_make_unique(join="-")
+    
+    
+    adata.obs['barcode'] = cells
+    adata.obs_names = cells
+    adata.obs_names_make_unique(join="-")
+    return adata
+
 def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
     if type == 'plain':
         if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csz.gz'):

@@ -155,7 +155,7 @@
         } else if (dataType == 'scRNA-seq') {
             const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
             for (let i = 0; i < textbtn.length; i++) {
-                textbtn[i].click();
+                if (i == 0 || i == 1) textbtn[i].click();
             }
             document.forms[0].elements['species'].value = 'mouse'
         }
