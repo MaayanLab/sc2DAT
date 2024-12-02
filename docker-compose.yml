@@ -3,7 +3,7 @@ services:
   app:
     platform: linux/x86_64
     build: .
-    image: maayanlab/sc2dat:0.0.9
+    image: maayanlab/sc2dat:0.0.11
     x-kubernetes:
       imagePullPolicy: IfNotPresent
       annotations:
