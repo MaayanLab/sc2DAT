@@ -90,12 +90,16 @@
                         </div>
                     </div>
                     <div id="shared-area" class="row justify-content-evenly" style="display: none;">
-                        {% for _field in _fields[9:] %}
+                        {% for _field in _fields[9:13] %}
                             <div class="col-4">
                                 {{ _field.render() }}
                             </div>
                         {% endfor %}
+                        <div class="col-9">
+                                {{ _fields[13].render() }}
                         </div>
+                    </div>
+                     
                     <div id="submit-area" class="row" style="display: none;">
                         <div class="col-sm-12">
                             <input onclick="checkFiles(event)" type="submit" value="Submit" />
