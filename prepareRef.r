@@ -9,12 +9,13 @@
 # 
 # devtools::install_github("humengying0907/InstaPrism")
 
-#
+
+
 library(InstaPrism)
 
 # load reference data (cellxgene rds format)
 library(Seurat)
-ref = readRDS('5d57179e-17d8-416f-aa55-9c3dbc3c29fc.rds')
+ref = readRDS('example_cellxgene.rds')
 meta_data = ref@meta.data
 
 # Save the reference object which can be added to the sc2DAT referece scRNA-seq options
