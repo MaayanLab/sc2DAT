@@ -4,6 +4,7 @@ from matplotlib.ticker import MaxNLocator
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import pandas as pd
+from scipy.sparse import csr_matrix
 import numpy as np
 import seaborn as sns
 import requests
@@ -20,6 +21,9 @@ from dotenv import load_dotenv
 import statsmodels
 import statsmodels.stats
 import statsmodels.stats.multitest
+from scipy.io import mmread
+import gzip
+from os import fspath
 load_dotenv()
 
 def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
@@ -48,10 +52,18 @@ def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
 
 def load_mtx(mtx_filename, barcodes_filename, gene_filename):
     
-    adata = anndata.read_mtx(mtx_filename).T
+    if mtx_filename.endswith(".gz"):
+        with gzip.open(mtx_filename, 'rb') as f:
+            matrix = mmread(f)
+        X = csr_matrix(X)
+        adata = anndata.AnnData(X).T
+    else:
+        adata = anndata.read_mtx(mtx_filename).T
+        
     with open(barcodes_filename, "r") as f:
         cells = f.readlines()
         cells = [x.strip() for x in cells]
+        
     genes = pd.read_csv(
         gene_filename,
         header=None,
