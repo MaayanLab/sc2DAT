@@ -2,23 +2,78 @@ version: '3'
 services:
   app:
     platform: linux/x86_64
-    build: .
-    image: maayanlab/sc2dat:0.0.19
+    build:
+      context: .
+      args:
+        appyter_version: appyter[production]@git+https://github.com/Maayanlab/appyter
     x-kubernetes:
       imagePullPolicy: IfNotPresent
       annotations:
         maayanlab.cloud/ingress: ${APPYTER_PUBLIC_URL}
+      serviceAccountName: ct2targets-sa
     environment:
       - APPYTER_PUBLIC_URL=${APPYTER_PUBLIC_URL}
       - APPYTER_DATA_DIR=s3://${MINIO_BUCKET}/#?key=${MINIO_ACCESS_KEY}&secret=${MINIO_SECRET_KEY}
-      - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.0.18#?namespace=ct2targets&env.PLAYWRIGHT_BROWSERS_PATH=/ms-playwright&resources.requests.memory=8Gi
+      - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.0.19#?namespace=default&env.PLAYWRIGHT_BROWSERS_PATH=/ms-playwright&resources.requests.memory=8Gi
       - APPYTER_PROFILE=bootstrap
       - APPYTER_EXTRAS=${APPYTER_EXTRAS}
       - APPYTER_DEBUG=false
       - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
     ports:
-      - 5000:80
+      - 5000
 
 x-kubernetes:
   name: ct2targets
-  namespace: ct2targets
+  namespace: default
+  apply: |
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: ct2targets-sa
+      namespace: default
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: ct2targets-role
+      namespace: default
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    - apiGroups:
+      - batch
+      - extensions
+      resources:
+      - jobs
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: ct2targets-role-binding
+      namespace: default
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: ct2targets-role
+    subjects:
+    - kind: ServiceAccount
+      name: ct2targets-sa
+      namespace: default

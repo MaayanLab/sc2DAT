@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9
 
 ENV DEBIAN_FRONTEND "noninteractive"
 ENV TZ "America/New_York"
@@ -22,7 +22,6 @@ RUN set -x \
   && python3 -m ipykernel install \
   && python3 -m playwright install chromium
 
-ADD setup.R /app/setup.R
 RUN set -x \
   && echo "Installing R..." \
   && apt-get -y clean \

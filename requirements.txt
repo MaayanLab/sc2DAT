@@ -1,8 +1,8 @@
-git+https://github.com/Maayanlab/appyter.git@665d145aa3b097baf64f858ea1e133e33e10878f
+appyter
 pandas
 numpy
 s3fs
-git+https://github.com/Maayanlab/maayanlab-bioinformatics.git@d06bbb288de24b58cb947e268b5eeae2b3188f46
+maayanlab-bioinformatics @ git+https://github.com/Maayanlab/maayanlab-bioinformatics.git
 igraph
 matplotlib_venn
 leidenalg
