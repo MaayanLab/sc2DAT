@@ -1,4 +1,5 @@
-git+https://github.com/Maayanlab/appyter.git@665d145aa3b097baf64f858ea1e133e33e10878f
+appyter[production]@git+https://github.com/Maayanlab/appyter.git@1b479136fc7fb950c532c0e11c1a828b64b64e7a
+uvloop
 pandas
 numpy
 s3fs
@@ -23,3 +24,4 @@ statsmodels
 scrublet
 plotly
 kaleido
+playwright

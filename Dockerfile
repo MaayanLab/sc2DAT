@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9
 
 ENV DEBIAN_FRONTEND "noninteractive"
 ENV TZ "America/New_York"
@@ -14,13 +14,19 @@ RUN set -x \
   && rm -rf /var/lib/apt/lists/* \
   && pip3 install --no-cache-dir --upgrade pip
 
-ENV PLAYWRIGHT_BROWSERS_PATH /ms-playwright
+RUN set -x \
+  && echo "Preparing user..." \
+  && useradd -ms /bin/bash -d /app app \
+  && groupadd fuse \
+  && adduser app fuse \
+  && mkdir -p /app /app/data /data \
+  && chown -R app:app /app /data \
+  && chmod og+rwx -R /var/lib/nginx /var/log/nginx
 
 RUN set -x \
   && echo "Installing jupyter kernel..." \
-  && pip3 install --no-cache-dir ipython_genutils ipykernel playwright \
-  && python3 -m ipykernel install \
-  && python3 -m playwright install chromium
+  && pip3 install --no-cache-dir ipython_genutils ipykernel \
+  && python3 -m ipykernel install
 
 ADD setup.R /app/setup.R
 RUN set -x \
@@ -49,20 +55,6 @@ RUN set -x \
   && echo "Installing python dependencies from requirements.txt..." \
   && pip3 install --no-cache-dir -r /app/requirements.txt \
   && rm /app/requirements.txt
-
-ARG appyter_version=appyter[production]@git+https://github.com/Maayanlab/appyter
-RUN set -x \
-  && echo "Installing appyter..." \
-  && pip3 install --no-cache-dir --upgrade ${appyter_version}
-
-RUN set -x \
-  && echo "Preparing user..." \
-  && useradd -ms /bin/bash -d /app app \
-  && groupadd fuse \
-  && adduser app fuse \
-  && mkdir -p /app /app/data /data \
-  && chown -R app:app /app /data \
-  && chmod og+rwx -R /var/lib/nginx /var/log/nginx
 
 USER app
 WORKDIR /app

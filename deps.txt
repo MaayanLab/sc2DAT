@@ -10,3 +10,5 @@ libcups2
 libxdamage1
 libasound2
 build-essential
+chromium
+chromium-driver
