@@ -8,6 +8,7 @@ results
 venv
 figures
 .env
+.venv
 *.DS_store
 temp
 deconvolution_res.zip
