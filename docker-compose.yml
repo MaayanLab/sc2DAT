@@ -3,7 +3,7 @@ services:
   sc2dat-app:
     platform: linux/x86_64
     build: .
-    image: maayanlab/sc2dat:0.1.1
+    image: maayanlab/sc2dat:0.1.2
     pull_policy: missing
     x-kubernetes:
       annotations:
