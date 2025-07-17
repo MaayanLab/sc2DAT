@@ -2,22 +2,22 @@ services:
   sc2dat-app:
     platform: linux/x86_64
     build: .
-    image: maayanlab/sc2dat:0.1.2
+    image: maayanlab/sc2dat:0.1.3
     pull_policy: missing
     x-kubernetes:
       annotations:
         maayanlab.cloud/ingress: ${APPYTER_PUBLIC_URL}
       serviceAccountName: sc2dat-sa
     environment:
-      - APPYTER_PUBLIC_URL=${APPYTER_PUBLIC_URL}
-      - APPYTER_DATA_DIR=s3://${MINIO_BUCKET}/#?key=${MINIO_ACCESS_KEY}&secret=${MINIO_SECRET_KEY}
-      - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.1.1#?namespace=sc2dat&resources.requests.memory=8Gi
-      - APPYTER_PROFILE=bootstrap
-      - APPYTER_EXTRAS=${APPYTER_EXTRAS}
-      - APPYTER_DEBUG=false
-      - APPYTER_PROXY=true
+    - APPYTER_PUBLIC_URL=${APPYTER_PUBLIC_URL}
+    - APPYTER_DATA_DIR=s3://${MINIO_BUCKET}/#?key=${MINIO_ACCESS_KEY}&secret=${MINIO_SECRET_KEY}
+    - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.1.1#?namespace=sc2dat&resources.requests.memory=8Gi
+    - APPYTER_PROFILE=bootstrap
+    - APPYTER_EXTRAS=${APPYTER_EXTRAS}
+    - APPYTER_DEBUG=false
+    - APPYTER_PROXY=true
     ports:
-      - 5000
+    - 5000
 
 x-kubernetes:
   name: sc2dat
