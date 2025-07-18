@@ -108,7 +108,33 @@
                             </style>
                             {{ _fields[2].render() }}
                         </div>
-                        {{ _fields[3].render() }}
+                        <div class="row justify-content-evenly">
+                            <style>
+                            .tab-pane:first-of-type {
+                                --bs-gutter-x: 1.5rem;
+                                --bs-gutter-y: 0;
+                                display: flex;
+                                flex-wrap: wrap;
+                                margin-top: calc(-1 * var(--bs-gutter-y));
+                                margin-right: calc(-.5 * var(--bs-gutter-x));
+                                margin-left: calc(-.5 * var(--bs-gutter-x));
+                                justify-content: center;
+                            }
+                            .tab-pane:first-of-type > div:has(> #sc_rna_file_2) {
+                                flex: 0 0 auto;
+                                width: 50% !important;
+                            }
+                            .tab-pane:first-of-type > div:has(> #sc_meta_file_2) {
+                                flex: 0 0 auto;
+                                width: 50% !important;
+                            }
+                            .tab-pane:first-of-type > div {
+                                flex: 0 0 auto;
+                                width: 75%;
+                            }
+                            </style>
+                            {{ _fields[3].render() }}
+                        </div>
                     </div>
                     <div id="shared-area" class="row justify-content-evenly" style="display: none;">
                         {% for _field in _fields[9:13] %}
