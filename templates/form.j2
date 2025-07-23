@@ -47,7 +47,7 @@
             <div class="container col-10 mt-3" style="font-size: 14px !important;">
             <div id="ga" class="mb-4"><img src="static/sc2DAT_GA.png" width="850px"/></></div>
                 
-                <form method="POST" enctype="multipart/form-data" action="">
+                <form method="POST" enctype="multipart/form-data" action="" onsubmit="return onSubmit(event)">
                     <div hidden> 
                         {{ _fields[1].render() }}
                     </div>
@@ -82,11 +82,58 @@
                                 onclick="loadExample()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
                             </div>
                         <div class="row justify-content-evenly">
-                        {% for _field in _fields[2:4] %}
-                            <div class="col-5">
-                                {{ _field.render() }}
-                            </div>
-                        {% endfor %}
+                            <style>
+                            .tab-pane:first-of-type {
+                                --bs-gutter-x: 1.5rem;
+                                --bs-gutter-y: 0;
+                                display: flex;
+                                flex-wrap: wrap;
+                                margin-top: calc(-1 * var(--bs-gutter-y));
+                                margin-right: calc(-.5 * var(--bs-gutter-x));
+                                margin-left: calc(-.5 * var(--bs-gutter-x));
+                                justify-content: center;
+                            }
+                            .tab-pane:first-of-type > div:has(> #sc_rna_file_1) {
+                                flex: 0 0 auto;
+                                width: 50% !important;
+                            }
+                            .tab-pane:first-of-type > div:has(> #sc_meta_file_1) {
+                                flex: 0 0 auto;
+                                width: 50% !important;
+                            }
+                            .tab-pane:first-of-type > div {
+                                flex: 0 0 auto;
+                                width: 75%;
+                            }
+                            </style>
+                            {{ _fields[2].render() }}
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <style>
+                            .tab-pane:first-of-type {
+                                --bs-gutter-x: 1.5rem;
+                                --bs-gutter-y: 0;
+                                display: flex;
+                                flex-wrap: wrap;
+                                margin-top: calc(-1 * var(--bs-gutter-y));
+                                margin-right: calc(-.5 * var(--bs-gutter-x));
+                                margin-left: calc(-.5 * var(--bs-gutter-x));
+                                justify-content: center;
+                            }
+                            .tab-pane:first-of-type > div:has(> #sc_rna_file_2) {
+                                flex: 0 0 auto;
+                                width: 50% !important;
+                            }
+                            .tab-pane:first-of-type > div:has(> #sc_meta_file_2) {
+                                flex: 0 0 auto;
+                                width: 50% !important;
+                            }
+                            .tab-pane:first-of-type > div {
+                                flex: 0 0 auto;
+                                width: 75%;
+                            }
+                            </style>
+                            {{ _fields[3].render() }}
                         </div>
                     </div>
                     <div id="shared-area" class="row justify-content-evenly" style="display: none;">
@@ -102,10 +149,9 @@
                      
                     <div id="submit-area" class="row" style="display: none;">
                         <div class="col-sm-12">
-                            <input onclick="checkFiles(event)" type="submit" value="Submit" />
+                            <input type="submit" value="Submit" />
                             <div id="submit-feedback" class="p-2 px-5 rounded mx-auto"
                                 style="position: absolute; background-color: rgba(255, 0, 0, 0.552);">
-                                Please provide at least one data file
                             </div>
                         </div>
                     </div>
@@ -206,48 +252,69 @@
         }, 1000)
     }
 
-    var trueTypeOf = (obj) => Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
-
-
-    function checkFile(field) {
-        const meta = document.forms[0].elements[field]
-        var metavalue;
-        if (trueTypeOf(meta) == 'radionodelist') {
-            metavalue = meta[1].value
-        } else {
-            metavalue = meta.value
-            const reg = new RegExp('^(drs|s3|gs|ftp|http|https)://.+$')
-            if (!reg.test(metavalue)) {
-                metavalue = undefined;
+    async function validate(formData) {
+        console.warn(Object.fromEntries(formData.entries()))
+        if (formData.get('data_type') == 'scRNA-seq') {
+            if (formData.get('sc_data_type_1') === 'Plain Text') {
+                if (!formData.get('sc_rna_file_1')) throw new Error('Please provide Data Set 1')
+                if (!formData.get('sc_meta_file_1')) throw new Error('Please provide Data Set 1 Metadata')
+            } else if (formData.get('sc_data_type_1') === '.mtx') {
+                if (!formData.get('barcode_sc_1')) throw new Error('Please provide Data Set 1 Barcode File')
+                if (!formData.get('features_sc_1')) throw new Error('Please provide Data Set 1 Features File')
+                if (!formData.get('matrix_sc_1')) throw new Error('Please provide Data Set 1 Matrix File')
+            } else if (formData.get('sc_data_type_1') === 'anndata') {
+                if (!formData.get('anndata_sc_1')) throw new Error('Please provide Data Set 1 AnnData File')
             }
+            if (formData.get('sc_data_type_2') === 'Plain Text' && (formData.get('sc_rna_file_2') || formData.get('sc_meta_file_2'))) {
+                if (!formData.get('sc_rna_file_2')) throw new Error('Please provide Data Set 2 Data')
+                if (!formData.get('sc_meta_file_2')) throw new Error('Please provide Data Set 2 Metadata')
+                if (formData.get('sc_rna_file_1') === formData.get('sc_rna_file_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+                if (formData.get('sc_meta_file_1') === formData.get('sc_meta_file_2')) throw new Error('Data Set 1 & 2 Metadata are the same!')
+            } else if (formData.get('sc_data_type_2') === '.mtx' && (formData.get('barcode_sc_2') || formData.get('features_sc_2') || formData.get('matrix_sc_2'))) {
+                if (!formData.get('barcode_sc_2')) throw new Error('Please provide Data Set 1 Barcode File')
+                if (!formData.get('features_sc_2')) throw new Error('Please provide Data Set 1 Features File')
+                if (!formData.get('matrix_sc_2')) throw new Error('Please provide Data Set 1 Matrix File')
+                if (formData.get('matrix_sc_1') === formData.get('matrix_sc_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+            } else if (formData.get('sc_data_type_2') === 'anndata') {
+                if (!formData.get('anndata_sc_2')) throw new Error('Please provide Data Set 1 AnnData File')
+                if (formData.get('anndata_sc_1') === formData.get('anndata_sc_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+            }
+        } else if (formData.get('data_type') == 'bulk RNA-seq') {
+            if (!formData.get('bulk_expr')) throw new Error('Please provide Bulk RNA-seq Expression Data')
+            if (!formData.get('bulk_meta')) throw new Error('Please provide Bulk RNA-seq Expression Metadata')
         }
-        return metavalue ? true : false
     }
 
-    function resetParams() {
-        const params = [15, 0.01, 1, '', 'yes', 'yes', 'yes', 'yes', 0.8, 0.5, 500, 500, 'Protein-Protein Co-expression', []]
-        const fields = ['n_neighbors', 'min_dist', 'resolution', 'cluster_column',
-            'membrane_screener', 'normalize_to_bg', 'impute_protein_expr',
-            'impute_phospho_expr', 'percent_rows_protein', 'percent_rows_phospho', 'chea3_n', 'kea3_n',
-            'intermediate_method', 'tumor_validate']
-        for (let i = 0; i < fields.length; i++) {
-            document.forms[0].elements[fields[i]].value = params[i]
-        }
-
-    }
-
-    function checkFiles(e) {
-        const files = [checkFile('rna_expr'), checkFile('prot_expr'), checkFile('phospho_expr'), checkFile('meta')]
-        if (files[0] || files[1] || files[2]) {
-            return;
+    async function doSubmit(formData) {
+        await validate(formData)
+        const res = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+            },
+            body: formData,
+        })
+        if (res.status === 406) {
+            let { error } = await res.json()
+            throw new Error(error.message)
         } else {
-            e.preventDefault();
-            document.getElementById('submit-feedback').style.visibility = 'visible';
-            document.getElementById('submit-feedback').style.opacity = 1;
-            setTimeout(() => {
-                document.getElementById('submit-feedback').style.opacity = 0;
-            }, 3000)
+            const { _id } = await res.json()
+            window.location.href = `${_id}/`
         }
+    }
+
+    function onSubmit(e) {
+      e.preventDefault()
+      const formData = new FormData(e.target)
+      doSubmit(formData).catch(function (e) {
+        console.error(e)
+        document.getElementById('submit-feedback').innerText = e.toString()
+        document.getElementById('submit-feedback').style.visibility = 'visible';
+        document.getElementById('submit-feedback').style.opacity = 1;
+        //setTimeout(() => {
+        //    document.getElementById('submit-feedback').style.opacity = 0;
+        //}, 5000)
+      })
     }
 
     function getNumRuns() {

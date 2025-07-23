@@ -1,8 +1,8 @@
-git+https://github.com/Maayanlab/appyter.git@665d145aa3b097baf64f858ea1e133e33e10878f
+appyter[production]@git+https://github.com/Maayanlab/appyter.git@1b479136fc7fb950c532c0e11c1a828b64b64e7a
 pandas
 numpy
 s3fs
-git+https://github.com/Maayanlab/maayanlab-bioinformatics.git@d06bbb288de24b58cb947e268b5eeae2b3188f46
+git+https://github.com/Maayanlab/maayanlab-bioinformatics.git@2b18be8542b8c0cf393707845041f8c380e54021
 igraph
 matplotlib_venn
 leidenalg
@@ -23,3 +23,4 @@ statsmodels
 scrublet
 plotly
 kaleido
+playwright

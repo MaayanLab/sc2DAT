@@ -1,24 +1,76 @@
-version: '3'
 services:
-  app:
+  sc2dat-app:
     platform: linux/x86_64
     build: .
-    image: maayanlab/sc2dat:0.0.19
+    image: maayanlab/sc2dat:0.1.7
+    pull_policy: missing
     x-kubernetes:
-      imagePullPolicy: IfNotPresent
       annotations:
         maayanlab.cloud/ingress: ${APPYTER_PUBLIC_URL}
+      serviceAccountName: sc2dat-sa
     environment:
-      - APPYTER_PUBLIC_URL=${APPYTER_PUBLIC_URL}
-      - APPYTER_DATA_DIR=s3://${MINIO_BUCKET}/#?key=${MINIO_ACCESS_KEY}&secret=${MINIO_SECRET_KEY}
-      - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.0.18#?namespace=ct2targets&env.PLAYWRIGHT_BROWSERS_PATH=/ms-playwright&resources.requests.memory=8Gi
-      - APPYTER_PROFILE=bootstrap
-      - APPYTER_EXTRAS=${APPYTER_EXTRAS}
-      - APPYTER_DEBUG=false
-      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    - APPYTER_PUBLIC_URL=${APPYTER_PUBLIC_URL}
+    - APPYTER_DATA_DIR=s3://${MINIO_BUCKET}/#?key=${MINIO_ACCESS_KEY}&secret=${MINIO_SECRET_KEY}
+    - APPYTER_EXECUTOR=kube::maayanlab/sc2dat:0.1.7#?namespace=sc2dat&resources.requests.memory=8Gi
+    - APPYTER_PROFILE=bootstrap
+    - APPYTER_EXTRAS=${APPYTER_EXTRAS}
+    - APPYTER_DEBUG=false
+    - APPYTER_PROXY=true
     ports:
-      - 5000:80
+    - 5000
 
 x-kubernetes:
-  name: ct2targets
-  namespace: ct2targets
+  name: sc2dat
+  namespace: sc2dat
+  apply: |
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: sc2dat-sa
+      namespace: sc2dat
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: sc2dat-role
+      namespace: sc2dat
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    - apiGroups:
+      - batch
+      - extensions
+      resources:
+      - jobs
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: sc2dat-role-binding
+      namespace: sc2dat
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: sc2dat-role
+    subjects:
+    - kind: ServiceAccount
+      name: sc2dat-sa
+      namespace: sc2dat

@@ -85,17 +85,17 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
     if type == 'plain':
         if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csz.gz'):
             sc_data = pd.read_csv(sc_data_file, index_col=0, compression='gzip' if sc_data_file.endswith('.gz') else None)
-        elif sc_data_file.endswith('.txt') or sc_data_file.endswith('.txt.gz') or sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
+        elif sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_data = pd.read_csv(sc_data_file, index_col=0, sep='\t', compression='gzip' if sc_data_file.endswith('.gz') else None)
         else:
-            raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv, .txt)')
+            raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv)')
 
         if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csz.gz'):
             sc_metadata = pd.read_csv(sc_metadata_file, index_col=0, compression='gzip' if sc_metadata_file.endswith('.gz') else None)
-        elif sc_data_file.endswith('.txt') or sc_metadata_file.endswith('.txt.gz') or sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
+        elif sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         else:
-            raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv, .txt)')
+            raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv)')
 
         adata = sc.AnnData(sc_data.T.values, obs=sc_metadata)
         adata.var['gene_names'] = sc_data.index.values
@@ -106,10 +106,10 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
 def read_bulk_data(filename: str):
     if filename.endswith('.csv') or filename.endswith('.csz.gz'):
         return pd.read_csv(filename, index_col=0, compression='gzip' if filename.endswith('.gz') else None)
-    elif filename.endswith('.txt') or filename.endswith('.txt.gz') or filename.endswith('.tsv') or filename.endswith('.tsv.gz'):
+    elif filename.endswith('.tsv') or filename.endswith('.tsv.gz'):
         return pd.read_csv(filename, index_col=0, sep='\t', compression='gzip' if filename.endswith('.gz') else None)
     else:
-        raise ValueError('File type for bulk data not supported (.csv, .tsv, .txt)')
+        raise ValueError('File type for bulk data not supported (.csv, .tsv)')
 
 def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output_dir: str, convert_dict: dict):
     """

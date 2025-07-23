@@ -1,0 +1,33 @@
+{% extends "base.j2" %}
+
+{% block script_head %}
+{{ super() }}
+{% if 'ipywidgets' in _config.EXTRAS %}
+<script>
+require.config({
+  paths: {
+    '@jupyter-widgets/html-manager': 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd',
+  }
+})
+define('@appyter/ipywidgets-manager', ['@jupyter-widgets/html-manager'], function (htmlmanager) {
+  const manager = new htmlmanager.HTMLManager({ loader: htmlmanager.requireLoader })
+  return manager
+})
+</script>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+<h3 style="text-align: center">Scroll down to see results as they are computed!</h3>
+<div class="row">
+  <div class="col-sm-12">
+    {% include "fragments/jupyter.j2" %}
+
+    <div id="_content" class="svelte container loading">
+      {% include "fragments/loader.j2" %}
+      <script type="application/json">{{ dict(nbdownload=_nb, js_url=url_for('static', filename='js/landing.js'))|jsonify }}</script>
+    </div>
+  </div>
+</div>
+{% endblock %}
