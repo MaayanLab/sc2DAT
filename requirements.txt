@@ -24,3 +24,4 @@ scrublet
 plotly
 kaleido
 playwright
+scipy
