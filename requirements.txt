@@ -1,4 +1,4 @@
-appyter[production]@git+https://github.com/Maayanlab/appyter.git@1b479136fc7fb950c532c0e11c1a828b64b64e7a
+appyter[production]@git+https://github.com/Maayanlab/appyter.git@268408092e433c57ff0fc755c58abf068aa888da
 pandas
 numpy
 s3fs
