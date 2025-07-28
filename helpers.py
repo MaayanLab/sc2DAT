@@ -84,6 +84,7 @@ def load_mtx(mtx_filename, barcodes_filename, gene_filename):
 def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
     if type == 'plain':
         if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csz.gz'):
+        if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csv.gz'):
             sc_data = pd.read_csv(sc_data_file, index_col=0, compression='gzip' if sc_data_file.endswith('.gz') else None)
         elif sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_data = pd.read_csv(sc_data_file, index_col=0, sep='\t', compression='gzip' if sc_data_file.endswith('.gz') else None)
@@ -91,6 +92,7 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
             raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv)')
 
         if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csz.gz'):
+        if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csv.gz'):
             sc_metadata = pd.read_csv(sc_metadata_file, index_col=0, compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         elif sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
@@ -102,6 +104,7 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
         adata.var.set_index('gene_names', drop=False, inplace=True)
         adata.obs['samples'] = sc_metadata.index.values
         return adata
+    return None
     
 def read_bulk_data(filename: str):
     if filename.endswith('.csv') or filename.endswith('.csz.gz'):
