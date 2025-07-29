@@ -76,13 +76,13 @@ def load_mtx(mtx_filename, barcodes_filename, gene_filename):
             gene_filename,
             header=None,
             sep='\t',
-			compression='gzip'
+			compression='gzip',
         )
     else:
         genes = pd.read_csv(
             gene_filename,
             header=None,
-            sep='\t'        
+            sep='\t',
         )
     
     adata.var['gene_ids'] = genes.iloc[:, 0].values    
