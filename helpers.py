@@ -24,6 +24,8 @@ import statsmodels.stats.multitest
 from scipy.io import mmread
 import gzip
 from os import fspath
+import scanpy as sc
+import decoupler as dc
 load_dotenv()
 
 def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
@@ -50,47 +52,64 @@ def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
     return adata
 
 
-def load_mtx(mtx_filename, barcodes_filename, gene_filename):
+def load_mtx(mtx_filename, barcodes_filename, gene_filename, meta_filename):
     
     if mtx_filename.endswith(".gz"):
         with gzip.open(mtx_filename, 'rb') as f:
-            matrix = mmread(f)
+            X = mmread(f)
         X = csr_matrix(X)
         adata = anndata.AnnData(X).T
     else:
         adata = anndata.read_mtx(mtx_filename).T
         
-    with open(barcodes_filename, "r") as f:
-        cells = f.readlines()
-        cells = [x.strip() for x in cells]
+    if barcodes_filename.endswith(".gz"):
+        with gzip.open(barcodes_filename, "rt") as f:
+            cells = f.readlines()
+            cells = [x.strip() for x in cells]
+    else:
+        with open(barcodes_filename, "r") as f:
+            cells = f.readlines()
+            cells = [x.strip() for x in cells]
         
-    genes = pd.read_csv(
-        gene_filename,
-        header=None,
-        sep='\t',
-    )
+    if gene_filename.endswith(".gz"):
+        genes = pd.read_csv(
+            gene_filename,
+            header=None,
+            sep='\t',
+			compression='gzip',
+        )
+    else:
+        genes = pd.read_csv(
+            gene_filename,
+            header=None,
+            sep='\t',
+        )
     
     adata.var['gene_ids'] = genes.iloc[:, 0].values    
     adata.var['gene_symbols'] = genes.iloc[:, 1].values
     adata.var_names = adata.var['gene_symbols']
     adata.var_names_make_unique(join="-")
     
-    
     adata.obs['barcode'] = cells
     adata.obs_names = cells
     adata.obs_names_make_unique(join="-")
+    if meta_filename.endswith("sv.gz") or meta_filename.endswith(".tsv") or meta_filename.endswith(".tsv"):
+        metadata = pd.read_csv(meta_filename, index_col=0, sep='\t', compression='gzip' if meta_filename.endswith('.gz') else None)
+        metadata = metadata.loc[adata.obs_names]
+        adata.obs = adata.obs.join(metadata)
+
     return adata
 
 def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
     if type == 'plain':
-        if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csz.gz'):
+        if sc_data_file.endswith('.csv') or sc_data_file.endswith('.csv.gz'):
             sc_data = pd.read_csv(sc_data_file, index_col=0, compression='gzip' if sc_data_file.endswith('.gz') else None)
         elif sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_data = pd.read_csv(sc_data_file, index_col=0, sep='\t', compression='gzip' if sc_data_file.endswith('.gz') else None)
         else:
             raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv)')
 
-        if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csz.gz'):
+        if sc_metadata_file.endswith('.csv') or sc_metadata_file.endswith('.csv.gz'):
             sc_metadata = pd.read_csv(sc_metadata_file, index_col=0, compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         elif sc_data_file.endswith('.tsv') or sc_data_file.endswith('.tsv.gz'):
             sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
@@ -102,9 +121,10 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
         adata.var.set_index('gene_names', drop=False, inplace=True)
         adata.obs['samples'] = sc_metadata.index.values
         return adata
+    return None
     
 def read_bulk_data(filename: str):
-    if filename.endswith('.csv') or filename.endswith('.csz.gz'):
+    if filename.endswith('.csv') or filename.endswith('.csv.gz'):
         return pd.read_csv(filename, index_col=0, compression='gzip' if filename.endswith('.gz') else None)
     elif filename.endswith('.tsv') or filename.endswith('.tsv.gz'):
         return pd.read_csv(filename, index_col=0, sep='\t', compression='gzip' if filename.endswith('.gz') else None)
@@ -194,8 +214,7 @@ def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output_dir:
             cell_type_dfs[f[:-4]] = pd.read_csv(f'{output_dir}/{f}', index_col=0)
     return estimated_frac_df, cell_type_dfs
 
-import scanpy as sc
-import decoupler as dc
+
 def normalize_sc_data(adata, n_neighbors, min_dist, resolution):
     sc.pp.filter_cells(adata, min_genes=200)
     sc.pp.filter_genes(adata, min_cells=3)

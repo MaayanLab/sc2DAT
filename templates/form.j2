@@ -137,13 +137,13 @@
                         </div>
                     </div>
                     <div id="shared-area" class="row justify-content-evenly" style="display: none;">
-                        {% for _field in _fields[9:13] %}
+                        {% for _field in _fields[9:-1] %}
                             <div class="col-4">
                                 {{ _field.render() }}
                             </div>
                         {% endfor %}
                         <div class="col-9">
-                                {{ _fields[13].render() }}
+                                {{ _fields[-1].render() }}
                         </div>
                     </div>
                      
