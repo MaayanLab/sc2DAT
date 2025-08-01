@@ -52,7 +52,7 @@ def load_seurat_files(mtx_filename, gene_filename, barcodes_filename):
     return adata
 
 
-def load_mtx(mtx_filename, barcodes_filename, gene_filename):
+def load_mtx(mtx_filename, barcodes_filename, gene_filename, meta_filename):
     
     if mtx_filename.endswith(".gz"):
         with gzip.open(mtx_filename, 'rb') as f:
@@ -63,7 +63,7 @@ def load_mtx(mtx_filename, barcodes_filename, gene_filename):
         adata = anndata.read_mtx(mtx_filename).T
         
     if barcodes_filename.endswith(".gz"):
-        with gzip.open(barcodes_filename, "r") as f:
+        with gzip.open(barcodes_filename, "rt") as f:
             cells = f.readlines()
             cells = [x.strip() for x in cells]
     else:
@@ -93,6 +93,15 @@ def load_mtx(mtx_filename, barcodes_filename, gene_filename):
     adata.obs['barcode'] = cells
     adata.obs_names = cells
     adata.obs_names_make_unique(join="-")
+    print(cells)
+    if meta_filename.endswith("sv.gz") or meta_filename.endswith(".tsv") or meta_filename.endswith(".tsv"):
+        print("adding metadata")
+        metadata = pd.read_csv(meta_filename, index_col=0, sep='\t', compression='gzip' if meta_filename.endswith('.gz') else None)
+        print(adata.obs_names)
+        print(metadata.index)
+        metadata = metadata.loc[adata.obs_names]
+        adata.obs = adata.obs.join(metadata)
+
     return adata
 
 def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
