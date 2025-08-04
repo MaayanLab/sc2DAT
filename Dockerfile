@@ -28,14 +28,6 @@ RUN set -x \
   && pip3 install --no-cache-dir ipython_genutils ipykernel \
   && python3 -m ipykernel install
 
-ADD setup.R /app/setup.R
-RUN set -x \
-  && echo "Installing R..." \
-  && apt-get -y clean \
-  && apt-get -y update \
-  && apt-get -y install r-base \
-  && rm -rf /var/lib/apt/lists/*
-
 ADD deps.txt /app/deps.txt
 RUN set -x \
   && echo "Installing system dependencies from deps.txt..." \
