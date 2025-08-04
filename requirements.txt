@@ -1,4 +1,4 @@
-appyter[production]@git+https://github.com/Maayanlab/appyter.git@268408092e433c57ff0fc755c58abf068aa888da
+appyter[production]@git+https://github.com/Maayanlab/appyter.git@497f5abe3b7446225aad04f2ff3323330a0b29cc
 pandas
 numpy
 s3fs
@@ -25,3 +25,5 @@ plotly
 kaleido
 playwright
 scipy
+nbconvert
+nbformat

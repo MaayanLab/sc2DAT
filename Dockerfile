@@ -54,7 +54,8 @@ ADD requirements.txt /app/requirements.txt
 RUN set -x \
   && echo "Installing python dependencies from requirements.txt..." \
   && pip3 install --no-cache-dir -r /app/requirements.txt \
-  && rm /app/requirements.txt
+  && rm /app/requirements.txt \
+  && playwright install chromium
 
 USER app
 WORKDIR /app
