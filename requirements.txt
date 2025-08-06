@@ -25,3 +25,5 @@ plotly
 kaleido
 playwright
 scipy
+nbconvert
+nbformat
