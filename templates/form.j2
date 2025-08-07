@@ -52,9 +52,11 @@
                         {{ _fields[1].render() }}
                     </div>
                     <div id="bulk-RNA-seq" style="display: none;">
-                        <div class="col-3 mx-auto mb-3">
-                            <div class="btn rounded mt-0" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
-                                onclick="loadExample()">Load bulk RNA-seq Example (Lung Cancer)</div>
+                        <div class="row mx-auto justify-content-center gap-5 mb-3">
+                            <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
+                                onclick="loadBulkExample()">Load bulk RNA-seq Example 1 (Lung Cancer)</div>
+                            <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
+                                onclick="loadPDACExample()">Load bulk RNA-seq Example 2 (Pancreatic Cancer)</div>
                         </div>
                         <div class="row justify-content-evenly ">
                         {% for _field in _fields[4:6] %}
@@ -77,10 +79,17 @@
                         
                     </div>
                     <div id="scRNA-seq" style="display: none;">
-                        <div class="col-4 mx-auto">
-                            <div class="btn rounded mt-0 mb-3" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
-                                onclick="loadExample()">Load scRNA-seq Example (Kidney IRI GSE171417)</div>
-                            </div>
+                        <div class="row mx-auto justify-content-center gap-5 mb-3">
+                            <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
+                                onclick="loadSCExample()">Load scRNA-seq Example 1 (Kidney IRI GSE171417)</div>
+                           
+                            <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
+                                onclick="loadDCExample()">Load scRNA-seq Example 2 (Spleen DCs GSE137710)</div>
+                            
+                            <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
+                                onclick="loadCDExample()">Load scRNA-seq Example 3 (Crohn's Disease)</div>
+                            
+                        </div>
                         <div class="row justify-content-evenly">
                             <style>
                             .tab-pane:first-of-type {
@@ -191,65 +200,111 @@
         $('#bulk-RNAseq-button').addClass('selected')
     })
 
-    function loadExample() {
-        const dataType = document.forms[0].elements['data_type'].value
-        if (dataType == 'bulk RNA-seq') {
-            const textbtn = document.getElementsByClassName('text-btn ' + 'CPTAC');
-            for (let i = 0; i < textbtn.length; i++) {
-                textbtn[i].click();
-            }
-            document.forms[0].elements['condition_col'].value = 'condition'
-            document.forms[0].elements['ctrl_condition'].value = 'normal'
-            document.forms[0].elements['reference'].value = 'Lung Cancer Atlas (LuCA) - Salcher et al. 2022 (Human)'
-            document.forms[0].elements['species'].value = 'human'
-        } else if (dataType == 'scRNA-seq') {
-            const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
-            for (let i = 0; i < textbtn.length; i++) {
-                if (i == 0 || i == 1) textbtn[i].click();
-            }
-            document.forms[0].elements['species'].value = 'mouse'
-        }
-    }
-
-    function loadExampleSc1() {
-        document.querySelector('[aria-controls="tab-content-data_type-scRNA-seq"]').click();
-        setTimeout(() => {
-            document.querySelector('[aria-controls="tab-content-sc_data_type_ctrl-Plain Text"]').click();
-            document.querySelector('[aria-controls="tab-content-sc_data_type-Plain Text"]').click()
-            setTimeout(() => {
-                const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
-                for (let i = 0; i < textbtn.length; i++) {
-                    textbtn[i].click();
-                }
-                document.forms[0].elements['species'].value = 'mouse'
-                document.querySelector('[name="control_cond"]').value = 'Cont';
-                document.querySelector('[name="pert_name_pert"]').value = 'Krt20';
-            }, 1000)
-        }, 1000)
-    }
-
-    function loadExampleSc2() {
-        const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
+    function loadBulkExample() {
+        const textbtn = document.getElementsByClassName('text-btn ' + 'CPTAC');
         for (let i = 0; i < textbtn.length; i++) {
             textbtn[i].click();
         }
+        document.forms[0].elements['condition_col'].value = 'condition'
+        document.forms[0].elements['ctrl_condition'].value = 'normal'
+        document.forms[0].elements['reference'].value = 'Lung Cancer Atlas (LuCA) - Salcher et al. 2022 (Human)'
         document.forms[0].elements['species'].value = 'human'
-        document.forms[0].elements['pert_name'].value = 'Krt20'
-        document.forms[0].elements['control_cond'].value = 'Cont'
+        document.forms[0].elements['tumor_validate'].value = 'Non-Small Cell Lung Cancer'
     }
 
-    async function loadExampleBulk() {
-        document.querySelector('[aria-controls="tab-content-data_type-bulk RNA-seq"]').click();
-        await setTimeout(() => {
-             const textbtn = document.getElementsByClassName('text-btn ' + 'GSE49155');
+    function loadPDACExample() {
+        const textbtn = document.getElementsByClassName('text-btn ' + 'PDAC');
+        for (let i = 0; i < textbtn.length; i++) {
+            textbtn[i].click();
+        }
+        document.forms[0].elements['condition_col'].value = 'condition'
+        document.forms[0].elements['ctrl_condition'].value = 'Normal'
+        document.forms[0].elements['reference'].value = 'Pancreas - Tabula Sapiens (Human)'
+        document.forms[0].elements['species'].value = 'human'
+        document.forms[0].elements['tumor_validate'].value = 'Pancreatic Adenocarcinoma'
+        
+    }
+
+    function loadSCExample() {
+        const tabs = document.querySelectorAll('button[role="tab"]');
+        for (const tab of tabs) {
+            if (tab.textContent.trim() === 'Plain Text') {
+                tab.click();
+                break;
+            }
+        }
+        setTimeout(() => {
+            const textbtn = document.getElementsByClassName('text-btn ' + 'GSE171417');
+                for (let i = 0; i < textbtn.length; i++) {
+                    if (i == 0 || i == 1) textbtn[i].click();
+                }
+        }, 200)
+
+        setTimeout(() => {
+            document.forms[0].elements['species'].value = 'mouse'
+            document.forms[0].elements['n_neighbors'].value = 15
+            document.forms[0].elements['min_dist'].value = 0.01
+            document.forms[0].elements['resolution'].value = 1
+            document.forms[0].elements['impute'].value = False
+            document.forms[0].elements['tumor_validate'].value = ''
+        }, 200)
+
+    }
+
+    function loadDCExample() {
+        const tabs = document.querySelectorAll('button[role="tab"]');
+        for (const tab of tabs) {
+            if (tab.textContent.trim() === 'Plain Text') {
+                tab.click();
+                break;
+            }
+        }
+        setTimeout(() => {
+            const textbtn = document.getElementsByClassName('text-btn ' + 'GSE137710');
             for (let i = 0; i < textbtn.length; i++) {
                 textbtn[i].click();
             }
-            document.forms[0].elements['condition_col'].value = 'condition';
-            document.forms[0].elements['ctrl_condition'].value = 'normal';
-            document.forms[0].elements['reference'].value = 'Lung Cancer Atlas (LuCA) - Salcher et al. 2022 (Human)';
-            document.forms[0].elements['species'].value = 'human';
-        }, 1000)
+        }, 200)
+
+        setTimeout(() => {
+            document.forms[0].elements['cell_type_col_1'].value = 'cell_type'
+            document.forms[0].elements['species'].value = 'human'
+            document.forms[0].elements['n_neighbors'].value = 30
+            document.forms[0].elements['min_dist'].value = 0.1
+            document.forms[0].elements['resolution'].value = 1
+            document.forms[0].elements['impute'].value = 'False'
+            document.forms[0].elements['tumor_validate'].value = ''
+        }, 200)
+        
+    }
+
+    function loadCDExample() {
+        const tabs = document.querySelectorAll('button[role="tab"]');
+        for (const tab of tabs) {
+            if (tab.textContent.trim() === '.mtx') {
+                tab.click();
+                break;
+            }
+        }
+        setTimeout(() => {
+            const textbtn = document.getElementsByClassName('text-btn ' + 'CD');
+            for (let i = 0; i < textbtn.length; i++) {
+                textbtn[i].click();
+            }
+            console.log(document.forms[0].elements)
+            
+        }, 200)
+        setTimeout(() => {
+            document.forms[0].elements['cell_type_col_1'].value = 'Celltype'
+            document.forms[0].elements['species'].value = 'human'
+            document.forms[0].elements['tumor_validate'].value = 'Colorectal Adenocarcinoma'
+            document.forms[0].elements['n_neighbors'].value = 15
+            document.forms[0].elements['min_dist'].value = 0.01
+            document.forms[0].elements['resolution'].value = 1
+            document.forms[0].elements['impute'].value = 'False'
+ 
+        }, 200)
+        
     }
 
     async function validate(formData) {
