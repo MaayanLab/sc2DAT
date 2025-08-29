@@ -93,9 +93,16 @@ def load_mtx(mtx_filename, barcodes_filename, gene_filename, meta_filename):
     adata.obs['barcode'] = cells
     adata.obs_names = cells
     adata.obs_names_make_unique(join="-")
-    if meta_filename.endswith("sv.gz") or meta_filename.endswith(".tsv") or meta_filename.endswith(".tsv"):
-        metadata = pd.read_csv(meta_filename, index_col=0, sep='\t', compression='gzip' if meta_filename.endswith('.gz') else None)
-        metadata = metadata.loc[adata.obs_names]
+    if meta_filename:
+        if meta_filename.endswith(".csv") or meta_filename.endswith(".csv.gz"):
+            metadata = pd.read_csv(meta_filename, index_col=0, compression='gzip' if meta_filename.endswith('.gz') else None)
+        elif meta_filename.endswith(".tsv") or meta_filename.endswith(".tsv.gz"):
+            metadata = pd.read_csv(meta_filename, index_col=0, sep='\t', compression='gzip' if meta_filename.endswith('.gz') else None)
+        #metadata = metadata.loc[adata.obs_names]
+        if len(adata.obs_names.intersection(metadata.index)) == 0:
+              raise ValueError('Data and metadata file do not share the same index. Ensure sample IDs are identical between both files.')
+        
+        adata = adata[adata.obs_names.isin(metadata.index)]
         adata.obs = adata.obs.join(metadata)
 
     return adata
@@ -115,7 +122,9 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
             sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         else:
             raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv)')
-
+        if len(sc_metadata.index.intersection(sc_data.index)) == 0:
+              raise ValueError('Data and metadata file do not share the same index. Ensure sample IDs are identical between both files.')
+        
         adata = sc.AnnData(sc_data.T.values, obs=sc_metadata)
         adata.var['gene_names'] = sc_data.index.values
         adata.var.set_index('gene_names', drop=False, inplace=True)
