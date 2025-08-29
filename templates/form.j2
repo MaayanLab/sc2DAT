@@ -308,36 +308,54 @@
     }
 
     async function validate(formData) {
-        console.warn(Object.fromEntries(formData.entries()))
-        if (formData.get('data_type') == 'scRNA-seq') {
-            if (formData.get('sc_data_type_1') === 'Plain Text') {
-                if (!formData.get('sc_rna_file_1')) throw new Error('Please provide Data Set 1')
-                if (!formData.get('sc_meta_file_1')) throw new Error('Please provide Data Set 1 Metadata')
-            } else if (formData.get('sc_data_type_1') === '.mtx') {
-                if (!formData.get('barcode_sc_1')) throw new Error('Please provide Data Set 1 Barcode File')
-                if (!formData.get('features_sc_1')) throw new Error('Please provide Data Set 1 Features File')
-                if (!formData.get('matrix_sc_1')) throw new Error('Please provide Data Set 1 Matrix File')
-            } else if (formData.get('sc_data_type_1') === 'anndata') {
-                if (!formData.get('anndata_sc_1')) throw new Error('Please provide Data Set 1 AnnData File')
+    console.warn(Object.fromEntries(formData.entries()))
+    if (formData.get('data_type') == 'scRNA-seq') {
+        if (formData.get('sc_data_type_1') === 'Plain Text') {
+            if (!formData.get('sc_rna_file_1')) throw new Error('Please provide Data Set 1')
+            if (!formData.get('sc_meta_file_1')) throw new Error('Please provide Data Set 1 Metadata')
+            if ((formData.get('sc_rna_file_1').includes('GSE171417_rbk_experimental.tsv.gz')) && !(formData.get('sc_meta_file_1').includes('GSE171417_metadata_experimental.tsv'))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
             }
-            if (formData.get('sc_data_type_2') === 'Plain Text' && (formData.get('sc_rna_file_2') || formData.get('sc_meta_file_2'))) {
-                if (!formData.get('sc_rna_file_2')) throw new Error('Please provide Data Set 2 Data')
-                if (!formData.get('sc_meta_file_2')) throw new Error('Please provide Data Set 2 Metadata')
-                if (formData.get('sc_rna_file_1') === formData.get('sc_rna_file_2')) throw new Error('Data Set 1 & 2 Data are the same!')
-                if (formData.get('sc_meta_file_1') === formData.get('sc_meta_file_2')) throw new Error('Data Set 1 & 2 Metadata are the same!')
-            } else if (formData.get('sc_data_type_2') === '.mtx' && (formData.get('barcode_sc_2') || formData.get('features_sc_2') || formData.get('matrix_sc_2'))) {
-                if (!formData.get('barcode_sc_2')) throw new Error('Please provide Data Set 1 Barcode File')
-                if (!formData.get('features_sc_2')) throw new Error('Please provide Data Set 1 Features File')
-                if (!formData.get('matrix_sc_2')) throw new Error('Please provide Data Set 1 Matrix File')
-                if (formData.get('matrix_sc_1') === formData.get('matrix_sc_2')) throw new Error('Data Set 1 & 2 Data are the same!')
-            } else if (formData.get('sc_data_type_2') === 'anndata') {
-                if (!formData.get('anndata_sc_2')) throw new Error('Please provide Data Set 1 AnnData File')
-                if (formData.get('anndata_sc_1') === formData.get('anndata_sc_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+            else if ((formData.get('sc_rna_file_1').includes('GSE137710_human_spleen_raw_counts.tsv')) && (!formData.get('sc_meta_file_1').includes('GSE137710_metadata_spleen.tsv'))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
             }
-        } else if (formData.get('data_type') == 'bulk RNA-seq') {
-            if (!formData.get('bulk_expr')) throw new Error('Please provide Bulk RNA-seq Expression Data')
-            if (!formData.get('bulk_meta')) throw new Error('Please provide Bulk RNA-seq Expression Metadata')
+        } else if (formData.get('sc_data_type_1') === '.mtx') {
+            if (!formData.get('barcode_sc_1')) throw new Error('Please provide Data Set 1 Barcode File')
+            if (!formData.get('features_sc_1')) throw new Error('Please provide Data Set 1 Features File')
+            if (!formData.get('matrix_sc_1')) throw new Error('Please provide Data Set 1 Matrix File')
+            if ((formData.get('matrix_sc_1').includes('Melanoma_matrix.mtx.gz')) && (!formData.get('barcode_sc_1').includes('Melanoma_barcodes.tsv.gz') || !formData.get('features_sc_1').includes('Melanoma_features.tsv.gz') || formData.get('mtx_meta_file_1'))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
+            }
+            else if (formData.get('matrix_sc_1').includes('CD_Broad_matrix.mtx.gz') && (!(formData.get('barcode_sc_1').includes('CD_Broad_barcodes.tsv') || !formData.get('features_sc_1').includes('CD_Broad_features.tsv')))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
+            }
+        } else if (formData.get('sc_data_type_1') === 'anndata') {
+            if (!formData.get('anndata_sc_1')) throw new Error('Please provide Data Set 1 AnnData File')
         }
+        if (formData.get('sc_data_type_2') === 'Plain Text' && (formData.get('sc_rna_file_2') || formData.get('sc_meta_file_2'))) {
+            if (!formData.get('sc_rna_file_2')) throw new Error('Please provide Data Set 2 Data')
+            if (!formData.get('sc_meta_file_2')) throw new Error('Please provide Data Set 2 Metadata')
+            if (formData.get('sc_rna_file_1') === formData.get('sc_rna_file_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+            if (formData.get('sc_meta_file_1') === formData.get('sc_meta_file_2')) throw new Error('Data Set 1 & 2 Metadata are the same!')
+        } else if (formData.get('sc_data_type_2') === '.mtx' && (formData.get('barcode_sc_2') || formData.get('features_sc_2') || formData.get('matrix_sc_2'))) {
+            if (!formData.get('barcode_sc_2')) throw new Error('Please provide Data Set 1 Barcode File')
+            if (!formData.get('features_sc_2')) throw new Error('Please provide Data Set 1 Features File')
+            if (!formData.get('matrix_sc_2')) throw new Error('Please provide Data Set 1 Matrix File')
+            if (formData.get('matrix_sc_1') === formData.get('matrix_sc_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+        } else if (formData.get('sc_data_type_2') === 'anndata') {
+            if (!formData.get('anndata_sc_2')) throw new Error('Please provide Data Set 1 AnnData File')
+            if (formData.get('anndata_sc_1') === formData.get('anndata_sc_2')) throw new Error('Data Set 1 & 2 Data are the same!')
+        }
+    } else if (formData.get('data_type') == 'bulk RNA-seq') {
+        if (!formData.get('bulk_expr')) throw new Error('Please provide Bulk RNA-seq Expression Data')
+        if (!formData.get('bulk_meta')) throw new Error('Please provide Bulk RNA-seq Expression Metadata')
+        if (formData.get('bulk_expr').includes('CPTAC_LUAD_counts.tsv') && !(formData.get('bulk_meta').includes('CPTAC_LUAD_meta.tsv'))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
+        }
+        if (formData.get('bulk_expr').includes('PDAC_counts.tsv') && !(formData.get('bulk_meta').includes('PDAC_meta.tsv'))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
+        }
+    }
     }
 
     async function doSubmit(formData) {
