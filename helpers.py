@@ -21,6 +21,8 @@ from dotenv import load_dotenv
 import statsmodels
 import statsmodels.stats
 import statsmodels.stats.multitest
+import pathlib
+import tempfile
 from scipy.io import mmread
 import gzip
 from os import fspath
@@ -140,7 +142,18 @@ def read_bulk_data(filename: str):
     else:
         raise ValueError('File type for bulk data not supported (.csv, .tsv)')
 
-def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output_dir: str, convert_dict: dict):
+def make_zip_archive(output: str, root: str):
+  import shutil
+  import zipfile
+  import pathlib
+  with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+    for f in pathlib.Path(root).rglob('*'):
+      if not f.is_file(): continue
+      with f.open('rb') as fr:
+        with zf.open(str(f.relative_to(root)), 'w') as fw:
+          shutil.copyfileobj(fr, fw)
+
+def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output: str, convert_dict: dict):
     """
     Perform deconvolution using InstaPrism and save results.
 
@@ -154,73 +167,88 @@ def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output_dir:
     - estimated_frac: pd.DataFrame, cell type fractions.
     """
     # Example conversion dictionary (you should populate this with actual mappings)
-    os.makedirs(name='temp', exist_ok=True)
     # Step 1: Read the bulk expression data and convert gene symbols to Ensembl IDs
     bulk_expr.index = bulk_expr.index.map(lambda x: convert_dict.get(x, x))  # Convert gene symbols
-    print(ref_url)
-    response = requests.get(ref_url)
-    print(response.status_code)
-    if response.status_code == 200:
-        # Write the content to a file
-        with open('temp/ref_obj.rds', 'wb') as file:
-            file.write(response.content)
-    else:
-        print('Failed to retrieve reference object.', response.status_code)
+    with tempfile.TemporaryDirectory() as tmpdir:
+      tmpdir_path = pathlib.Path(tmpdir)
+      (tmpdir_path/'temp').mkdir()
+      temporary_dir = str(tmpdir_path/'temp')
+      if pathlib.Path(output).suffix == '.zip':
+        # when output is a zip, we'll store everything in tempdir
+        output_dir = str(tmpdir_path/'results')
+      else:
+        # ... otherwise we'll just store temp files in temp dir and store where they're going
+        output_dir = output
+      pathlib.Path(output_dir).mkdir(exist_ok=True)
+      print(ref_url)
+      response = requests.get(ref_url, stream=True)
+      print(response.status_code)
+      if response.status_code == 200:
+          # Write the content to a file
+          with open(f'{temporary_dir}/ref_obj.rds', 'wb') as file:
+              for chunk in response.iter_content(1024):
+                  file.write(chunk)
+      else:
+          print('Failed to retrieve reference object.', response.status_code)
+      
+      # Step 2: Write out the modified bulk expression DataFrame
+      bulk_expr_ensembl_path = f'{temporary_dir}/bulk_expr_ensembl.tsv'
+      bulk_expr = bulk_expr.loc[~bulk_expr.index.duplicated(keep='first')]
+      bulk_expr.to_csv(bulk_expr_ensembl_path, sep='\t')
+
+      # Step 3: Create the R code string
+      r_code = f"""
+      library(InstaPrism)
+
+      # Read the reference object
+      print('reading reference object')
+      ref_obj <- readRDS('{temporary_dir}/ref_obj.rds')
+
+      # Read the bulk expression data
+      print('reading bulk expression')
+      bulk_expr <- read.csv('{bulk_expr_ensembl_path}', sep='\\t', row.names=1)
+
+      # Print diagnostic information
+      cat("Bulk expression dimensions:", dim(bulk_expr), "\\n")
+      cat("Reference object class:", class(ref_obj), "\\n")
+
+      # Perform deconvolution
+      deconv_res <- InstaPrism::InstaPrism(bulk_Expr=bulk_expr, refPhi_cs=ref_obj)
+
+      # Get estimated fractions
+      estimated_frac <- t(deconv_res@Post.ini.ct@theta)
+
+      # Save estimated fractions
+      write.csv(estimated_frac, file='{output_dir}/estimated_frac.csv', row.names=TRUE)
+
+      # Get Z array and save for each cell type
+      Z <- get_Z_array(deconv_res)
+      cell_types <- dimnames(Z)[[3]]  # Get cell type names
+
+      for (cell_type in cell_types) {{
+          DCT_Z <- Z[, , cell_type]
+          write.csv(DCT_Z, file=paste0('{output_dir}/', gsub("/", "", cell_type), '_Z.csv'), row.names=TRUE)
+      }}
+
+      # Return estimated fractions
+      """
+
+      # Step 4: Execute the R code
+      try:
+          ro.r(r_code)  # Execute the R code and get estimated fractions
+      except Exception as e:
+          print(f"Error during execution: {str(e)}")
+          raise
+      
+      estimated_frac_df = pd.read_csv(f'{output_dir}/estimated_frac.csv', index_col=0)
+      cell_type_dfs = {}
+      for f in os.listdir(output_dir):
+          if f.endswith('_Z.csv'):
+              cell_type_dfs[f[:-4]] = pd.read_csv(f'{output_dir}/{f}', index_col=0)
     
-    # Step 2: Write out the modified bulk expression DataFrame
-    bulk_expr_ensembl_path = f'temp/bulk_expr_ensembl.tsv'
-    bulk_expr = bulk_expr.loc[~bulk_expr.index.duplicated(keep='first')]
-    bulk_expr.to_csv(bulk_expr_ensembl_path, sep='\t')
-
-    # Step 3: Create the R code string
-    r_code = f"""
-    library(InstaPrism)
-
-    # Read the reference object
-    print('reading reference object')
-    ref_obj <- readRDS('temp/ref_obj.rds')
-
-    # Read the bulk expression data
-    print('reading bulk expression')
-    bulk_expr <- read.csv('{bulk_expr_ensembl_path}', sep='\\t', row.names=1)
-
-    # Print diagnostic information
-    cat("Bulk expression dimensions:", dim(bulk_expr), "\\n")
-    cat("Reference object class:", class(ref_obj), "\\n")
-
-    # Perform deconvolution
-    deconv_res <- InstaPrism::InstaPrism(bulk_Expr=bulk_expr, refPhi_cs=ref_obj)
-
-    # Get estimated fractions
-    estimated_frac <- t(deconv_res@Post.ini.ct@theta)
-
-    # Save estimated fractions
-    write.csv(estimated_frac, file='{output_dir}/estimated_frac.csv', row.names=TRUE)
-
-    # Get Z array and save for each cell type
-    Z <- get_Z_array(deconv_res)
-    cell_types <- dimnames(Z)[[3]]  # Get cell type names
-
-    for (cell_type in cell_types) {{
-        DCT_Z <- Z[, , cell_type]
-        write.csv(DCT_Z, file=paste0('{output_dir}/', gsub("/", "", cell_type), '_Z.csv'), row.names=TRUE)
-    }}
-
-    # Return estimated fractions
-    """
-
-    # Step 4: Execute the R code
-    try:
-        ro.r(r_code)  # Execute the R code and get estimated fractions
-    except Exception as e:
-        print(f"Error during execution: {str(e)}")
-        raise
-    
-    estimated_frac_df = pd.read_csv(f'{output_dir}/estimated_frac.csv', index_col=0)
-    cell_type_dfs = {}
-    for f in os.listdir(output_dir):
-        if f.endswith('_Z.csv'):
-            cell_type_dfs[f[:-4]] = pd.read_csv(f'{output_dir}/{f}', index_col=0)
+      if pathlib.Path(output).suffix == '.zip':
+        # make aa zip archive out of the output directory when necessary
+        make_zip_archive(output, output_dir)
     return estimated_frac_df, cell_type_dfs
 
 
