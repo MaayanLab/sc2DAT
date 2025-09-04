@@ -13,3 +13,4 @@ libasound2
 build-essential
 chromium
 chromium-driver
+libfuse2
