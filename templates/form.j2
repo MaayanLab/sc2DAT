@@ -84,7 +84,7 @@
                                 onclick="loadSCExample()">Load scRNA-seq Example 1 (Kidney IRI GSE171417)</div>
                            
                             <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
-                                onclick="loadDCExample()">Load scRNA-seq Example 2 (Spleen DCs GSE137710)</div>
+                                onclick="loadGDCExample()">Load scRNA-seq Example 2 (GDC CPTAC-3 85cb..02fd)</div>
                             
                             <div class="btn rounded col-3 justify-content-center" style="border: solid 2px rgb(103, 103, 103); font-weight: 500; background-color: rgb(188, 234, 207);" 
                                 onclick="loadCDExample()">Load scRNA-seq Example 3 (Crohn's Disease)</div>
@@ -251,23 +251,23 @@
 
     }
 
-    function loadDCExample() {
+    function loadGDCExample() {
         const tabs = document.querySelectorAll('button[role="tab"]');
         for (const tab of tabs) {
-            if (tab.textContent.trim() === 'Plain Text') {
+            if (tab.textContent.trim() === '.mtx') {
                 tab.click();
                 break;
             }
         }
         setTimeout(() => {
-            const textbtn = document.getElementsByClassName('text-btn ' + 'GSE137710');
+            const textbtn = document.getElementsByClassName('text-btn ' + 'GDC');
             for (let i = 0; i < textbtn.length; i++) {
                 textbtn[i].click();
             }
         }, 200)
 
         setTimeout(() => {
-            document.forms[0].elements['cell_type_col_1'].value = 'cell_type'
+            document.forms[0].elements['cell_type_col_1'].value = ''
             document.forms[0].elements['species'].value = 'human'
             document.forms[0].elements['n_neighbors'].value = 30
             document.forms[0].elements['min_dist'].value = 0.1
@@ -316,9 +316,6 @@
             if ((formData.get('sc_rna_file_1').includes('GSE171417_rbk_experimental.tsv.gz')) && !(formData.get('sc_meta_file_1').includes('GSE171417_metadata_experimental.tsv'))) {
                 throw new Error("If using example files, please ensure all files are from the same example.")
             }
-            else if ((formData.get('sc_rna_file_1').includes('GSE137710_human_spleen_raw_counts.tsv')) && (!formData.get('sc_meta_file_1').includes('GSE137710_metadata_spleen.tsv'))) {
-                throw new Error("If using example files, please ensure all files are from the same example.")
-            }
         } else if (formData.get('sc_data_type_1') === '.mtx') {
             if (!formData.get('barcode_sc_1')) throw new Error('Please provide Data Set 1 Barcode File')
             if (!formData.get('features_sc_1')) throw new Error('Please provide Data Set 1 Features File')
@@ -327,6 +324,9 @@
                 throw new Error("If using example files, please ensure all files are from the same example.")
             }
             else if (formData.get('matrix_sc_1').includes('CD_Broad_matrix.mtx.gz') && (!(formData.get('barcode_sc_1').includes('CD_Broad_barcodes.tsv') || !formData.get('features_sc_1').includes('CD_Broad_features.tsv')))) {
+                throw new Error("If using example files, please ensure all files are from the same example.")
+            }
+            else if (formData.get('matrix_sc_1').includes('GDC_CPTAC_3_matrix.mtx.gz') && (!(formData.get('barcode_sc_1').includes('GDC_CPTAC_3_barcodes.tsv') || !formData.get('features_sc_1').includes('GDC_CPTAC_3_features.tsv')))) {
                 throw new Error("If using example files, please ensure all files are from the same example.")
             }
         } else if (formData.get('sc_data_type_1') === 'anndata') {
