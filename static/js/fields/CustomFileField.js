@@ -2271,7 +2271,21 @@ function instance($$self, $$props, $$invalidate) {
     if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CustomTabField> was created with unknown prop '${key}'`);
   });
 
-  const click_handler = choice_name => $$invalidate(0, args.value = choice_name, args);
+  const click_handler = choice_name => {
+    if (args.value === choice_name) {
+      const m = /^(.+?)-type$/.exec(args.name);
+
+      if (m != null) {
+        const el = document.querySelector(`.custom-file-input[id="${m[1]}"]`);
+
+        if (el !== null) {
+          el.click();
+        }
+      }
+    }
+
+    $$invalidate(0, args.value = choice_name, args);
+  };
 
   $$self.$$set = $$props => {
     if ('args' in $$props) $$invalidate(0, args = $$props.args);
