@@ -124,7 +124,7 @@ def read_sc_data(sc_data_file: str, sc_metadata_file: str, type: str):
             sc_metadata= pd.read_csv(sc_metadata_file, index_col=0, sep='\t', compression='gzip' if sc_metadata_file.endswith('.gz') else None)
         else:
             raise ValueError('File type for scRNA-seq control profile not supported (.csv, .tsv)')
-        if len(sc_metadata.index.intersection(sc_data.index)) == 0:
+        if len(sc_metadata.index.intersection(sc_data.columns)) == 0:
               raise ValueError('Data and metadata file do not share the same index. Ensure sample IDs are identical between both files.')
         
         adata = sc.AnnData(sc_data.T.values, obs=sc_metadata)
