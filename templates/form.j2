@@ -353,6 +353,9 @@
         if (formData.get('bulk_expr').includes('PDAC_counts.tsv') && !(formData.get('bulk_meta').includes('PDAC_meta.tsv'))) {
                 throw new Error("If using example files, please ensure all files are from the same example.")
         }
+        if ((formData.get('condition_col') == '') || (formData.get('ctrl_condition') == '')) {
+            throw new Error("Please provide the name of the condition column and specify the name of the control group (control condition name).")
+        }
     }
     }
 
