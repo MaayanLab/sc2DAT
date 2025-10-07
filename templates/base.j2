@@ -325,7 +325,7 @@
 
 {% block body %}
 <div class="row justify-content-center mb-3"
-  style="position: relative; width: 105%; left: -3%; font-family: 'Open Sans'; background-color: rgb(208, 255, 223); border-bottom: 2px solid #006bdd; overflow-x: visible;">
+  style="position: relative; font-family: 'Open Sans'; background-color: rgb(208, 255, 223); border-bottom: 2px solid #006bdd; overflow-x: visible;">
   <div class="container col-12">
     <div class="mb-1 mt-2 mx-0 row align-items-center text-left flex-row" style="position: relative; margin-right: 20%">
       <div class="col-2">
@@ -452,50 +452,65 @@
 
 {% block footer %}
 <footer class="footer mt-5">
-  <div class="d-flex"
-    style="position:absolute;width: 104%; left: -3%; background-color:rgb(48, 98, 245); padding: 0px; overflow-x: hidden;">
-    <div class="row justify-content-around align-items-center text-center my-3 mx-auto">
-      <div class="col  ml-5 mx-5" style="font-size: medium;">
-        <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank" style="color: white !important;
-          text-decoration: none !important;
-          border-style: solid;
-          padding: 8px;
-          border-color: white;
-          border-radius: 10px;
-          border-width: 1px;">Contact Us</a>
-
-        <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/SC2Targets" target="_blank"
-          rel="noopener noreferrer" style="color: white !important;
+  <div style="background-color:rgb(48, 98, 245); overflow-x: hidden;">
+    <div class="container py-4">
+      <div class="row justify-content-around align-items-center text-center">
+        <div class="col ml-5 mx-5" style="font-size: medium;">
+          <a class="btn-link mr-2 text-nowrap" href="mailto:avi.maayan@mssm.edu" target="_blank" style="color: white !important;
             text-decoration: none !important;
             border-style: solid;
             padding: 8px;
             border-color: white;
             border-radius: 10px;
-            border-width: 1px;">
-          Source Code
-        </a>
-      </div>
-      <div class="col mx-5">
-        <a href="https://labs.icahn.mssm.edu/" target="_blank" rel="noopener noreferrer">
-          <img src="{{ url_for('static', filename='ismms_white.png')}}" style="width: 8rem;" alt='Ma&apos;ayan Lab' />
-        </a>
-      </div>
+            border-width: 1px;">Contact Us</a>
 
-      <div class="col mx-5">
-        <a href="https://labs.icahn.mssm.edu/maayanlab/" target="_blank" rel="noopener noreferrer">
-          <img class='rounded pt-3' src="{{ url_for('static', filename='maayanlab_white.png')}}" style="width: 8rem;"
-            alt='Ma&apos;ayan
-            Lab' />
-        </a>
-      </div>
-      <div class="col mx-5">
-        <a class="mr-5" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-          <img src="{{ url_for('static', filename='cc-by-nc-sa.png')}}" style="width: 8rem;" alt="CC-by-NC-SA" />
-        </a>
-      </div>
+          <a class="btn-link text-nowrap" href="https://github.com/MaayanLab/SC2Targets" target="_blank"
+            rel="noopener noreferrer" style="color: white !important;
+              text-decoration: none !important;
+              border-style: solid;
+              padding: 8px;
+              border-color: white;
+              border-radius: 10px;
+              border-width: 1px;">
+            Source Code
+          </a>
+        </div>
 
+        <div class="col mx-5">
+          <a href="https://labs.icahn.mssm.edu/" target="_blank" rel="noopener noreferrer">
+            <img src="{{ url_for('static', filename='ismms_white.png')}}" style="width: 8rem;" alt='Ma&apos;ayan Lab' />
+          </a>
+        </div>
+
+        <div class="col mx-5">
+          <a href="https://labs.icahn.mssm.edu/maayanlab/" target="_blank" rel="noopener noreferrer">
+            <img class='rounded pt-3' src="{{ url_for('static', filename='maayanlab_white.png')}}" style="width: 8rem;"
+              alt='Ma&apos;ayan
+              Lab' />
+          </a>
+        </div>
+
+        <div class="col mx-5">
+          <a class="mr-5" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img src="{{ url_for('static', filename='cc-by-nc-sa.png')}}" style="width: 8rem;" alt="CC-by-NC-SA" />
+          </a>
+        </div>
+
+        <div class="row justify-content-center mx-4">
+          <div class="col-10">
+            <div style="color: white">
+              Please acknowledge sc2DAT in your publications by citing the following reference:
+            </div>
+            <a class="" style="color: #a0d8f9;" href="https://academic.oup.com/bioinformaticsadvances/advance-article/doi/10.1093/bioadv/vbaf237/8266336" target="_blank">
+              <p style="line-height: normal;">
+                Marino GB, Byrd AI, Ahmed N, Clarke DJB, Ma'ayan A. sc2DAT: Workflow for Targeting Tumor Subpopulations of Single Cells. Bioinformatics Advances. 2025 Sep 26;vbaf237. https://doi.org/10.1093/bioadv/vbaf237.
+              </p>
+            </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
 
   </div>
 </footer>
