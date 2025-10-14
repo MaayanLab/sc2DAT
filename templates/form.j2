@@ -346,11 +346,10 @@
         }
     } else if (formData.get('data_type') == 'bulk RNA-seq') {
         if (!formData.get('bulk_expr')) throw new Error('Please provide Bulk RNA-seq Expression Data')
-        if (!formData.get('bulk_meta')) throw new Error('Please provide Bulk RNA-seq Expression Metadata')
-        if (formData.get('bulk_expr').includes('CPTAC_LUAD_counts.tsv') && !(formData.get('bulk_meta').includes('CPTAC_LUAD_meta.tsv'))) {
+        if (formData.get('bulk_expr').includes('CPTAC_LUAD_counts.tsv') && !(formData.get('bulk_meta').includes('CPTAC_LUAD_meta.tsv')) && (formData.get('bulk_meta') != '')) {
                 throw new Error("If using example files, please ensure all files are from the same example.")
         }
-        if (formData.get('bulk_expr').includes('PDAC_counts.tsv') && !(formData.get('bulk_meta').includes('PDAC_meta.tsv'))) {
+        if (formData.get('bulk_expr').includes('PDAC_counts.tsv') && !(formData.get('bulk_meta').includes('PDAC_meta.tsv')) && (formData.get('bulk_meta') != '')) {
                 throw new Error("If using example files, please ensure all files are from the same example.")
         }
         if ((formData.get('condition_col') != '') && (formData.get('ctrl_condition') == '') || (formData.get('condition_col') == '') && (formData.get('ctrl_condition') != '')) {
