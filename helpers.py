@@ -197,6 +197,8 @@ def deconvolution_insta_prism(ref_url: str, bulk_expr: pd.DataFrame, output: str
       bulk_expr.to_csv(bulk_expr_ensembl_path, sep='\t')
 
       # Step 3: Create the R code string
+      # hint: to use one of the instaprism references, replace ref_obj with the below line
+      # ref_obj <- InstaPrism_reference("SKCM") (melanoma - replace w "BRCA", etc)
       r_code = f"""
       library(InstaPrism)
 
